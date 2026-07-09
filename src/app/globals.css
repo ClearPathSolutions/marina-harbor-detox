@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Anchor jumps (e.g. #verify) clear the sticky header instead of hiding under it */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-white text-ink font-sans antialiased;
+    /* Hard guarantee: nothing ever hangs off the side of the page */
+    overflow-x: hidden;
+  }
+
+  /* Prevent images/media from ever forcing horizontal scroll */
+  img,
+  video,
+  svg {
+    max-width: 100%;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    @apply bg-orange-500 text-white;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-orange-500 ring-offset-2 ring-offset-white;
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-content px-5 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply mx-auto w-full max-w-wide px-5 sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
+      tracking-wide transition-all duration-200 focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+
+  /* Golden Gate orange — the primary call-to-action */
+  .btn-orange {
+    @apply btn bg-orange-500 text-white shadow-soft hover:bg-orange-600 hover:shadow-card active:scale-[0.98];
+  }
+
+  .btn-gold {
+    @apply btn bg-gold-400 text-navy-900 shadow-soft hover:bg-gold-300 hover:shadow-card active:scale-[0.98];
+  }
+
+  .btn-navy {
+    @apply btn bg-navy-800 text-white shadow-soft hover:bg-navy-700 active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply btn border border-white/70 bg-white/5 text-white backdrop-blur-sm hover:bg-white hover:text-navy-900;
+  }
+
+  .btn-outline-navy {
+    @apply btn border border-navy-700/25 bg-white text-navy-700 hover:border-navy-700 hover:bg-navy-50;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-orange-600;
+  }
+
+  .section {
+    @apply py-16 sm:py-20 lg:py-28;
+  }
+
+  .link-underline {
+    @apply relative inline-flex w-fit after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0
+      after:bg-current after:transition-all after:duration-300 hover:after:w-full;
+  }
+}
+
+/* Scroll-reveal: hidden state only applies when JS is confirmed present (`.js` on <html>).
+   Without JS the content is always visible — never hidden from users or crawlers. */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Never leave reveal content stuck hidden for reduced-motion users */
+  .js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

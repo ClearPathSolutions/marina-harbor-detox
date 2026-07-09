@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node extract.mjs)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3)",
+      "Bash(node -e ' *)",
+      "Bash(cd \"/Users/benjamincastro/Marina Harbor Detox\" && echo \"---other privacy/terms pages---\"; ls content/pages/ | grep -iE \"privacy|terms|hipaa|notice\" ; echo \"---dynamicParams / route---\"; sed -n '1,40p' src/app/[...slug]/page.tsx 2>/dev/null | grep -n \"dynamicParams\\\\|generateStaticParams\\\\|getAllContent\\\\|slug\" )"
+    ],
+    "additionalDirectories": [
+      "/Users/benjamincastro/Marina Harbor Detox/src/app/[...slug]"
+    ]
+  }
+}
