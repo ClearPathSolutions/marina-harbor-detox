@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import { site } from "@/lib/site";
 import Analytics from "@/components/Analytics";
+import Clarion from "@/components/Clarion";
 import CookieConsent from "@/components/CookieConsent";
 import Elfsight from "@/components/Elfsight";
 import FloatingCall from "@/components/FloatingCall";
@@ -114,6 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         {children}
         <FloatingCall />
+        <Clarion />
         <Elfsight />
         <CookieConsent />
       </body>

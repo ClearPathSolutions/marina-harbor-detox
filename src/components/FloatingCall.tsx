@@ -14,7 +14,7 @@ export default function FloatingCall() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 right-6 z-[55] hidden flex-col items-end gap-3 lg:flex">
+    <div className="fixed bottom-6 left-6 z-[55] hidden flex-col items-start gap-3 lg:flex">
       {open && (
         <div className="w-64 overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-lift">
           <div className="bg-navy-900 px-4 py-3">
