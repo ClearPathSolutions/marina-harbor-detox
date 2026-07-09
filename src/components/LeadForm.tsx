@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { site } from "@/lib/site";
 import { ArrowRight, Check, Phone, Shield } from "./Icons";
 import ProviderCombobox from "./ProviderCombobox";
@@ -29,6 +29,10 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [provider, setProvider] = useState("");
+  // Synchronous re-entry guard: blocks a second submit instantly (e.g. a fast
+  // double-click or Enter-then-click) before React can re-render the disabled
+  // button. Without this, both clicks fire before `status` updates → 2 POSTs.
+  const inFlight = useRef(false);
 
   const isVerify = intent === "verify";
 
@@ -37,43 +41,45 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
   // contact form additionally posts to our internal /api/lead (webhook/email).
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (inFlight.current) return; // already submitting — ignore duplicate
+    inFlight.current = true;
     setStatus("submitting");
     setErrors({});
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
 
-    // Honeypot — silently succeed for bots without sending anything.
-    if (typeof data.company === "string" && data.company.trim()) {
-      setStatus("success");
-      form.reset();
-      setProvider("");
-      return;
-    }
-
-    // Client-side validation (we set noValidate, so enforce required fields here).
-    const val = (k: string) => (typeof data[k] === "string" ? (data[k] as string).trim() : "");
-    const nextErrors: Record<string, string> = {};
-    const digits = val("phone").replace(/\D/g, "");
-    if (digits.length < 10) nextErrors.phone = "Please enter a valid phone number.";
-    const email = val("email");
-    const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-    if (isVerify) {
-      if (val("firstName").length < 1) nextErrors.firstName = "Please enter your first name.";
-      if (val("lastName").length < 1) nextErrors.lastName = "Please enter your last name.";
-      if (!email || !emailOk) nextErrors.email = "Please enter a valid email.";
-      if (!val("dob")) nextErrors.dob = "Date of birth is required for verification.";
-      if (!val("insurance")) nextErrors.insurance = "Please enter your insurance provider.";
-    } else {
-      if (val("name").length < 2) nextErrors.name = "Please enter your name.";
-      if (email && !emailOk) nextErrors.email = "Please enter a valid email.";
-    }
-    if (Object.keys(nextErrors).length) {
-      setErrors(nextErrors);
-      setStatus("error");
-      return;
-    }
-
     try {
+      // Honeypot — silently succeed for bots without sending anything.
+      if (typeof data.company === "string" && data.company.trim()) {
+        setStatus("success");
+        form.reset();
+        setProvider("");
+        return;
+      }
+
+      // Client-side validation (we set noValidate, so enforce required fields here).
+      const val = (k: string) => (typeof data[k] === "string" ? (data[k] as string).trim() : "");
+      const nextErrors: Record<string, string> = {};
+      const digits = val("phone").replace(/\D/g, "");
+      if (digits.length < 10) nextErrors.phone = "Please enter a valid phone number.";
+      const email = val("email");
+      const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+      if (isVerify) {
+        if (val("firstName").length < 1) nextErrors.firstName = "Please enter your first name.";
+        if (val("lastName").length < 1) nextErrors.lastName = "Please enter your last name.";
+        if (!email || !emailOk) nextErrors.email = "Please enter a valid email.";
+        if (!val("dob")) nextErrors.dob = "Date of birth is required for verification.";
+        if (!val("insurance")) nextErrors.insurance = "Please enter your insurance provider.";
+      } else {
+        if (val("name").length < 2) nextErrors.name = "Please enter your name.";
+        if (email && !emailOk) nextErrors.email = "Please enter a valid email.";
+      }
+      if (Object.keys(nextErrors).length) {
+        setErrors(nextErrors);
+        setStatus("error");
+        return;
+      }
+
       // 1) Sync to Clarion (fire-and-forget; don't fail the UX if it hiccups).
       try {
         await window.ClarionForms?.submit({
@@ -104,6 +110,8 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
       setProvider("");
     } catch {
       setStatus("error");
+    } finally {
+      inFlight.current = false;
     }
   }
 
