@@ -6,6 +6,7 @@ import MobileCTABar from "./MobileCTABar";
 import CTASection from "./CTASection";
 import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
+import StaffGrid from "./StaffGrid";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
 import {
   type Block,
@@ -276,6 +277,27 @@ function Related({ doc }: { doc: Doc }) {
   );
 }
 
+/**
+ * Names this page already lists. Staff on /about are authored as content blocks —
+ * an h2 "Dedicated Team" followed by h3 name / p title pairs — so the h3 texts in
+ * that run are the people already shown. Used to keep the portal grid from
+ * repeating anyone.
+ */
+function namesOnPage(doc: Doc): string[] {
+  const start = doc.blocks.findIndex(
+    (b) => b.tag === "h2" && /dedicated team/i.test(b.text),
+  );
+  if (start === -1) return [];
+  const out: string[] = [];
+  for (const b of doc.blocks.slice(start + 1)) {
+    if (b.tag === "h2") break; // next major section
+    if (b.tag === "h3" && b.text.trim().split(/\s+/).length <= 4) {
+      out.push(b.text.trim());
+    }
+  }
+  return out;
+}
+
 export default function ContentPage({ doc }: { doc: Doc }) {
   const segs = pathSegments(doc.url);
   const slugPath = "/" + segs.join("/");
@@ -287,6 +309,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const isFacility = slugPath === "/facility";
   const isAdmission = slugPath === "/admission";
   const isContact = slugPath === "/contact-location";
+  const isAbout = slugPath === "/about";
   const withForm = isAdmission || isContact;
 
   const crumbs =
@@ -481,6 +504,8 @@ export default function ContentPage({ doc }: { doc: Doc }) {
             </div>
           </section>
         )}
+
+        {isAbout && <StaffGrid facility="marina-harbor-detox" exclude={namesOnPage(doc)} />}
 
         <Related doc={doc} />
         <CTASection />
