@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import { site } from "@/lib/site";
 import Analytics from "@/components/Analytics";
+import Clarion from "@/components/Clarion";
 import CookieConsent from "@/components/CookieConsent";
 import Elfsight from "@/components/Elfsight";
 import FloatingCall from "@/components/FloatingCall";
@@ -106,6 +107,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Marks JS as available before paint so scroll-reveal never hides content for no-JS users */}
         <script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add('js')` }} />
+        {/* Site-wide visitor tracking */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script async src="//264810.tctm.co/t.js" />
       </head>
       <body>
         {/* First focusable element on every page — lets keyboard and screen-reader
@@ -124,6 +128,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         {children}
         <FloatingCall />
+        <Clarion />
         <Elfsight />
         <CookieConsent />
       </body>

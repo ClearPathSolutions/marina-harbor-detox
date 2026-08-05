@@ -42,6 +42,11 @@ export const site = {
   widgets: {
     trustindexLoader: "718a667695be9627c1963405c60",
     elfsightApp: "de52e11c-b5df-4d05-8281-0a00d33a23e0",
+    // Clarion Labs — hosts the chat widget + insurance-verification form capture.
+    clarion: {
+      siteKey: "cpx_8RF5FiJFYnDZgaFMY2fjSTtjCTQ84Wmk",
+      api: "https://api.clarionlabs.ai",
+    },
   },
 } as const;
 
