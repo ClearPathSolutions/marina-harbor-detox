@@ -8,6 +8,7 @@ import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
 import ConsentMap from "./ConsentMap";
 import TeamPreview from "./TeamPreview";
+import TableOfContents, { type TocItem } from "./TableOfContents";
 import PageHero from "./PageHero";
 import FaqAccordion, { buildFaq } from "./FaqAccordion";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
@@ -21,6 +22,7 @@ import {
   relatedLinks,
 } from "@/lib/content";
 import { site } from "@/lib/site";
+import { tocLabel } from "@/lib/toc";
 import { createLinker, type Linker } from "@/lib/prose";
 import {
   blogPostingSchema,
@@ -319,32 +321,8 @@ function Prose({ sections }: { sections: Section[] }) {
   );
 }
 
-/** Sticky desktop "On this page" jump nav (only when a page has enough sections). */
-function TableOfContents({ sections }: { sections: Section[] }) {
-  const items = sections.filter((s) => s.title);
-  if (items.length < 3) return null;
-  return (
-    <nav aria-label="On this page" className="rounded-3xl border border-navy-100 bg-white p-5 shadow-soft">
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-navy-700">On this page</p>
-      <ul className="mt-3 space-y-2">
-        {items.map((s) => (
-          <li key={s.id}>
-            <a
-              href={`#${s.id}`}
-              className="block border-l-2 border-navy-100 pl-3 text-sm leading-snug text-navy-900/65 transition-colors hover:border-orange-500 hover:text-orange-600"
-            >
-              {s.title}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
-
 /** Collapsible "On this page" for phones, where the sidebar is hidden. */
-function MobileToc({ sections }: { sections: Section[] }) {
-  const items = sections.filter((s) => s.title);
+function MobileToc({ items }: { items: TocItem[] }) {
   if (items.length < 3) return null;
   return (
     <details className="group mb-8 rounded-2xl border border-navy-100 bg-sand-50 p-4 lg:hidden">
@@ -356,7 +334,7 @@ function MobileToc({ sections }: { sections: Section[] }) {
         {items.map((s) => (
           <li key={s.id}>
             <a href={`#${s.id}`} className="block text-sm leading-snug text-navy-900/70 hover:text-orange-600">
-              {s.title}
+              {s.label}
             </a>
           </li>
         ))}
@@ -463,6 +441,13 @@ export default function ContentPage({ doc }: { doc: Doc }) {
     doc.h1,
     createLinker(slugPath),
   );
+
+  // Nav labels for the jump-nav. The h2s themselves are keyword sentences —
+  // see lib/toc.ts for why they cannot be used verbatim as link text.
+  const tocTaken = new Set<string>();
+  const tocItems: TocItem[] = sections
+    .filter((s) => s.title)
+    .map((s) => ({ id: s.id, label: tocLabel(s.title as string, tocTaken) }));
 
   const isFacility = slugPath === "/facility";
   const isAdmission = slugPath === "/admission";
@@ -582,7 +567,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                     in a 3xl wrapper this branch ran to 80 cpl, well past
                     comfortable, while the sidebar branch sat at 64. */}
                 <div className="prose-col">
-                  <MobileToc sections={sections} />
+                  <MobileToc items={tocItems} />
                   <Prose sections={sections} />
                 </div>
               </div>
@@ -596,7 +581,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                     <FaqAccordion items={buildFaq(bodyBlocks)} />
                   ) : (
                     <>
-                      <MobileToc sections={sections} />
+                      <MobileToc items={tocItems} />
                       <Prose sections={sections} />
                     </>
                   )}
@@ -615,9 +600,11 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                   )}
                 </div>
                 <div className="hidden min-w-0 lg:block">
-                  <div className="space-y-6 lg:sticky lg:top-28">
-                    <TableOfContents sections={sections} />
+                  {/* CTA first: it is the point of the page, and a 10-item
+                      jump-nav above it pushed the phone number off-screen. */}
+                  <div className="space-y-8 lg:sticky lg:top-28">
                     <SidebarCTA />
+                    <TableOfContents items={tocItems} />
                   </div>
                 </div>
               </div>
