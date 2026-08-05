@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     description: site.description,
     images: [
       {
-        url: "/images/facility/facility-2320.jpg",
+        url: site.ogFallback,
         width: 2560,
         height: 1707,
         alt: `${site.name} facility`,
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${site.name} | ${site.tagline}`,
     description: site.description,
-    images: ["/images/facility/facility-2320.jpg"],
+    images: [site.ogFallback],
   },
   robots: { index: true, follow: true },
   // Favicon + apple touch icon are auto-detected from app/icon.png & app/apple-icon.png
@@ -79,7 +79,8 @@ const structuredData = {
   url: site.url,
   telephone: site.phones.primary.label,
   email: site.email,
-  image: `${site.url}/images/facility/facility-2320.jpg`,
+  foundingDate: site.founded,
+  image: `${site.url}/images/photos/lounge-01.jpg`,
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.street,
@@ -107,6 +108,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add('js')` }} />
       </head>
       <body>
+        {/* First focusable element on every page — lets keyboard and screen-reader
+            users jump the header nav straight to <main id="main">. Visually hidden
+            until focused. */}
+        <a
+          href="#main"
+          className="sr-only rounded-xl bg-white px-5 py-3 font-semibold text-navy-900 shadow-lift focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus-visible:ring-2 focus-visible:ring-orange-500"
+        >
+          Skip to content
+        </a>
         <Analytics />
         <script
           type="application/ld+json"

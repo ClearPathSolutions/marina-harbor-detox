@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { Clock, Facebook, Instagram, Mail, MapPin, Phone } from "./Icons";
+import CopyrightYear from "./CopyrightYear";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -135,7 +136,7 @@ export default function Footer() {
             <Link href="/privacy-policy" className="hover:text-orange-400">
               Privacy Policy
             </Link>
-            <span>© {new Date().getFullYear()} {site.name}. All Rights Reserved.</span>
+            <span>© <CopyrightYear buildYear={new Date().getFullYear()} /> {site.name}. All Rights Reserved.</span>
           </div>
         </div>
       </div>

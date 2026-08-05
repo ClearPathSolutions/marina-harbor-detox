@@ -6,6 +6,7 @@ import MobileCTABar from "./MobileCTABar";
 import CTASection from "./CTASection";
 import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
+import ConsentMap from "./ConsentMap";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
 import {
   type Block,
@@ -17,6 +18,13 @@ import {
   relatedLinks,
 } from "@/lib/content";
 import { site } from "@/lib/site";
+import {
+  blogPostingSchema,
+  breadcrumbSchema,
+  faqSchema,
+  medicalWebPageSchema,
+  personSchema,
+} from "@/lib/schema";
 
 const humanize = (s: string) =>
   s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()).replace(/\bAnd\b/g, "&");
@@ -30,10 +38,48 @@ const isNoise = (b: Block) => {
   return (
     /^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(t) || // "August 26, 2021"
     /^\d{1,2}:\d{2}(\s?[ap]m)?$/i.test(t) || // stray publish times: "10:42 pm"
-    /CADC|LMFT|CADC II|, MD$/.test(t) ||
+    /CADC|LMFT|CADC II|LCSW|, MD$/.test(t) ||
+    // "wpengine" is the WordPress system account, not a person. It leaked into
+    // the copy as a bullet ("Written By: wpengine") — drop it rather than
+    // publish it as authorship. Real authorship is D-3 / MH-15.
+    /^(written\s+by\s*[:\-–—]?\s*)?wpengine$/i.test(t) ||
     t.length < 3
   );
 };
+
+/**
+ * MH-13 — pull "Medically Reviewed By" / "Last Updated" out of the block stream.
+ *
+ * The extractor turned both into list items, so on 7 pages they render as stray
+ * bullets in the middle of the copy. They are byline metadata, not content:
+ * lift them out here and render them under the h1 instead.
+ */
+const REVIEWER_RE = /^\s*Medically\s+Reviewed\s+By\s*[:\-–—]?\s*(.+?)\s*$/i;
+const UPDATED_RE = /^\s*Last\s+Updated\s*[:\-–—]?\s*(.+?)\s*$/i;
+
+type Byline = { reviewedBy: string | null; lastUpdated: string | null };
+
+function extractByline(blocks: Block[]): Byline & { blocks: Block[] } {
+  let reviewedBy: string | null = null;
+  let lastUpdated: string | null = null;
+
+  const rest = blocks.filter((b) => {
+    if (b.tag !== "li") return true;
+    const r = b.text.match(REVIEWER_RE);
+    if (r) {
+      if (!reviewedBy) reviewedBy = r[1];
+      return false;
+    }
+    const u = b.text.match(UPDATED_RE);
+    if (u) {
+      if (!lastUpdated) lastUpdated = u[1];
+      return false;
+    }
+    return true;
+  });
+
+  return { reviewedBy, lastUpdated, blocks: rest };
+}
 
 type Section = { id: string; title: string | null; nodes: React.ReactNode[] };
 
@@ -53,6 +99,38 @@ const slugify = (s: string) =>
  * Consecutive <li> are still grouped into one <ul>, and an h1 that merely echoes
  * the hero headline is dropped.
  */
+/**
+ * MH-29 — rewrite heading tags so rendered levels never skip.
+ *
+ * The WordPress copy is inconsistent: some pages open with an h3 directly under
+ * the hero h1 (h1→h3), others jump h2→h4. Rather than editing 23 files, we
+ * normalise the stream here. A stack of source levels maps each heading to the
+ * shallowest legal output level: the first body heading always becomes h2, and
+ * each nested heading is at most one level deeper than its parent.
+ *
+ * Noise blocks and the hero echo are ignored so they cannot shift the levels.
+ * Output is capped at h4, which is the deepest style ContentPage renders.
+ */
+function normalizeHeadings(blocks: Block[], heroH1: string): Block[] {
+  const LEVEL: Partial<Record<Block["tag"], number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
+  const stack: number[] = [];
+
+  return blocks.map((b) => {
+    const src = LEVEL[b.tag];
+    if (!src) return b;
+    if (isNoise(b)) return b;
+    // The body's echo of the hero h1 is dropped later; don't let it set a level.
+    if (b.tag === "h1" && norm(b.text) === norm(heroH1)) return b;
+
+    while (stack.length && stack[stack.length - 1] >= src) stack.pop();
+    const out = Math.min(2 + stack.length, 4);
+    stack.push(src);
+
+    const tag = `h${out}` as Block["tag"];
+    return tag === b.tag ? b : { ...b, tag };
+  });
+}
+
 function buildSections(blocks: Block[], heroH1: string): Section[] {
   const isHeadingH1 = (b: Block) => b.tag === "h1" && norm(b.text) !== norm(heroH1);
   const hasH2 = blocks.some((b) => b.tag === "h2" || isHeadingH1(b));
@@ -282,7 +360,9 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const hero = leadImage(doc);
   const date = doc.type === "post" ? postDate(doc.url) : null;
   const rt = doc.type === "post" ? readingTime(doc) : null;
-  const sections = buildSections(doc.blocks, doc.h1);
+  // MH-13: lift the reviewer / last-updated bullets out before sectioning.
+  const { reviewedBy, lastUpdated, blocks: bodyBlocks } = extractByline(doc.blocks);
+  const sections = buildSections(normalizeHeadings(bodyBlocks, doc.h1), doc.h1);
 
   const isFacility = slugPath === "/facility";
   const isAdmission = slugPath === "/admission";
@@ -298,10 +378,29 @@ export default function ContentPage({ doc }: { doc: Doc }) {
     `${site.address.street} ${site.address.city}, ${site.address.state} ${site.address.zip}`
   );
 
+  // MH-30 — per-page structured data. Breadcrumbs are on every inner page;
+  // the rest is emitted only where the page type actually warrants it.
+  const isBio = slugPath.startsWith("/about/");
+  const bioTitle = isBio ? doc.blocks.find((b) => b.tag === "h3")?.text ?? null : null;
+  const schemas = [
+    breadcrumbSchema(crumbs),
+    doc.type === "post" ? blogPostingSchema(doc, slugPath, hero, reviewedBy) : null,
+    doc.type !== "post" ? medicalWebPageSchema(doc, slugPath, reviewedBy) : null,
+    slugPath === "/faq" ? faqSchema(doc.blocks) : null,
+    isBio ? personSchema(doc, slugPath, bioTitle, hero) : null,
+  ].filter(Boolean);
+
   return (
     <>
+      {schemas.map((s, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }}
+        />
+      ))}
       <Header />
-      <main>
+      <main id="main">
         {/* Page hero */}
         <section className="relative isolate overflow-hidden bg-navy-900">
           <div className="absolute inset-0 -z-10 opacity-40">
@@ -332,7 +431,26 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                 <span aria-hidden className="text-white/30">·</span>
                 <span>{rt} min read</span>
                 <span aria-hidden className="text-white/30">·</span>
+                {/* Byline is contested (site.ts credits a named author, this
+                    hardcodes an editorial entity) — blocked on D-3 / MH-15. */}
                 <span>Marina Harbor Detox Clinical Team</span>
+              </p>
+            )}
+
+            {/* MH-13 — reviewer / last-updated byline, lifted out of the body
+                copy where the extractor had left it as stray list items. The
+                reviewer name is not yet linked: her bio page depends on D-5 /
+                MH-12. */}
+            {(reviewedBy || lastUpdated) && (
+              <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/70">
+                {reviewedBy && (
+                  <span className="inline-flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-gold-400" />
+                    Medically reviewed by <strong className="font-semibold text-white/90">{reviewedBy}</strong>
+                  </span>
+                )}
+                {reviewedBy && lastUpdated && <span aria-hidden className="text-white/30">·</span>}
+                {lastUpdated && <span>Last updated {lastUpdated}</span>}
               </p>
             )}
           </div>
@@ -460,13 +578,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                   </li>
                 </ul>
                 <div className="mt-8 overflow-hidden rounded-4xl border border-navy-100 bg-sand-100 shadow-soft">
-                  <iframe
-                    title="Marina Harbor Detox location map"
-                    src={`https://www.google.com/maps?q=${mapsQuery}&output=embed`}
-                    className="aspect-[4/3] w-full"
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
+                  <ConsentMap query={mapsQuery} />
                 </div>
                 <a
                   href={site.address.maps}

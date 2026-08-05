@@ -4,25 +4,35 @@
 export const site = {
   name: "Marina Harbor Detox",
   tagline: "Premier Drug & Alcohol Rehab in San Francisco, CA",
+  // MH-20: kept under 160 chars. The "accredited" and "15+ years" claims are
+  // preserved verbatim in substance — D-4 (accreditation) and D-7 (the 15-year
+  // claim) are still open, so this shortens the sentence without settling either.
   description:
-    "Compassionate, accredited medical detox and residential rehab provided by experienced clinicians with over 15 years of addiction treatment expertise in a private, luxury setting designed for lasting recovery.",
+    "Compassionate, accredited medical detox and residential rehab from clinicians with 15+ years of addiction expertise, in a private San Francisco setting.",
   url: "https://marinaharbordetox.com",
   email: "info@marinaharbordetox.com",
+  // ONE tracked website number, per the business record. Every CTA, the header,
+  // the footer and the JSON-LD all resolve here — do not reintroduce alternates
+  // (an advocate line and a 415 local line used to live here and split the
+  // homepage across three numbers, which broke NAP consistency + call attribution).
   phones: {
-    // Primary admissions line surfaced in the header + CTAs
     primary: { label: "1-866-525-3026", href: "tel:+18665253026" },
-    advocate: { label: "866-932-3206", href: "tel:+18669323206" },
-    local: { label: "415-868-3858", href: "tel:+14158683858" },
   },
   sms: "sms:+18665253026",
+  founded: "2021",
   address: {
-    street: "289 Marina Blvd.",
+    street: "289 Marina Blvd",
     city: "San Francisco",
     state: "CA",
     zip: "94123",
     maps: "https://www.google.com/maps/place/Marina+Harbor+Detox/@37.806261,-122.4370412,15z",
+    // Google Business Profile "write a review" shortlink
+    review: "https://g.page/r/CfD3cn_q2hyLEAI/review",
   },
   license: "Licensed by the State Department of Health Care Services · DHCS License #380106AP · Expires 8/31/2027",
+  // Social-card fallback for pages with no usable hero of their own. leadImage()
+  // deliberately refuses logos/seals, so this is what stands in — never the logo.
+  ogFallback: "/images/photos/aerial-bridge-04.jpg",
   social: {
     facebook: "https://www.facebook.com/Marina-Harbor-Detox-102211298893099",
     instagram: "https://www.instagram.com/marinaharbordetox_/?hl=en",
@@ -58,7 +68,8 @@ export const nav: NavItem[] = [
       { label: "FAQ", href: "/faq", desc: "Answers to common questions" },
       { label: "Blog", href: "/blog", desc: "Recovery news & resources" },
       { label: "Alicia Joslin", href: "/about/alicia-joslin", desc: "Program Director" },
-      { label: "Gus Saadeh", href: "/about/gus-saadeh", desc: "Operations Director" },
+      { label: "Gus Saadeh", href: "/about/gus-saadeh", desc: "Director of Operations" },
+      { label: "Ashley Hurtado", href: "/about/ashley-hurtado", desc: "Therapist, AMFT" },
     ],
   },
   {
@@ -181,14 +192,14 @@ export const accreditations = [
 ] as const;
 
 export const facilityPhotos = [
-  { src: "/images/facility/facility-2320.jpg", alt: "Marina Harbor Detox — luxury common living space" },
-  { src: "/images/facility/facility-2309.jpg", alt: "Marina Harbor Detox — private suite interior" },
-  { src: "/images/facility/facility-2377.jpg", alt: "Marina Harbor Detox — comfortable lounge area" },
-  { src: "/images/facility/facility-2346.jpg", alt: "Marina Harbor Detox — dining and gathering space" },
-  { src: "/images/facility/facility-2366.jpg", alt: "Marina Harbor Detox — serene interior detail" },
-  { src: "/images/facility/facility-2294.jpg", alt: "Marina Harbor Detox — welcoming entryway" },
-  { src: "/images/facility/facility-2390.jpg", alt: "Marina Harbor Detox — restful bedroom suite" },
-  { src: "/images/facility/facility-2426.jpg", alt: "Marina Harbor Detox — outdoor lounge and grounds" },
+  { src: "/images/photos/lounge-01.jpg", alt: "Common living room at Marina Harbor Detox with floor-to-ceiling windows over Marina Green" },
+  { src: "/images/photos/room-fireplace-03.jpg", alt: "Private guest room with a queen bed, sitting area and Marina District view" },
+  { src: "/images/photos/lounge-bridge-view.jpg", alt: "Lounge seating looking out to the Golden Gate Bridge" },
+  { src: "/images/photos/kitchen-01.jpg", alt: "Bright residential kitchen with a breakfast bar" },
+  { src: "/images/photos/room-twin-03.jpg", alt: "Shared guest room with two beds and a bay view" },
+  { src: "/images/photos/bath-marble.jpg", alt: "Marble-tiled ensuite bathroom with a walk-in glass shower" },
+  { src: "/images/photos/dining-conference.jpg", alt: "Dining and group meeting room at Marina Harbor Detox" },
+  { src: "/images/photos/mural-marina-harbor.jpg", alt: "Hand-painted Marina Harbor Detox mural of the Golden Gate Bridge at sunset" },
 ] as const;
 
 export const serviceAreas = [
@@ -196,35 +207,23 @@ export const serviceAreas = [
   "Santa Cruz", "Santa Barbara", "San Luis Obispo", "Elk Grove",
 ] as const;
 
-export const blogPosts = [
-  {
-    title: "What Does Comprehensive Addiction Treatment Include?",
-    category: "Treatment",
-    author: "Kris Brace, CADC II",
-    date: "June 17, 2026",
-    excerpt:
-      "When most people think about addiction treatment, they often picture detox. While detox is an important first step, long-term recovery usually requires much more than…",
-    href: "/2026/06/17/what-comprehensive-addiction-treatment-includes",
-    image: "/images/backgrounds/luxury-lounge.jpg",
-  },
-  {
-    title: "Who Benefits Most From Residential Rehab?",
-    category: "Rehab",
-    author: "Kris Brace, CADC II",
-    date: "June 3, 2026",
-    excerpt:
-      "When exploring addiction treatment options, one of the most common questions people ask is: 'Do I really need residential rehab?' The answer depends on several…",
-    href: "/2026/06/03/who-benefits-most-from-residential-rehab",
-    image: "/images/backgrounds/golden-gate-bridge.jpg",
-  },
-  {
-    title: "What Happens to the Brain During Meth Addiction?",
-    category: "Education",
-    author: "Kris Brace, CADC II",
-    date: "May 20, 2026",
-    excerpt:
-      "Methamphetamine addiction can affect the brain faster and more aggressively than many other substances. Over time, meth changes the way the brain regulates motivation…",
-    href: "/2026/05/20/how-meth-affects-the-brain",
-    image: "/images/backgrounds/detail.jpg",
-  },
-] as const;
+/**
+ * MH-33 — homepage blog cards are now derived from content/posts at build time
+ * (see `homepagePosts()` in lib/content.ts). Posts carry no category field, so
+ * the coloured chip is opt-in per slug here; a post with no entry simply renders
+ * without a chip rather than inventing one.
+ */
+export const postCategories: Record<string, string> = {
+  "2026__06__17__what-comprehensive-addiction-treatment-includes": "Treatment",
+  "2026__06__03__who-benefits-most-from-residential-rehab": "Rehab",
+  "2026__05__20__how-meth-affects-the-brain": "Education",
+  "2026__05__08__why-heroin-withdrawal-is-so-difficult": "Education",
+  "2026__04__21__prescription-drug-withdrawal-timeline": "Education",
+};
+
+/**
+ * Byline shown on the homepage blog cards. Authorship is contested — site.ts
+ * credits this name while ContentPage hardcodes "Marina Harbor Detox Clinical
+ * Team" — and is blocked on D-3 / MH-15. Left exactly as it was.
+ */
+export const blogAuthor = "Kris Brace, CADC II";

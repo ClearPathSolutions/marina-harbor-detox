@@ -10,13 +10,14 @@ import { ArrowRight, Check, Clock, iconMap, Message, Phone, Shield, Sparkle } fr
 import {
   accreditations,
   amenities,
-  blogPosts,
+  blogAuthor,
   insuranceLogos,
   programs,
   serviceAreas,
   site,
   therapies,
 } from "@/lib/site";
+import { homepagePosts } from "@/lib/content";
 
 // Blog authors have no headshot on the source site, so we render a tidy monogram
 // (e.g. "Kris Brace, CADC II" → "KB") instead of a broken image or fake stock photo.
@@ -41,22 +42,26 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         {/* ══ HERO ══════════════════════════════════════════════ */}
         <section className="relative isolate overflow-hidden">
           <div className="absolute inset-0 -z-10">
             <Image
-              src="/images/backgrounds/coastal.jpg"
-              alt="The Golden Gate Bridge in San Francisco"
+              src="/images/photos/aerial-bridge-04.jpg"
+              alt="Aerial view over the Marina District and marina toward the Golden Gate Bridge"
               fill
               priority
               sizes="100vw"
               className="object-cover object-center"
             />
-            {/* No wash/film over the photo — it stays fully clean. Legibility comes from the
-                hero text's own shadow (below), plus a whisper of darkening only at the very
-                bottom-left so the copy never floats on a bright patch of water. */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-navy-950/45 via-transparent to-transparent" />
+            {/* Still no flat wash or panel over the photo — the bridge, sky and bay on the
+                right stay completely clean. But the approved aerial is far brighter than the
+                stock shot this hero was originally tuned for (pale sky above, sunlit Marina
+                Green below), and white copy was failing contrast against it. So the darkening
+                is now DIRECTIONAL: a scrim that fades out well before the bridge, plus a
+                bottom fade. Text legibility still comes from white type + its own shadow. */}
+            <div className="absolute inset-0 bg-gradient-to-r from-navy-950/85 via-navy-950/45 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/55 via-transparent to-transparent" />
           </div>
 
           <div className="container-wide flex min-h-[76vh] items-center py-16 sm:min-h-[82vh] sm:py-20">
@@ -212,7 +217,7 @@ export default function Home() {
         {/* ══ RECOVERY ADVOCATE BAND ════════════════════════════ */}
         <section className="relative isolate overflow-hidden bg-navy-950">
           <div className="absolute inset-0 -z-10">
-            <Image src="/images/backgrounds/coastal.jpg" alt="" fill sizes="100vw" className="object-cover" />
+            <Image src="/images/photos/aerial-bridge-04.jpg" alt="" fill sizes="100vw" className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-navy-950/92 via-navy-950/70 to-navy-900/45" />
           </div>
           <div className="container-x flex flex-col items-center gap-8 py-16 text-center lg:flex-row lg:justify-between lg:py-14 lg:text-left">
@@ -224,8 +229,8 @@ export default function Home() {
               </p>
             </Reveal>
             <Reveal delay={120} className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <a href={site.phones.advocate.href} className="btn-orange whitespace-nowrap">
-                <Phone className="h-4 w-4" /> Call {site.phones.advocate.label}
+              <a href={site.phones.primary.href} className="btn-orange whitespace-nowrap">
+                <Phone className="h-4 w-4" /> Call {site.phones.primary.label}
               </a>
               <Link href="/admission#verify" className="btn-outline whitespace-nowrap">
                 Verify Your Insurance
@@ -240,7 +245,7 @@ export default function Home() {
             <Reveal className="order-2 lg:order-1 lg:h-full">
               <div className="relative aspect-[4/3] overflow-hidden rounded-4xl shadow-card lg:aspect-auto lg:h-full">
                 <Image
-                  src="/images/backgrounds/luxury-lounge.jpg"
+                  src="/images/photos/lounge-sofa.jpg"
                   alt="Private living lounge with Marina District views at Marina Harbor Detox"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -384,8 +389,8 @@ export default function Home() {
             <Reveal delay={120} className="lg:h-full">
               <div className="relative aspect-[4/3] overflow-hidden rounded-4xl shadow-card lg:aspect-auto lg:h-full">
                 <Image
-                  src="/images/backgrounds/golden-gate-bridge.jpg"
-                  alt="The Golden Gate Bridge in San Francisco"
+                  src="/images/photos/aerial-bridge-01.jpg"
+                  alt="The Golden Gate Bridge seen across the marina from Marina Harbor Detox"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
@@ -417,31 +422,33 @@ export default function Home() {
             </Reveal>
 
             <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {blogPosts.map((post, i) => (
-                <Reveal key={post.title} delay={i * 90}>
+              {homepagePosts(3).map((post, i) => (
+                <Reveal key={post.href} delay={i * 90}>
                   <Link
                     href={post.href}
                     className="group flex h-full flex-col overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-card"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <Image
-                        src={post.image}
+                        src={post.image ?? site.ogFallback}
                         alt={post.title}
                         fill
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      <span className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white">
-                        {post.category}
-                      </span>
+                      {post.category && (
+                        <span className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white">
+                          {post.category}
+                        </span>
+                      )}
                     </div>
                     <div className="flex flex-1 flex-col p-6">
                       <div className="flex items-center gap-2.5">
                         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-navy-800 text-[11px] font-bold text-gold-400">
-                          {initials(post.author)}
+                          {initials(blogAuthor)}
                         </span>
                         <div className="text-xs leading-tight text-navy-900/60">
-                          <span className="block font-semibold text-navy-900/80">{post.author}</span>
+                          <span className="block font-semibold text-navy-900/80">{blogAuthor}</span>
                           {post.date}
                         </div>
                       </div>
@@ -464,7 +471,7 @@ export default function Home() {
         <section className="relative isolate overflow-hidden">
           <div className="absolute inset-0 -z-10">
             <Image
-              src="/images/facility/facility-2426.jpg"
+              src="/images/photos/aerial-marina-01.jpg"
               alt=""
               fill
               sizes="100vw"
@@ -483,8 +490,8 @@ export default function Home() {
                 are standing by day and night to help you find your personal solution.
               </p>
               <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                <a href={site.phones.local.href} className="btn-orange text-base">
-                  <Phone className="h-5 w-5" /> Call Us Now
+                <a href={site.phones.primary.href} className="btn-orange text-base">
+                  <Phone className="h-5 w-5" /> Call {site.phones.primary.label}
                 </a>
                 <a href={site.sms} className="btn-outline text-base">
                   <Message className="h-5 w-5" /> Text Us Now

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { nav, site } from "@/lib/site";
@@ -25,6 +25,59 @@ export default function Header() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  // ── MH-24: mobile drawer keyboard accessibility ──────────────────────────
+  // The closed panel is only translated off-screen, so without `inert` every
+  // link inside it stays in the tab order — below xl that is ~45 invisible stops
+  // before a keyboard user reaches the page. `inert` removes the whole subtree
+  // from focus and the a11y tree; the layer below also gets aria-hidden.
+  const panelRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  const closeDrawer = useCallback(() => {
+    setOpen(false);
+    // Return focus to the control that opened the drawer.
+    toggleRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    // Move focus into the panel when it opens.
+    const focusables = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((el) => el.offsetParent !== null);
+
+    focusables()[0]?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeDrawer();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      // Trap focus inside the panel.
+      const items = focusables();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && (active === first || !panelRef.current?.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, closeDrawer]);
 
   return (
     <>
@@ -129,10 +182,12 @@ export default function Header() {
               <Phone className="h-5 w-5" />
             </a>
             <button
+              ref={toggleRef}
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
               aria-expanded={open}
+              aria-controls="mobile-drawer"
               className="grid h-11 w-11 place-items-center rounded-full border border-white/25 text-white active:scale-95"
             >
               <Menu className="h-5 w-5" />
@@ -147,10 +202,13 @@ export default function Header() {
           sibling of <header> — not an ancestor — it doesn't affect the sticky header. */}
       <div
         className={`fixed inset-0 z-[60] overflow-hidden xl:hidden ${open ? "" : "pointer-events-none"}`}
+        aria-hidden={!open}
+        // React 19 renders `inert=""` for true and omits it for false.
+        inert={!open}
       >
         {/* Backdrop */}
         <div
-          onClick={() => setOpen(false)}
+          onClick={closeDrawer}
           className={`absolute inset-0 bg-navy-950/70 backdrop-blur-sm transition-opacity duration-300 ${
             open ? "opacity-100" : "opacity-0"
           }`}
@@ -158,6 +216,8 @@ export default function Header() {
         />
         {/* Panel */}
         <div
+          ref={panelRef}
+          id="mobile-drawer"
           className={`absolute right-0 top-0 flex h-full w-[min(88vw,22rem)] flex-col bg-navy-900 shadow-lift transition-transform duration-300 ${
             open ? "translate-x-0" : "translate-x-full"
           }`}
@@ -175,7 +235,7 @@ export default function Header() {
           />
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={closeDrawer}
             aria-label="Close menu"
             className="grid h-10 w-10 place-items-center rounded-full border border-white/25 text-white active:scale-95"
           >

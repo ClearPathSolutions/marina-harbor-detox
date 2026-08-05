@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { site } from "@/lib/site";
+import { onConsentChange, readConsent } from "@/lib/consent";
 import Reveal from "./Reveal";
+import { ArrowRight } from "./Icons";
 
 /**
  * "Hear From Our Patients" — the live Google reviews wall, ported from WordPress.
@@ -11,12 +13,22 @@ import Reveal from "./Reveal";
  * (rich snippet) for search results. We inject the loader into our own container
  * so the widget mounts in-place inside this section rather than being hoisted to
  * <head> by next/script.
+ *
+ * MH-27 — the loader is a third-party request, so it does NOT fire until the
+ * visitor has accepted cookies. Before that we render a click-to-load card,
+ * which also lets someone who declined still opt in for just this widget.
  */
 export default function Reviews() {
   const ref = useRef<HTMLDivElement>(null);
   const injected = useRef(false);
+  const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
+    setAllowed(readConsent() === "granted");
+    return onConsentChange((c) => setAllowed(c === "granted"));
+  }, []);
+
+  const load = useCallback(() => {
     if (injected.current || !ref.current) return;
     injected.current = true;
     const s = document.createElement("script");
@@ -25,6 +37,10 @@ export default function Reviews() {
     s.defer = true;
     ref.current.appendChild(s);
   }, []);
+
+  useEffect(() => {
+    if (allowed) load();
+  }, [allowed, load]);
 
   return (
     <section className="section bg-sand-50">
@@ -38,6 +54,31 @@ export default function Reviews() {
           </p>
         </Reveal>
         <div ref={ref} className="mt-10" />
+
+        {!allowed && (
+          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-navy-100 bg-white p-8 text-center shadow-card">
+            <p className="leading-relaxed text-navy-900/70">
+              Our Google reviews are shown by Trustindex, a third-party service. We don&rsquo;t load it
+              until you agree to cookies.
+            </p>
+            <button type="button" onClick={() => setAllowed(true)} className="btn-outline-navy mt-5">
+              Load reviews <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Google Business Profile "write a review" shortlink — alumni & families
+            land here from the Trustindex wall above. */}
+        <div className="mt-10 text-center">
+          <a
+            href={site.address.review}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline-navy"
+          >
+            Leave Us a Google Review <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
       </div>
     </section>
   );

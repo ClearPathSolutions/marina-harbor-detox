@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-const STORAGE_KEY = "mhd-consent";
-
-type Consent = "granted" | "denied";
+import { type Consent, readConsent, writeConsent } from "@/lib/consent";
 
 declare global {
   interface Window {
@@ -30,7 +27,7 @@ export default function CookieConsent() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Consent | null;
+    const stored = readConsent();
     if (stored) {
       // Re-assert the saved choice on every load so tags pick it up post-consent-default.
       apply(stored);
@@ -40,7 +37,9 @@ export default function CookieConsent() {
   }, []);
 
   const choose = (consent: Consent) => {
-    localStorage.setItem(STORAGE_KEY, consent);
+    // writeConsent persists AND notifies Reviews / the Maps embed so they can
+    // load (or stay blocked) immediately — see src/lib/consent.ts.
+    writeConsent(consent);
     apply(consent);
     setShow(false);
   };

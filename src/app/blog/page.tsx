@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   description:
     "Expert articles on addiction, detox, and recovery from the clinical team at Marina Harbor Detox in San Francisco.",
   alternates: { canonical: "/blog" },
+  openGraph: { images: ["/images/photos/lounge-bay-view.jpg"] },
 };
 
 export default function BlogIndex() {
@@ -24,7 +25,7 @@ export default function BlogIndex() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         {/* Header band */}
         <section className="bg-navy-900">
           <div className="container-x py-14 text-center sm:py-20">

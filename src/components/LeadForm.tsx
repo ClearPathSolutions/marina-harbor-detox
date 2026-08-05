@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "@/lib/site";
 import { ArrowRight, Check, Phone, Shield } from "./Icons";
 
 type Intent = "verify" | "contact";
 type Status = "idle" | "submitting" | "success" | "error";
+
+const GENERIC_ERROR = `Something went wrong. Please call us at ${site.phones.primary.label}.`;
 
 const insurers = [
   "Aetna", "Cigna", "Anthem / Elevance", "Blue Cross Blue Shield", "Highmark",
@@ -15,13 +17,23 @@ const insurers = [
 export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string>("");
+  const formRef = useRef<HTMLFormElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
 
   const isVerify = intent === "verify";
+
+  // MH-25: the success state replaces the whole form, which is silent to a
+  // screen reader. Announce it and move focus into it.
+  useEffect(() => {
+    if (status === "success") successRef.current?.focus();
+  }, [status]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("submitting");
     setErrors({});
+    setFormError("");
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
     try {
@@ -35,17 +47,34 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         setStatus("success");
         form.reset();
       } else {
-        setErrors(json.errors ?? {});
+        const fieldErrors: Record<string, string> = json.errors ?? {};
+        setErrors(fieldErrors);
+        // Rate limit (429), no-delivery (503) and delivery-failure (502) all
+        // return a human message naming the phone line — show it verbatim.
+        setFormError(Object.keys(fieldErrors).length ? "" : json.error || GENERIC_ERROR);
         setStatus("error");
+        // MH-25: move focus to the first field that failed validation.
+        const first = Object.keys(fieldErrors)[0];
+        if (first) {
+          const el = form.querySelector<HTMLElement>(`[name="${first}"]`);
+          el?.focus();
+        }
       }
     } catch {
+      setFormError(GENERIC_ERROR);
       setStatus("error");
     }
   }
 
   if (status === "success") {
     return (
-      <div className="rounded-4xl border border-navy-100 bg-white p-8 text-center shadow-card sm:p-10">
+      <div
+        ref={successRef}
+        role="status"
+        aria-live="polite"
+        tabIndex={-1}
+        className="rounded-4xl border border-navy-100 bg-white p-8 text-center shadow-card outline-none sm:p-10"
+      >
         <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-orange-500 text-white">
           <Check className="h-7 w-7" />
         </div>
@@ -62,8 +91,17 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
     );
   }
 
+  // MH-25: errors are announced (role="alert") and tied to their input via
+  // aria-describedby, with aria-invalid set through a11y() below.
   const err = (k: string) =>
-    errors[k] ? <p className="mt-1.5 text-xs font-medium text-orange-600">{errors[k]}</p> : null;
+    errors[k] ? (
+      <p id={`lf-${k}-error`} role="alert" className="mt-1.5 text-xs font-medium text-orange-600">
+        {errors[k]}
+      </p>
+    ) : null;
+
+  const a11y = (k: string) =>
+    errors[k] ? { "aria-invalid": true as const, "aria-describedby": `lf-${k}-error` } : {};
 
   const field =
     "w-full rounded-2xl border border-navy-200 bg-white px-4 py-3 text-navy-900 shadow-sm outline-none transition-colors placeholder:text-navy-900/35 focus:border-orange-400 focus:ring-2 focus:ring-orange-500/30";
@@ -71,6 +109,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
 
   return (
     <form
+      ref={formRef}
       onSubmit={onSubmit}
       noValidate
       className="min-w-0 rounded-4xl border border-navy-100 bg-white p-6 shadow-card sm:p-8"
@@ -90,12 +129,12 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="lf-name" className={labelCls}>Full name</label>
-          <input id="lf-name" name="name" type="text" autoComplete="name" required className={field} placeholder="Jane Doe" />
+          <input id="lf-name" name="name" type="text" autoComplete="name" required className={field} placeholder="Jane Doe" {...a11y("name")} />
           {err("name")}
         </div>
         <div>
           <label htmlFor="lf-phone" className={labelCls}>Phone</label>
-          <input id="lf-phone" name="phone" type="tel" autoComplete="tel" required className={field} placeholder="(415) 555-0123" />
+          <input id="lf-phone" name="phone" type="tel" autoComplete="tel" required className={field} placeholder="(415) 555-0123" {...a11y("phone")} />
           {err("phone")}
         </div>
       </div>
@@ -104,7 +143,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         <label htmlFor="lf-email" className={labelCls}>
           Email <span className="font-normal text-navy-900/45">(optional)</span>
         </label>
-        <input id="lf-email" name="email" type="email" autoComplete="email" className={field} placeholder="you@email.com" />
+        <input id="lf-email" name="email" type="email" autoComplete="email" className={field} placeholder="you@email.com" {...a11y("email")} />
         {err("email")}
       </div>
 
@@ -135,10 +174,12 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         {status !== "submitting" && <ArrowRight className="h-4 w-4" />}
       </button>
 
-      {status === "error" && !Object.keys(errors).length && (
-        <p className="mt-3 text-center text-sm text-orange-600">
-          Something went wrong. Please call us at{" "}
-          <a href={site.phones.primary.href} className="font-semibold underline">{site.phones.primary.label}</a>.
+      {status === "error" && formError && (
+        <p role="alert" className="mt-3 text-center text-sm text-orange-600">
+          {formError}{" "}
+          <a href={site.phones.primary.href} className="font-semibold underline">
+            {site.phones.primary.label}
+          </a>
         </p>
       )}
 

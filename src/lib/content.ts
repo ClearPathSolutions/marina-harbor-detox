@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import manifest from "../../content/media-manifest.json";
-import { nav } from "./site";
+import approvedPhotos from "../../content/approved-photos.json";
+import { nav, postCategories } from "./site";
 
 // Loads the archived WordPress content (extracted to /content) and maps it to
 // routes + local images. All reads happen at build time (static generation).
@@ -25,7 +25,6 @@ export type Doc = {
 };
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
-const media = manifest as Record<string, string>;
 
 function readDir(sub: string): Doc[] {
   const dir = path.join(CONTENT_DIR, sub);
@@ -48,6 +47,36 @@ export function getAllDocs(): Doc[] {
   return [...getPages(), ...getPosts()];
 }
 
+/**
+ * MH-33 — homepage blog cards, derived from `content/posts` at build time.
+ *
+ * These used to be a hardcoded `blogPosts` array in site.ts, which silently
+ * drifted from /blog whenever a post was added. Everything here comes from the
+ * post itself; `author` stays a site-level constant because blog authorship is
+ * an open question (D-3 / MH-15) and must not be resolved by this function.
+ */
+export type HomepagePost = {
+  title: string;
+  href: string;
+  date: string;
+  excerpt: string;
+  image: string | null;
+  category: string | null;
+};
+
+export function homepagePosts(count = 3): HomepagePost[] {
+  return getPosts()
+    .slice(0, count)
+    .map((doc) => ({
+      title: doc.h1 || doc.title,
+      href: "/" + pathSegments(doc.url).join("/"),
+      date: postDate(doc.url)?.label ?? "",
+      excerpt: excerpt(doc, 150),
+      image: leadImage(doc),
+      category: postCategories[doc.slug] ?? null,
+    }));
+}
+
 /** Turn a full URL into route segments: ".../what-we-offer/alcohol-detox/" -> ["what-we-offer","alcohol-detox"] */
 export function pathSegments(url: string): string[] {
   return url
@@ -62,23 +91,213 @@ export function getDocBySegments(segments: string[]): Doc | null {
   return getAllDocs().find((d) => pathSegments(d.url).join("/") === key) ?? null;
 }
 
-const baseKey = (u: string) => u.replace(/-\d+x\d+(?=\.[a-z]+)/i, "").replace(/\.webp$/i, "");
 
-/** Map any WordPress upload URL (any size variant) to its local /media path, or null. */
-export function localImage(url?: string): string | null {
-  if (!url) return null;
-  return media[baseKey(url.split("?")[0])] ?? null;
+/**
+ * ── Photography policy ─────────────────────────────────────────────────────
+ *
+ * Every photograph on this site comes from the client-approved shoot in
+ * `public/images/photos` (catalogued in `content/approved-photos.json`): drone
+ * aerials of the Marina District and the Golden Gate, plus interiors of the
+ * facility itself.
+ *
+ * The pages' own `ogImage`/`images` fields still point at the legacy WordPress
+ * uploads in `/media` — generic stock that was never approved, and which
+ * included a competitor's brand in one filename. Those are deliberately ignored
+ * here; `leadImage()` resolves from the approved set only.
+ *
+ * ONE exception: real staff headshots. The approved set is scenery and interiors
+ * and contains no portraits, so a bio page would otherwise show a bedroom. These
+ * two are photographs of actual people and are kept.
+ */
+const HEADSHOTS: Record<string, string> = {
+  about__gus_saadeh: "/media/2026/02/IMG_2660.jpg",
+  about__alicia_joslin: "/media/2026/06/MHD-Alicia-Joslin.png",
+};
+
+const photos = approvedPhotos as { name: string; category: string; file: string }[];
+const byCategory = (...cats: string[]) =>
+  photos.filter((p) => cats.includes(p.category)).map((p) => p.file);
+
+/** Stable, order-independent hash so a given slug always gets the same photo. */
+function slugHash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
 }
 
-/** Best hero image for a doc: prefer og:image, else first content image that resolves locally. */
+/**
+ * Never use as a full-width hero: these crop badly at 16:9 / 3:2.
+ *   bath-ensuite   0.67  portrait
+ *   bath-marble    0.75  portrait  (fine in the facility gallery, which is square-ish)
+ *   stairs-spiral  0.75  portrait
+ *   lounge-panorama 4.51 ultra-wide letterbox
+ */
+const NOT_HERO_SAFE = new Set([
+  "/images/photos/bath-ensuite.jpg",
+  "/images/photos/bath-marble.jpg",
+  "/images/photos/stairs-spiral.jpg",
+  "/images/photos/lounge-panorama.jpg",
+]);
+
+/**
+ * Explicit photo for every non-post page. Chosen per page subject rather than
+ * hashed, so nothing lands somewhere absurd — a hashed pool previously put a
+ * desk-and-monitor shot on "Holistic Therapy" and a bar-height kitchen counter
+ * on "Alcohol Detox".
+ *
+ * Rules applied: topic must match; siblings never share; nothing from
+ * NOT_HERO_SAFE; and no kitchen/bar imagery on alcohol pages.
+ */
+const PAGE_PHOTO: Record<string, string> = {
+  // ── Core ────────────────────────────────────────────────────────────────
+  about: "/images/photos/mural-marina-harbor.jpg",      // the hand-painted house mural
+  facility: "/images/photos/lounge-01.jpg",             // the signature common room
+  admission: "/images/photos/seating-art.jpg",          // the intake / waiting area
+  "contact-location": "/images/photos/aerial-marina-01.jpg",
+  faq: "/images/photos/lounge-group.jpg",               // chairs in a circle = conversation
+  "care-providers": "/images/photos/hallway-credentials.jpg", // the wall of licences
+  aftercare: "/images/photos/fireplace-detail.jpg",     // homely, ongoing
+  "privacy-policy": "/images/photos/office-admin.jpg",  // records / admin desk
+  "thank-you": "/images/photos/aerial-bridge-05.jpg",
+  blog: "/images/photos/lounge-bay-view.jpg",
+
+  // ── Bios (headshots handled separately; Ashley has none yet) ────────────
+  about__ashley_hurtado: "/images/photos/sitting-room-01.jpg", // a therapy room
+
+  // ── Who we help — private rooms, one each ───────────────────────────────
+  men: "/images/photos/room-twin-01.jpg",
+  women: "/images/photos/room-fireplace-05.jpg",
+  "young-adults": "/images/photos/room-single-01.jpg",
+  "college-students": "/images/photos/room-single-02.jpg",
+  professionals: "/images/photos/room-fireplace-03.jpg", // the most private-looking suite
+  "first-responders": "/images/photos/room-twin-04.jpg",
+
+  // ── Areas we serve — a different aerial each, so no two match ───────────
+  "what-we-offer/drug-rehab-marin-county": "/images/photos/aerial-bridge-01.jpg",
+  "palo-alto": "/images/photos/aerial-city-01.jpg",
+  "berkeley-addiction-treatment-program": "/images/photos/aerial-city-02.jpg",
+  "fremont-addiction-treatment": "/images/photos/aerial-city-03.jpg",
+  "san-jose": "/images/photos/aerial-city-04.jpg",
+  "santa-cruz": "/images/photos/aerial-neighborhood-01.jpg",
+  "santa-barbara": "/images/photos/aerial-neighborhood-02.jpg",
+  "san-luis-obispo": "/images/photos/aerial-marina-02.jpg",
+  "elk-grove": "/images/photos/aerial-bridge-02.jpg",
+
+  // ── Insurance — calm interiors, one each ────────────────────────────────
+  aetna: "/images/photos/lounge-03.jpg",
+  cigna: "/images/photos/lounge-04.jpg",
+  umr: "/images/photos/lounge-05.jpg",
+  comppsych: "/images/photos/lounger-window-01.jpg",
+  geisinger: "/images/photos/dining-mirror.jpg",
+  "first-health-network": "/images/photos/lounge-02.jpg",
+
+  // ── What we offer ───────────────────────────────────────────────────────
+  "what-we-offer": "/images/photos/lounge-bridge-view.jpg",
+  "what-we-offer/detox-san-francisco": "/images/photos/room-fireplace-04.jpg",
+  "what-we-offer/inpatient-rehab-san-francisco": "/images/photos/lounge-group.jpg",
+  "what-we-offer/dual-diagnosis": "/images/photos/sitting-room-01.jpg",   // 1:1 therapy
+  "what-we-offer/holistic-addiction-therapy": "/images/photos/sitting-room-02.jpg", // chaise + armchair, bay view
+  "what-we-offer/alcohol-detox": "/images/photos/room-fireplace-06.jpg",  // deliberately NOT the bar-stool kitchen
+  "what-we-offer/drug-detox": "/images/photos/room-twin-02.jpg",
+  "what-we-offer/benzodiazepines-detox": "/images/photos/room-fireplace-01.jpg",
+  "what-we-offer/heroin-detox": "/images/photos/room-twin-05.jpg",
+  "what-we-offer/meth-detox": "/images/photos/room-twin-03.jpg",
+  "what-we-offer/cocaine-detox": "/images/photos/room-fireplace-02.jpg",
+  "what-we-offer/prescription-drugs-detox": "/images/photos/room-white.jpg",
+  "what-we-offer/suboxone-detox": "/images/photos/room-bay-view.jpg",
+  // Deliberately shares Medical Detox's photo: same acute-detox story, and every
+  // other private room is already spoken for.
+  "fentanyl-detox": "/images/photos/room-fireplace-04.jpg",
+};
+
+/**
+ * Topic keywords -> photo, for blog posts. First match wins, so the more
+ * specific terms are listed first. Anything unmatched falls through to the
+ * spread-out rotation in `poolFor`.
+ */
+const POST_TOPIC: [RegExp, string[]][] = [
+  [/exercise|fitness|yoga|nutrition|holistic|meditation|reiki|art-therapy|music|acupuncture/, [
+    "/images/photos/lounger-window-01.jpg",
+    "/images/photos/lounger-window-02.jpg",
+    "/images/photos/sitting-room-02.jpg",
+  ]],
+  [/family|codependen|relationship|loved-one|intervention/, [
+    "/images/photos/dining-conference.jpg",
+    "/images/photos/dining-mirror.jpg",
+    "/images/photos/sitting-room-01.jpg",
+  ]],
+  [/group|therapy|counsel|cbt|dbt|12-step|support/, [
+    "/images/photos/lounge-group.jpg",
+    "/images/photos/sitting-room-01.jpg",
+    "/images/photos/lounge-05.jpg",
+  ]],
+  [/aftercare|alumni|sober-living|long-term|relapse-prevention/, [
+    "/images/photos/fireplace-detail.jpg",
+    "/images/photos/sitting-room-01.jpg",
+    "/images/photos/lounge-02.jpg",
+  ]],
+  [/insurance|cost|pay|afford/, [
+    "/images/photos/office-admin.jpg",
+    "/images/photos/hallway-credentials.jpg",
+  ]],
+  [/san-francisco|bay-area|california|northern|marin|travel/, [
+    "/images/photos/aerial-bridge-03.jpg",
+    "/images/photos/aerial-city-01.jpg",
+    "/images/photos/aerial-neighborhood-01.jpg",
+    "/images/photos/aerial-marina-02.jpg",
+  ]],
+  [/inpatient|residential|facility|what-to-expect|first-30|admission|amenit|meal|food|kitchen/, [
+    "/images/photos/lounge-bay-view.jpg",
+    "/images/photos/lounge-03.jpg",
+    "/images/photos/hallway-stairs.jpg",
+    "/images/photos/hallway-entry.jpg",
+    "/images/photos/kitchen-02.jpg",
+  ]],
+  // The catch-all: this is a detox blog, so most posts land here. It needs the
+  // widest rotation of the lot or every article ends up on the same photo.
+  [/detox|withdrawal|timeline|taper|medication|mat|nad|addict|drug|alcohol|opioid|rehab/, [
+    "/images/photos/room-fireplace-04.jpg",
+    "/images/photos/room-fireplace-02.jpg",
+    "/images/photos/room-fireplace-06.jpg",
+    "/images/photos/room-twin-02.jpg",
+    "/images/photos/room-twin-05.jpg",
+    "/images/photos/room-bay-view.jpg",
+    "/images/photos/lounge-04.jpg",
+    "/images/photos/lounge-bridge-view.jpg",
+    "/images/photos/seating-art.jpg",
+    "/images/photos/aerial-bridge-06.jpg",
+  ]],
+];
+
+/**
+ * Fallback pool for posts with no topic keyword match — calm interiors and
+ * aerials, spread by slug hash so the long tail doesn't cluster on one image.
+ * Hero-unsafe crops are excluded.
+ */
+function fallbackPool(): string[] {
+  return byCategory("lounge", "detail", "aerial").filter((f) => !NOT_HERO_SAFE.has(f));
+}
+
+/**
+ * Hero / social image for a doc — always an approved photograph, chosen to suit
+ * the page. Never returns null, so nothing falls back to the logo (MH-19).
+ */
 export function leadImage(doc: Doc): string | null {
-  const og = localImage(doc.ogImage);
-  if (og) return og;
-  for (const img of doc.images) {
-    const local = localImage(img);
-    if (local) return local;
-  }
-  return null;
+  const key = doc.slug.replace(/-/g, "_");
+  if (HEADSHOTS[key]) return HEADSHOTS[key];
+
+  const slugPath = pathSegments(doc.url).join("/");
+  if (PAGE_PHOTO[slugPath]) return PAGE_PHOTO[slugPath];
+  const flat = slugPath.replace(/\//g, "__").replace(/-/g, "_");
+  if (PAGE_PHOTO[flat]) return PAGE_PHOTO[flat];
+
+  // Posts: match on subject first.
+  const haystack = `${slugPath} ${doc.h1} ${doc.title}`.toLowerCase().replace(/\s+/g, "-");
+  for (const [re, files] of POST_TOPIC)
+    if (re.test(haystack)) return files[slugHash(doc.slug) % files.length];
+
+  const pool = fallbackPool();
+  return pool.length ? pool[slugHash(doc.slug) % pool.length] : photos[0]?.file ?? null;
 }
 
 export function postDate(url: string): { iso: string; label: string } | null {

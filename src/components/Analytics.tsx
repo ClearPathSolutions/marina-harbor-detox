@@ -1,6 +1,9 @@
 "use client";
 
 import Script from "next/script";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { analyticsPath, isClinicalRoute, REDACTED_TITLE } from "@/lib/clinicalRoutes";
 
 /**
  * Marketing & analytics tags, ported from the WordPress site.
@@ -17,6 +20,15 @@ import Script from "next/script";
  * Consent: we implement Google Consent Mode v2 with all storage DENIED by default,
  * and Meta Pixel consent REVOKED by default. The CookieConsent banner flips these to
  * granted once the visitor accepts. Until then, tags send only cookieless pings.
+ *
+ * MH-05 — clinical routes are redacted. Automatic pageviews are switched OFF for
+ * both gtag (`send_page_view: false`) and the Pixel (no `track` in the init
+ * snippet); every pageview is instead dispatched from the effect below, which
+ * redacts Google's payload and stays silent for Meta on clinical URLs. See
+ * `src/lib/clinicalRoutes.ts` for the rule.
+ *
+ * MH-28 — that same effect keys on `usePathname()`, so App Router client-side
+ * navigations are counted. Previously only hard loads were.
  */
 export default function Analytics() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
@@ -25,8 +37,41 @@ export default function Analytics() {
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
 
   const useGtag = Boolean(gaId || adsId);
+  const enabled = useGtag || Boolean(pixelId) || Boolean(gtmId);
 
-  if (!useGtag && !pixelId && !gtmId) return null;
+  const pathname = usePathname();
+  // The init scripts already establish the tag; the first effect run is the
+  // first pageview, so nothing is double-counted.
+  const lastSent = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!enabled || !pathname || lastSent.current === pathname) return;
+    lastSent.current = pathname;
+
+    const clinical = isClinicalRoute(pathname);
+    const path = analyticsPath(pathname);
+
+    const w = window as typeof window & {
+      gtag?: (...args: unknown[]) => void;
+      fbq?: (...args: unknown[]) => void;
+    };
+
+    if (useGtag && typeof w.gtag === "function") {
+      w.gtag("event", "page_view", {
+        page_path: path,
+        page_location: `${window.location.origin}${path}`,
+        page_title: clinical ? REDACTED_TITLE : document.title,
+      });
+    }
+
+    // Meta cannot be redacted — fbq reads window.location directly — so on a
+    // clinical route we simply do not fire it.
+    if (pixelId && !clinical && typeof w.fbq === "function") {
+      w.fbq("track", "PageView");
+    }
+  }, [pathname, enabled, useGtag, pixelId]);
+
+  if (!enabled) return null;
 
   return (
     <>
@@ -62,7 +107,8 @@ export default function Analytics() {
         </Script>
       )}
 
-      {/* GA4 + Google Ads (gtag.js) */}
+      {/* GA4 + Google Ads (gtag.js). send_page_view is off: the effect above
+          owns pageviews so clinical paths can be redacted before they are sent. */}
       {useGtag && (
         <>
           <Script
@@ -72,14 +118,15 @@ export default function Analytics() {
           />
           <Script id="gtag-config" strategy="afterInteractive">
             {`
-              ${gaId ? `gtag('config', '${gaId}');` : ""}
-              ${adsId ? `gtag('config', '${adsId}');` : ""}
+              ${gaId ? `gtag('config', '${gaId}', { send_page_view: false });` : ""}
+              ${adsId ? `gtag('config', '${adsId}', { send_page_view: false });` : ""}
             `}
           </Script>
         </>
       )}
 
-      {/* Meta (Facebook) Pixel — consent revoked until the banner grants it */}
+      {/* Meta (Facebook) Pixel — consent revoked until the banner grants it, and
+          NO automatic PageView: the effect above fires it only off clinical routes. */}
       {pixelId && (
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
@@ -93,7 +140,6 @@ export default function Analytics() {
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('consent', 'revoke');
             fbq('init', '${pixelId}');
-            fbq('track', 'PageView');
           `}
         </Script>
       )}

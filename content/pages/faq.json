@@ -9,128 +9,344 @@
   "ogImage": "",
   "blocks": [
     {
-      "tag": "h3",
+      "tag": "h2",
       "text": "Your Questions Answered"
     },
     {
-      "tag": "p",
-      "text": "General Questions"
+      "tag": "h3",
+      "text": "What is detox?"
     },
     {
       "tag": "p",
       "text": "Detox, short for detoxification, is the deliberate flushing of toxic substances from the body. Detoxification is a full process of cleansing the body during addiction recovery. Detoxification should not be considered simply one action. After substance abuse has created a chemical dependency on drugs or alcohol, the body requires time to eliminate these toxins and restructure its metabolism and mental processes. Only after eliminating toxic substances can a patient begin to heal from the damages that their substance abuse has caused."
     },
     {
+      "tag": "h3",
+      "text": "Who goes to detox and why?"
+    },
+    {
       "tag": "p",
       "text": "People who go to a detoxification center can either be full addicts or individuals aware of their prolonged dependency on specific drugs. Those who register as a patient in a detoxification center understand that they have a problem and that they need help. Patients entering Marina Harbor check in to receive medical attention in addition to psychological support and counseling during the detox process. Depending upon level of addiction, detoxification can trigger additional side effects and withdrawal symptoms in the body. Receiving support from a detoxification center grants patients immediate access to medical staff and services during this challenging time. Furthermore, upon full removal of the substance from the body, detoxification centers can provide individuals with additional resources to help with their addiction and facilitate recovery. Continued services after detoxification can include counseling, therapy, and access to recovery support groups."
+    },
+    {
+      "tag": "h3",
+      "text": "How long is the detox process?"
     },
     {
       "tag": "p",
       "text": "The detox process can vary based on the substance abused and the level of addiction of each patient. Individuals with an unhealthy dependency on drugs rather than an acute physical addiction tend to recover more quickly. In some cases, a detoxification period can last a few days. In other instances, a complete detox can last several weeks. Regardless of the duration of the detox period, detoxification is an ongoing process. Detoxification must be maintained by establishing healthy new habits to repair the damages caused by substance abuse in addition to restructuring one’s lifestyle to prevent a relapse. Is detox the same for alcohol and other drugs? The concept of detoxification and the goals that it strives to achieve are essentially the same for patients recovering from alcohol or other drugs. However, due to the chemical changes in the body and the psychological effects of extended drug abuse, withdrawal symptoms during detoxification can be much more intense for patients recovering from harder drugs or abuse of multiple substances. As a result, the recovery period varies. Detoxification can be much more challenging and longer lasting for certain patients."
     },
     {
+      "tag": "h3",
+      "text": "Can I just detox myself?"
+    },
+    {
       "tag": "p",
       "text": "Detoxification by oneself can be a very dangerous choice. For many patients, detoxing should not be an abrupt change and requires gradual tapering off of the substance abused. Detoxification can cause intense physical and psychological reactions including unhealthy changes in blood pressure, rapid heartbeat, nausea, vomiting, and fatigue. In severe cases, detoxification can cause hallucinations, fainting, psychosis, and even coma and death. If you feel you need to detox from a drug addiction, seeking medical support is your best option to ensure proper, guided recovery from your substance abuse."
+    },
+    {
+      "tag": "h3",
+      "text": "Why should I go to a detox facility?"
     },
     {
       "tag": "p",
       "text": "You should go to a detox facility if your substance abuse has placed aspects of your personal life, your professional life, or your health in jeopardy. Going to a detox facility means that you recognize that you have a problem that requires intervention. Marina Harbor will properly prepare you for what withdrawal symptoms to expect in addition to offering medical services and interventions to facilitate the process. Furthermore, detox facilities will establish a network of support in your recovery. Physicians, therapists, counseling services, and even other patients who are undergoing the same process will be there alongside you for assistance. Receiving help will also empower you to continue your recovery upon release from your treatments."
     },
     {
+      "tag": "h3",
+      "text": "What kind of medications are used at Marina Harbor?"
+    },
+    {
       "tag": "p",
       "text": "During detoxification, a range of medications can be implemented in order to assist a patient in his or her recovery. Typically, benzodiazepines, anti-convulsants, barbiturates’ and sleep meds are used to help a patient combat common withdrawal symptoms. These medications can lessen the severity of nausea and vomiting, alleviate headaches, decrease rapid heart rate, and lower a fever. For patients with severe withdrawal, these medications can also reduce the risk of hallucinations, convulsions, and delirium tremens. Opioid agonists and antagonists can also be used for patients recovering from abuse of narcotics. These medications can lessen the pain induced during detox and prevent a patient’s brain from being able to achieve a high from the substances abused."
+    },
+    {
+      "tag": "h3",
+      "text": "Should I go to a rehab facility after Marina Harbor?"
     },
     {
       "tag": "p",
       "text": "Depending on your recovery plan, seeking further services from a rehabilitation facility may be required to fully recover from drug addiction. Rehabilitation facilities are specifically designed to provide patients with the proper environment and training to return to their daily lives with the skills necessary to avoid a relapse. Rehabilitation facilities can help patients establish new, healthy routines, recognize patterns that trigger substance abuse, and work toward mending relationships that drug abuse may have damaged. Patients who attend rehab facilities after detoxification receive strategies to stay clean and sober for life."
     },
     {
+      "tag": "h3",
+      "text": "Can I use my phone or iPad while I am in detox?"
+    },
+    {
       "tag": "p",
       "text": "Each situation is addressed individually. Although we do permit patients to use personal devices during detoxification, they are generally viewed as a distraction from the primary objective of recovery. However much personal devices can grant patients access to support from family and friends outside of the facility, they can also place additional stressors on a recovering addict. Detoxification and recovery requires full patient attention and participation. If a patient uses his or her personal device while detoxing, he or she may be perceived as being inattentive to medical staff, withdrawn from the overall process, and thus not fully dedicated to his or her recovery."
+    },
+    {
+      "tag": "h3",
+      "text": "Who pays for detox?"
     },
     {
       "tag": "p",
       "text": "Of course, payment for detoxification centers can be paid out of pocket by the patient for the services rendered. However, because it is considered a legitimate medical condition, drug addiction can be covered by health insurance. Patients seeking drug detoxification should review their individual health insurance plans and discuss with their providers what services are covered and to what extent. It may be that a provider covers specific inpatient or outpatient treatments; however, comforts and amenities at luxury detoxification centers will likely not be covered by insurance."
     },
     {
+      "tag": "h3",
+      "text": "What is the average cost of detox?"
+    },
+    {
       "tag": "p",
       "text": "As mentioned previously, detox costs can vary depending on insurance aid. The degree to which the detox center offers additional amenities to patients can influence cost."
+    },
+    {
+      "tag": "h3",
+      "text": "What about maintenance drugs?"
     },
     {
       "tag": "p",
       "text": "Upon successful detoxification, an ongoing treatment plan can be discussed with your physician to alleviate additional withdrawal symptoms and cravings. Antidepressants are commonly prescribed for patients recovering from addiction to lessen anxiety and malaise. Vivitrol is a common injection available for patients recovering from alcohol and opioid abuse. Vivitrol is an antagonist medication that prevents the brain from feeling the positive effects of a drug. In the case of those recovering from heroin or other narcotics, Methadone is a common medication used to combat withdrawal symptoms and cravings. Patients should openly discuss with their doctors their specific concerns to create an ongoing treatment plan after detoxification."
     },
     {
+      "tag": "h3",
+      "text": "What are my chances of relapse after detox?"
+    },
+    {
       "tag": "p",
       "text": "Detoxing from substance abuse with the goal of becoming sober cannot be perceived as a one and done event. Detoxification is an ongoing process that also includes establishing new, healthy habits and avoiding the situations that were triggers for your substance abuse in the past. Statistics show that patients who enter a detoxification facility have a 40% better chance at fully recovering from their addiction in comparison to those that do not. Nevertheless, the risks of everyday life are always out there, and some patients who detox do, in fact, relapse into addiction and have to start the entire process over again."
+    },
+    {
+      "tag": "h3",
+      "text": "Will I get sick while in detox?"
     },
     {
       "tag": "p",
       "text": "Detoxification is a shock to your system that causes a major interruption to your body’s continued exposure to a toxic substance. As such, there are many common withdrawal symptoms that patients can experience while undergoing detoxification. Symptoms can vary in intensity based on the severity of a patient’s addiction in addition to the number of substances abused. Common withdrawal symptoms include nausea, increased heart rate, sleep disturbances, anxiety and depression, headaches, and fever. In the case of severe withdrawal symptoms, panic attacks, hallucinations, psychosis, and loss of consciousness can occur."
     },
     {
+      "tag": "h3",
+      "text": "Will I be in pain while in detox?"
+    },
+    {
       "tag": "p",
       "text": "In some cases, detoxification can cause physical pain and discomfort in addition to the symptoms addressed in the previous question. Pain can be mild, including muscle soreness, cramping, and chills. Pain, however, can be more intense for those recovering from opiate and narcotic abuse. Detoxification from these drugs can cause intense headaches, abdominal cramps, and even full-body muscle spasms and convulsions."
     },
     {
-      "tag": "p",
-      "text": "Aetna, beacon, UMR, Anthem"
+      "tag": "h3",
+      "text": "Does Marina Harbor Detox accept insurance?"
     },
     {
       "tag": "p",
-      "text": "Joint Comission/IMS certified"
+      "text": "Yes. We work with most major PPO plans, including Aetna, Beacon, UMR, and Anthem. Call us and we will verify your specific benefits at no cost."
+    },
+    {
+      "tag": "h3",
+      "text": "Is Marina Harbor Detox accredited?"
+    },
+    {
+      "tag": "p",
+      "text": "Joint Commission accredited and IMS certified."
+    },
+    {
+      "tag": "h3",
+      "text": "How is Marina Harbor Detox different from other programs?"
     },
     {
       "tag": "p",
       "text": "Marina Harbor believes in holistic treatment with a focus on life skills in a luxury setting. We believe in providing a safe, therapeutic and comfortable environment to do the “uncomfortable work” that comes with detox and the early stages of recovery"
     },
     {
+      "tag": "h3",
+      "text": "What do I bring to rehab?"
+    },
+    {
       "tag": "p",
-      "text": "Clothes 7-10 days worth, toiletries/beauty products (alcohol free), wallet (including ID, Cash/Card,) cigarettes/vapes (preferably unopened), pictures, (if desired) any prescriptions medication, AVOID Jewelry unless necessary (please leave valuables at home)"
+      "text": "Seven to ten days' worth of clothes, toiletries and beauty products (alcohol-free), your wallet with ID and a card or cash, and cigarettes or vapes if you use them."
+    },
+    {
+      "tag": "h3",
+      "text": "Are my family members or friends allowed to visit?"
+    },
+    {
+      "tag": "p",
+      "text": "Yes."
+    },
+    {
+      "tag": "h3",
+      "text": "What if my loved one is not ready for treatment but needs it?"
     },
     {
       "tag": "p",
       "text": "There is nothing wrong with making an informational call, our admissions team is willing to help in any way they can and also follow up when necessary."
     },
     {
+      "tag": "h3",
+      "text": "What happens if I have a pending legal issue?"
+    },
+    {
       "tag": "p",
-      "text": "Presence in treatment letter, attend via zoom"
+      "text": "Let our admissions team know when you call. We can provide a letter confirming your presence in treatment, and we can help you arrange to attend hearings remotely where your court permits it."
+    },
+    {
+      "tag": "h3",
+      "text": "Do you provide transportation?"
+    },
+    {
+      "tag": "p",
+      "text": "Yes — we provide transportation."
+    },
+    {
+      "tag": "h3",
+      "text": "What do I tell my employer when I am going to treatment?"
     },
     {
       "tag": "p",
       "text": "Disclose information based on your own comfort level. There are many options for taking a leave from work depending on state, circumstances, time employed etc."
     },
     {
+      "tag": "h3",
+      "text": "What do I tell my probation officer if I am going to treatment?"
+    },
+    {
       "tag": "p",
       "text": "Honesty seems to be the best policy when it comes to the judicial system and SUD treatment. We can provide documentation/letters to the courts as well."
     },
     {
+      "tag": "h3",
+      "text": "What therapies do you provide?"
+    },
+    {
       "tag": "p",
-      "text": "Groups 4x per week + 1:1 session weekly"
+      "text": "Our clinical team uses evidence-based modalities including Cognitive Behavioral Therapy (CBT) and Dialectical Behavior Therapy (DBT), alongside our holistic programming."
+    },
+    {
+      "tag": "h3",
+      "text": "How often do clients attend therapy?"
+    },
+    {
+      "tag": "p",
+      "text": "Clients attend group therapy four times per week, plus a weekly one-to-one session with their therapist."
+    },
+    {
+      "tag": "h3",
+      "text": "Is this a 12-Step or SMART Recovery program?"
     },
     {
       "tag": "p",
       "text": "12-Step program."
     },
     {
-      "tag": "p",
-      "text": "Variety of PHP/IOP/SLE"
+      "tag": "h3",
+      "text": "Is there 24/7 on-site medical care?"
     },
     {
       "tag": "p",
-      "text": "Typically 5-10 days depending on substance, frequency/time/quantity of use"
+      "text": "Yes."
+    },
+    {
+      "tag": "h3",
+      "text": "What aftercare programs do you provide?"
     },
     {
       "tag": "p",
-      "text": "100% confidential"
+      "text": "We help every client step down into continuing care — including PHP, IOP, and sober living placements — before they leave us."
+    },
+    {
+      "tag": "h3",
+      "text": "How long is detoxification?"
     },
     {
       "tag": "p",
-      "text": "TV, private room/bathroom"
+      "text": "Typically 5–10 days, depending on the substance and the frequency, duration, and quantity of use."
+    },
+    {
+      "tag": "h3",
+      "text": "How long can I expect to be in treatment?"
+    },
+    {
+      "tag": "p",
+      "text": "Most clients stay 28 to 35 days, though the right length of stay is set with your clinical team."
+    },
+    {
+      "tag": "h3",
+      "text": "Is my treatment confidential?"
+    },
+    {
+      "tag": "p",
+      "text": "Yes — your treatment is 100% confidential."
+    },
+    {
+      "tag": "h3",
+      "text": "How many times a week will I receive individual therapy?"
+    },
+    {
+      "tag": "p",
+      "text": "Twice a week."
+    },
+    {
+      "tag": "h3",
+      "text": "How will my family participate in treatment?"
+    },
+    {
+      "tag": "p",
+      "text": "Family members can take part in your treatment — our team will walk you through the options during admission."
+    },
+    {
+      "tag": "h3",
+      "text": "Is there a Psychiatrist on staff?"
+    },
+    {
+      "tag": "p",
+      "text": "Yes."
+    },
+    {
+      "tag": "h3",
+      "text": "What do the bedrooms include? (private, TV’s, etc)"
+    },
+    {
+      "tag": "p",
+      "text": "Every bedroom is private, with its own bathroom and a television."
+    },
+    {
+      "tag": "h3",
+      "text": "Is smoking or vaping allowed at Marina Harbor Detox?"
+    },
+    {
+      "tag": "p",
+      "text": "Yes."
+    },
+    {
+      "tag": "h3",
+      "text": "Will I have a roommate?"
+    },
+    {
+      "tag": "p",
+      "text": "No."
+    },
+    {
+      "tag": "h3",
+      "text": "Do I need to bring my current prescriptions with me?"
+    },
+    {
+      "tag": "p",
+      "text": "Yes."
+    },
+    {
+      "tag": "h3",
+      "text": "Am I allowed to bring books or magazines with me?"
+    },
+    {
+      "tag": "p",
+      "text": "Yes."
+    },
+    {
+      "tag": "h3",
+      "text": "Will I have access to money or my wallet while I am in treatment?"
     },
     {
       "tag": "p",
       "text": "Yes, but we ask to keep them locked up securely"
+    },
+    {
+      "tag": "h3",
+      "text": "Is housing co-ed or gender specific?"
+    },
+    {
+      "tag": "p",
+      "text": "Housing is co-ed."
     }
   ],
   "images": [
