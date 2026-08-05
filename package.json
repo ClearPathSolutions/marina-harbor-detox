@@ -2,7 +2,7 @@
   "name": "marina-harbor-detox",
   "version": "1.0.0",
   "private": true,
-  "description": "Marina Harbor Detox — Premier Drug & Alcohol Rehab in San Francisco, CA",
+  "description": "Marina Harbor Detox \u2014 Premier Drug & Alcohol Rehab in San Francisco, CA",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "15.1.6",
+    "next": "15.5.20",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
