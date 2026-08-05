@@ -44,23 +44,26 @@
 }
 
 @layer components {
-  /* The single page container. `xl:px-12` keeps content off the window edge on
-     a 1440 laptop, where max-w-content (1400) leaves only a 20px outer margin. */
+  /* The single page container: 1200px, centred, 1.5rem gutters. Bands are
+     full-bleed; this is what keeps their CONTENT aligned to one grid. */
   .container-x {
-    @apply mx-auto w-full max-w-content px-5 sm:px-6 lg:px-8 xl:px-12;
+    @apply mx-auto w-full max-w-content px-6;
   }
 
   /* The reading frame: page-hero content and article grids both sit in this, so
      a title and its body copy share a left edge. Left-aligned, not centred —
      centring the article grid inside the container was what pushed body copy to
      x=224 while its own h1 stayed at x=52. */
+  /* Article body spans the whole container — there is no sidebar beside it
+     any more, so nothing needs to be held back to make room. */
   .container-article {
-    @apply w-full max-w-article;
+    @apply w-full;
   }
 
-  /* Prose with no sidebar beside it — same measure as the sidebar branch. */
+  /* Reading measure, centred. Full container width would run ~140 characters
+     per line; this holds it near 105 while staying symmetric in the frame. */
   .prose-col {
-    @apply w-full max-w-prose;
+    @apply mx-auto w-full max-w-prose;
   }
 
   /* `border border-transparent` is load-bearing: without it the outline

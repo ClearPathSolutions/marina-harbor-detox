@@ -11,6 +11,9 @@
  * itself is untouched — only the link text changes.
  */
 
+/** One entry in a page's jump nav. */
+export type TocItem = { id: string; label: string };
+
 const CITIES = [
   "San Francisco", "Northern California", "California", "the Bay Area", "Bay Area",
   "Marin County", "Palo Alto", "Berkeley", "Fremont", "San Jose", "Santa Cruz",

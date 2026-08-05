@@ -8,7 +8,8 @@ import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
 import ConsentMap from "./ConsentMap";
 import TeamPreview from "./TeamPreview";
-import TableOfContents, { type TocItem } from "./TableOfContents";
+import SectionNav from "./SectionNav";
+
 import PageHero from "./PageHero";
 import FaqAccordion, { buildFaq } from "./FaqAccordion";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
@@ -22,7 +23,7 @@ import {
   relatedLinks,
 } from "@/lib/content";
 import { site } from "@/lib/site";
-import { tocLabel } from "@/lib/toc";
+import { tocLabel, type TocItem } from "@/lib/toc";
 import { createLinker, type Linker } from "@/lib/prose";
 import {
   blogPostingSchema,
@@ -321,64 +322,6 @@ function Prose({ sections }: { sections: Section[] }) {
   );
 }
 
-/** Collapsible "On this page" for phones, where the sidebar is hidden. */
-function MobileToc({ items }: { items: TocItem[] }) {
-  if (items.length < 3) return null;
-  return (
-    <details className="group mb-8 rounded-2xl border border-navy-100 bg-sand-50 p-4 lg:hidden">
-      <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold uppercase tracking-wider text-navy-700">
-        On this page
-        <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
-      </summary>
-      <ul className="mt-3 space-y-2 border-t border-navy-100 pt-3">
-        {items.map((s) => (
-          <li key={s.id}>
-            <a href={`#${s.id}`} className="block text-sm leading-snug text-navy-900/70 hover:text-orange-600">
-              {s.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </details>
-  );
-}
-
-/** Sticky conversion card shown beside body copy on interior pages. */
-function SidebarCTA() {
-  return (
-    <aside>
-      <div className="overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-card">
-        <div className="bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 p-6 text-white">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-400">
-            <Clock className="h-4 w-4" /> Available 24/7
-          </span>
-          <p className="mt-3 text-lg font-bold leading-snug">Speak with a recovery advocate now</p>
-          <a href={site.phones.primary.href} className="mt-4 flex items-center gap-3">
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white/10 text-gold-400">
-              <Phone className="h-5 w-5" />
-            </span>
-            <span className="leading-tight">
-              <span className="block text-[11px] uppercase tracking-wider text-white/50">Call confidentially</span>
-              <span className="font-display text-lg font-bold">{site.phones.primary.label}</span>
-            </span>
-          </a>
-        </div>
-        <div className="p-6">
-          <Link href="/admission#verify" className="btn-orange w-full">
-            Verify Your Insurance <ArrowRight className="h-4 w-4" />
-          </Link>
-          <a href={site.sms} className="btn-outline-navy mt-3 w-full">Text Us Now</a>
-          <ul className="mt-6 grid gap-3 text-sm text-navy-900/70">
-            <li className="flex items-center gap-2.5"><Shield className="h-4 w-4 text-orange-500" /> Joint Commission Accredited</li>
-            <li className="flex items-center gap-2.5"><Check className="h-4 w-4 text-orange-500" /> Most PPO insurance accepted</li>
-            <li className="flex items-center gap-2.5"><MapPin className="h-4 w-4 text-orange-500" /> San Francisco, CA</li>
-          </ul>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
 function Related({ doc }: { doc: Doc }) {
   const links = relatedLinks(doc);
   if (!links.length) return null;
@@ -567,29 +510,27 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                     in a 3xl wrapper this branch ran to 80 cpl, well past
                     comfortable, while the sidebar branch sat at 64. */}
                 <div className="prose-col">
-                  <MobileToc items={tocItems} />
+                  <SectionNav items={tocItems} />
                   <Prose sections={sections} />
                 </div>
               </div>
             ) : (
-              <div className="container-article grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-12">
-                <div className="min-w-0">
+              /* Single column. There used to be a 320px right rail holding a
+                 sticky CTA tile; the tile has moved into the closing CTA band,
+                 so nothing is beside the prose any more and the reading column
+                 is centred in the container rather than pinned to the left with
+                 dead space down the right. */
+              <div className="container-article">
+                <div className="prose-col">
                   {doc.metaDescription && doc.type !== "post" && (
                     <p className="mb-6 break-words text-lg leading-relaxed text-navy-900/80">{doc.metaDescription}</p>
                   )}
+                  <SectionNav items={tocItems} />
                   {isFaq ? (
                     <FaqAccordion items={buildFaq(bodyBlocks)} />
                   ) : (
-                    <>
-                      <MobileToc items={tocItems} />
-                      <Prose sections={sections} />
-                    </>
+                    <Prose sections={sections} />
                   )}
-
-                  {/* The archived "Dedicated Team" section listed two people as
-                      plain text and predated Ashley Hurtado. Render the live
-                      roster instead so /about and /about/team stay in step. */}
-                  {slugPath === "/about" && <TeamPreview />}
 
                   {doc.type === "post" && (
                     <div className="mt-12 border-t border-navy-100 pt-6">
@@ -599,14 +540,16 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                     </div>
                   )}
                 </div>
-                <div className="hidden min-w-0 lg:block">
-                  {/* CTA first: it is the point of the page, and a 10-item
-                      jump-nav above it pushed the phone number off-screen. */}
-                  <div className="space-y-8 lg:sticky lg:top-28">
-                    <SidebarCTA />
-                    <TableOfContents items={tocItems} />
+
+                {/* Held to the reading measure, not the full container: the
+                    "Dedicated Team" h2 that introduces these cards lives in the
+                    prose flow, and breaking the grid out wider than its own
+                    heading gave the section two different left edges. */}
+                {slugPath === "/about" && (
+                  <div className="prose-col">
+                    <TeamPreview />
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>

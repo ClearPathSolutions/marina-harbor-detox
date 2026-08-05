@@ -26,8 +26,13 @@ export default function TeamPreview() {
   if (!team.length) return null;
 
   return (
-    <div className="mt-8">
-      <ul className="grid gap-4 sm:grid-cols-2">
+    /* Full container width, three across. At the old two-across the third
+       person sat alone on a second row with an empty cell beside them. */
+    /* No heading of its own: the "Dedicated Team" h2 in about.json already
+       introduces this, and adding another produced two near-identical headings
+       one after the other. */
+    <div className="mt-10">
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {team.map((m) => (
           <li key={m.slug} className="min-w-0">
             <Link
