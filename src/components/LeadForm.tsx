@@ -111,7 +111,11 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
 
       // 2) Contact form also records the lead in our own pipeline.
       if (!isVerify) {
-        const res = await fetch("/api/lead", {
+        // Trailing slash is deliberate (MH-35 / next.config.mjs trailingSlash:
+        // true). Posting to "/api/lead" would 308 first; a 308 does preserve the
+        // method and body, but there is no reason to spend a redirect on every
+        // lead submission.
+        const res = await fetch("/api/lead/", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ ...data, intent }),
