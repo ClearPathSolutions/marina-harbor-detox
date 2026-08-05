@@ -96,12 +96,16 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ── Main header (night-navy so the logo glows) ──────────── */}
+      {/* ── Main header (night-navy so the logo glows) ────────────
+          Solid, and no backdrop-blur. The header is sticky in normal flow, not
+          overlaid on the hero — so the old `bg-navy-900/70 backdrop-blur-xl`
+          was compositing against the white page behind it, which is what
+          produced the washed grey band above the photo. Nothing is behind it
+          worth blurring; a solid bar matches the utility strip above and keeps
+          the white logotype legible. */}
       <header
-        className={`sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-all duration-300 ${
-          scrolled
-            ? "border-white/10 bg-navy-900/85 shadow-lift"
-            : "border-white/10 bg-navy-900/70"
+        className={`sticky top-0 z-50 w-full border-b border-white/10 bg-navy-900 transition-shadow duration-300 ${
+          scrolled ? "shadow-lift" : ""
         }`}
       >
         <div className="container-wide flex items-center justify-between gap-4 py-3">
