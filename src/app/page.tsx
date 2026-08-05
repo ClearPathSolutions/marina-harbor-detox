@@ -76,7 +76,10 @@ export default function Home() {
               <Reveal delay={80}>
                 <h1 className="mt-4 text-4xl font-bold leading-[1.1] text-white sm:text-5xl sm:leading-[1.08]">
                   Premier Drug &amp; Alcohol Rehab in{" "}
-                  <span className="text-orange-400">San Francisco</span>
+                  {/* The city name is the accent phrase and must never break
+                      across lines — unconstrained, the desktop wrap put "San" at
+                      the end of line 2 and left "Francisco" alone on line 3. */}
+                  <span className="whitespace-nowrap text-orange-400">San Francisco</span>
                 </h1>
               </Reveal>
               <Reveal delay={160}>
