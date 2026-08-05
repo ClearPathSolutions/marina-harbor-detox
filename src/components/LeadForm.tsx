@@ -94,14 +94,19 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         return;
       }
 
-      // 1) Sync to Clarion (fire-and-forget; don't fail the UX if it hiccups).
+      // 1) Sync to Clarion. Track the outcome — whether this succeeded decides
+      // below whether an /api/lead failure is actually visible to the visitor.
+      let clarionOk = false;
       try {
-        await window.ClarionForms?.submit({
-          form_key: CLARION_FORM_KEY[intent],
-          data: { ...data, intent },
-        });
+        if (window.ClarionForms?.submit) {
+          const r = await window.ClarionForms.submit({
+            form_key: CLARION_FORM_KEY[intent],
+            data: { ...data, intent },
+          });
+          clarionOk = r ? r.ok : true;
+        }
       } catch {
-        /* Clarion capture is best-effort */
+        /* Clarion capture is best-effort — clarionOk stays false */
       }
 
       // 2) Contact form also records the lead in our own pipeline.
@@ -114,16 +119,30 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         const json = await res.json().catch(() => ({}));
         if (!(res.ok && json.ok)) {
           const fieldErrors: Record<string, string> = json.errors ?? {};
-          setErrors(fieldErrors);
-          // Rate limit (429), no-delivery (503) and delivery-failure (502) each
-          // return human copy naming the phone line — surface it verbatim rather
-          // than failing silently, otherwise the visitor sees a dead button.
-          setFormError(Object.keys(fieldErrors).length ? "" : json.error || GENERIC_ERROR);
-          setStatus("error");
-          // MH-25: move focus to the first field that failed validation.
-          const first = Object.keys(fieldErrors)[0];
-          if (first) form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
-          return;
+
+          // Validation errors are the visitor's to fix — always surface them.
+          if (Object.keys(fieldErrors).length) {
+            setErrors(fieldErrors);
+            setFormError("");
+            setStatus("error");
+            // MH-25: move focus to the first field that failed validation.
+            const first = Object.keys(fieldErrors)[0];
+            if (first) form.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+            return;
+          }
+
+          // Otherwise this is infrastructure: 429 rate limit, 502 delivery
+          // failure, or 503 no-delivery-configured. Each returns human copy
+          // naming the phone line. Only show it if Clarion did NOT capture the
+          // lead — if it did, the submission genuinely succeeded and telling
+          // the visitor it failed would make them submit again or give up.
+          if (!clarionOk) {
+            setErrors({});
+            setFormError(json.error || GENERIC_ERROR);
+            setStatus("error");
+            return;
+          }
+          console.warn("[lead] /api/lead unavailable; captured by Clarion only");
         }
       }
 
