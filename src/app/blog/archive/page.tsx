@@ -24,7 +24,7 @@ export default function BlogArchive() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main">
         {/* Header band */}
         <section className="bg-navy-900">
           <div className="container-x section-sm text-center">

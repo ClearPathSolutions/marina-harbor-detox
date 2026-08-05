@@ -7,6 +7,7 @@ import CTASection from "./CTASection";
 import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
 import ConsentMap from "./ConsentMap";
+import TeamPreview from "./TeamPreview";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
 import {
   type Block,
@@ -81,7 +82,7 @@ function extractByline(blocks: Block[]): Byline & { blocks: Block[] } {
   return { reviewedBy, lastUpdated, blocks: rest };
 }
 
-type Section = { id: string; title: string | null; nodes: React.ReactNode[] };
+type Section = { id: string; title: string | null; nodes: React.ReactNode[]; kinds: string[] };
 
 const slugify = (s: string) =>
   s
@@ -111,6 +112,46 @@ const slugify = (s: string) =>
  * Noise blocks and the hero echo are ignored so they cannot shift the levels.
  * Output is capped at h4, which is the deepest style ContentPage renders.
  */
+/**
+ * A heading is a promise that something follows. The WordPress extractor broke
+ * that promise in two ways, and both render as visible defects:
+ *
+ *  1. Trailing headings — the source page ended with a heading whose content
+ *     lived in a widget the extractor never captured (`/about` ends with
+ *     "Stories of Hope in Recovery" and no testimonials). It renders as a bold
+ *     line followed by the section's bottom padding: pure dead space.
+ *
+ *  2. Sentences marked up as headings — a 220-character Title Cased paragraph
+ *     tagged `<h4>` reads as shouting, not as a heading.
+ *
+ * Both are fixed structurally here rather than by hand-editing content files,
+ * so the next re-extraction can't reintroduce them.
+ */
+const HEADING_TAGS = new Set(["h1", "h2", "h3", "h4"]);
+
+/** Longest a real heading gets. Beyond this it is a sentence wearing a heading's tag. */
+const MAX_HEADING_CHARS = 110;
+
+function demoteSentenceHeadings(blocks: Block[]): Block[] {
+  return blocks.map((b) =>
+    HEADING_TAGS.has(b.tag) && b.text.trim().length > MAX_HEADING_CHARS
+      ? { ...b, tag: "p" as Block["tag"] }
+      : b,
+  );
+}
+
+/**
+ * Drop heading(s) left stranded at the very end of the stream with nothing
+ * under them. Deliberately narrow: only *trailing* headings are removed, so
+ * legitimate kicker/eyebrow headings that sit above another heading — "BERKELEY"
+ * above the page title, "Who We Are & How We Help" above the h1 — are kept.
+ */
+function dropTrailingHeadings(blocks: Block[]): Block[] {
+  const out = [...blocks];
+  while (out.length && HEADING_TAGS.has(out[out.length - 1].tag)) out.pop();
+  return out;
+}
+
 function normalizeHeadings(blocks: Block[], heroH1: string): Block[] {
   const LEVEL: Partial<Record<Block["tag"], number>> = { h1: 1, h2: 2, h3: 3, h4: 4 };
   const stack: number[] = [];
@@ -139,7 +180,7 @@ function buildSections(blocks: Block[], heroH1: string): Section[] {
 
   const sections: Section[] = [];
   const seen = new Set<string>();
-  let current: Section = { id: "", title: null, nodes: [] };
+  let current: Section = { id: "", title: null, nodes: [], kinds: [] };
   let list: string[] = [];
 
   const flushList = () => {
@@ -154,11 +195,23 @@ function buildSections(blocks: Block[], heroH1: string): Section[] {
         ))}
       </ul>
     );
+    current.kinds.push("content");
     list = [];
   };
 
   const commit = () => {
     flushList();
+    // A titled section with no body is the same extraction artifact as a
+    // trailing heading: the content lived in a WordPress widget that never made
+    // it into the export. Rendering it gives a bold line floating over dead
+    // space *and* a "On this page" entry that jumps to nothing. Drop it.
+    // A subheading left at the end of a section has nothing under it either —
+    // same broken promise as a trailing heading, just nested. Pop it.
+    while (current.kinds.length && current.kinds[current.kinds.length - 1] === "heading") {
+      current.nodes.pop();
+      current.kinds.pop();
+    }
+    if (current.title !== null && current.nodes.length === 0) return;
     if (current.title !== null || current.nodes.length) sections.push(current);
   };
 
@@ -171,7 +224,10 @@ function buildSections(blocks: Block[], heroH1: string): Section[] {
     return id;
   };
 
-  const push = (node: React.ReactNode) => current.nodes.push(node);
+  const push = (node: React.ReactNode, kind = "content") => {
+    current.nodes.push(node);
+    current.kinds.push(kind);
+  };
 
   blocks.forEach((b) => {
     if (isNoise(b)) return;
@@ -182,7 +238,7 @@ function buildSections(blocks: Block[], heroH1: string): Section[] {
     flushList();
     if (isBreak(b)) {
       commit();
-      current = { id: uniqueId(b.text), title: b.text, nodes: [] };
+      current = { id: uniqueId(b.text), title: b.text, nodes: [], kinds: [] };
       return;
     }
     const key = current.nodes.length;
@@ -191,19 +247,22 @@ function buildSections(blocks: Block[], heroH1: string): Section[] {
       push(
         <h2 key={key} className="mt-10 scroll-mt-28 text-2xl font-bold text-navy-900 sm:text-3xl">
           {b.text}
-        </h2>
+        </h2>,
+        "heading"
       );
     else if (b.tag === "h3")
       push(
         <h3 key={key} className="mt-9 scroll-mt-28 text-xl font-bold text-navy-900">
           {b.text}
-        </h3>
+        </h3>,
+        "heading"
       );
     else if (b.tag === "h4")
       push(
         <h4 key={key} className="mt-7 scroll-mt-28 text-lg font-semibold text-navy-900">
           {b.text}
-        </h4>
+        </h4>,
+        "heading"
       );
     else if (b.tag === "blockquote")
       push(
@@ -394,7 +453,10 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const rt = doc.type === "post" ? readingTime(doc) : null;
   // MH-13: lift the reviewer / last-updated bullets out before sectioning.
   const { reviewedBy, lastUpdated, blocks: bodyBlocks } = extractByline(doc.blocks);
-  const sections = buildSections(normalizeHeadings(bodyBlocks, doc.h1), doc.h1);
+  const sections = buildSections(
+    normalizeHeadings(dropTrailingHeadings(demoteSentenceHeadings(bodyBlocks)), doc.h1),
+    doc.h1,
+  );
 
   const isFacility = slugPath === "/facility";
   const isAdmission = slugPath === "/admission";
@@ -545,6 +607,11 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                   <MobileToc sections={sections} />
                   <Prose sections={sections} />
 
+                  {/* The archived "Dedicated Team" section listed two people as
+                      plain text and predated Ashley Hurtado. Render the live
+                      roster instead so /about and /about/team stay in step. */}
+                  {slugPath === "/about" && <TeamPreview />}
+
                   {doc.type === "post" && (
                     <div className="mt-12 border-t border-navy-100 pt-6">
                       <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
@@ -651,26 +718,9 @@ export default function ContentPage({ doc }: { doc: Doc }) {
           </section>
         )}
 
-        {/* The team is presented on /about/team, in one consistent layout. A
-            second portal-fed grid used to render here too, which duplicated the
-            same three people and, with one card in a 3-column grid, left two
-            thirds of the row empty. */}
-        {isAbout && (
-          <section className="border-t border-navy-100 bg-sand-50 section">
-            <div className="container-x text-center">
-              <span className="eyebrow">Our Clinical Team</span>
-              <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
-                The people caring for you
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl leading-relaxed text-navy-900/70">
-                A small, senior team — you will meet the same faces throughout your stay.
-              </p>
-              <Link href="/about/team" className="btn-navy mt-8">
-                Meet the team <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </section>
-        )}
+        {/* /about renders the roster inline via <TeamPreview /> — faces, roles
+            and per-person links. A separate full-width "meet the team" band used
+            to sit here as well, which made three team CTAs stack in a row. */}
 
         <Related doc={doc} />
         <CTASection />
