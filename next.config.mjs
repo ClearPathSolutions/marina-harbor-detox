@@ -51,7 +51,12 @@ const nextConfig = {
   compress: true,
   images: {
     formats: ["image/avif", "image/webp"],
-    // Local assets live in /public, so no remote patterns are required.
+    // Portal headshots (/about/team). All three people currently come back with
+    // photoUrl null, but next/image throws on an unconfigured remote host — so
+    // this has to be here BEFORE anyone uploads one, not after it breaks.
+    remotePatterns: [
+      { protocol: "https", hostname: "support.quadranthealthgroup.com", pathname: "/**" },
+    ],
     // Sizes tuned for the layout's breakpoints to keep payloads small.
     deviceSizes: [360, 420, 640, 768, 1024, 1280, 1536, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 200, 256, 384],

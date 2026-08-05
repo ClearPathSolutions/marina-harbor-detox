@@ -7,7 +7,6 @@ import CTASection from "./CTASection";
 import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
 import ConsentMap from "./ConsentMap";
-import StaffGrid from "./StaffGrid";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
 import {
   type Block,
@@ -652,7 +651,26 @@ export default function ContentPage({ doc }: { doc: Doc }) {
           </section>
         )}
 
-        {isAbout && <StaffGrid facility="marina-harbor-detox" exclude={namesOnPage(doc)} />}
+        {/* The team is presented on /about/team, in one consistent layout. A
+            second portal-fed grid used to render here too, which duplicated the
+            same three people and, with one card in a 3-column grid, left two
+            thirds of the row empty. */}
+        {isAbout && (
+          <section className="border-t border-navy-100 bg-sand-50 section">
+            <div className="container-x text-center">
+              <span className="eyebrow">Our Clinical Team</span>
+              <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+                The people caring for you
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl leading-relaxed text-navy-900/70">
+                A small, senior team — you will meet the same faces throughout your stay.
+              </p>
+              <Link href="/about/team" className="btn-navy mt-8">
+                Meet the team <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </section>
+        )}
 
         <Related doc={doc} />
         <CTASection />

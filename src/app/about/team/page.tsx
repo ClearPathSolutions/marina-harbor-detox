@@ -5,9 +5,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileCTABar from "@/components/MobileCTABar";
 import CTASection from "@/components/CTASection";
-import StaffGrid from "@/components/StaffGrid";
 import { ArrowRight } from "@/components/Icons";
-import { teamMembers } from "@/lib/content";
+import { teamMembers, type TeamMember } from "@/lib/content";
+import { bioParagraphs, fetchStaff, nameKey } from "@/lib/staff";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -34,8 +34,25 @@ function initials(name: string) {
     .join("");
 }
 
-export default function TeamPage() {
-  const team = teamMembers();
+export default async function TeamPage() {
+  // People whose bios live in content JSON come first and stay authoritative;
+  // the portal only contributes anyone it has that they do not already cover.
+  // Both render as the same rows — the portal used to get its own grid section,
+  // which duplicated these three and looked broken with a single card in it.
+  const fromContent = teamMembers();
+  const known = new Set(fromContent.map((m) => nameKey(m.name)));
+
+  const fromPortal: TeamMember[] = (await fetchStaff("marina-harbor-detox"))
+    .filter((p) => p.name && !known.has(nameKey(p.name)))
+    .map((p) => ({
+      slug: nameKey(p.name).replace(/\s+/g, "-"),
+      name: p.credentials ? `${p.name}, ${p.credentials}` : p.name,
+      title: p.title ?? "",
+      photo: p.photoUrl,
+      bio: bioParagraphs(p.bio),
+    }));
+
+  const team = [...fromContent, ...fromPortal];
 
   return (
     <>
@@ -121,12 +138,6 @@ export default function TeamPage() {
                   </div>
                 </article>
               ))}
-            </div>
-
-            {/* Portal-managed clinical staff, excluding anyone already listed
-                above. Renders nothing when the portal has no extra people. */}
-            <div className="mx-auto mt-4 max-w-[64rem]">
-              <StaffGrid facility="marina-harbor-detox" exclude={team.map((m) => m.name)} />
             </div>
 
             <div className="mx-auto mt-14 max-w-[64rem] border-t border-navy-100 pt-8">
