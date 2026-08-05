@@ -461,7 +461,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                 />
                 {/* Copy has to stay legible over any photo in the set, so the
                     scrim is heaviest on the left where the text sits. */}
-                <div className="absolute inset-0 bg-gradient-to-r from-navy-950/92 via-navy-950/75 to-navy-950/50" />
+                <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/75 to-navy-950/50" />
               </>
             ) : (
               <div className="absolute inset-0 opacity-40">
@@ -471,7 +471,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
               </div>
             )}
           </div>
-          <div className="container-x py-14 sm:py-20">
+          <div className="container-x section-sm">
             <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs text-white/50" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-orange-300">Home</Link>
               {crumbs.map((c) => (
@@ -483,7 +483,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
             </nav>
 
             {doc.type === "post" && <span className="eyebrow mb-3 text-gold-400">Recovery Blog</span>}
-            <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+            <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
               {doc.h1}
             </h1>
             {date && (

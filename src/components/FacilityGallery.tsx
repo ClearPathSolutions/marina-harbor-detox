@@ -93,6 +93,7 @@ export default function FacilityGallery() {
               alt={facilityPhotos[active].alt}
               width={2560}
               height={1707}
+              sizes="(max-width: 1024px) 95vw, 1200px"
               className="h-auto max-h-[85vh] w-full rounded-xl object-contain"
               priority
             />

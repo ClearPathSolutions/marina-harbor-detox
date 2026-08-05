@@ -25,7 +25,7 @@ const offerLinks = [
 export default function Footer() {
   return (
     <footer className="bg-navy-950 pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-white/70 lg:pb-0">
-      <div className="container-wide grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8 lg:py-16">
+      <div className="container-wide section-sm grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
         {/* Brand */}
         <div className="sm:col-span-2 lg:col-span-1">
           <Image
@@ -33,6 +33,7 @@ export default function Footer() {
             alt={site.name}
             width={1828}
             height={1028}
+            sizes="(max-width: 640px) 150px, 180px"
             className="h-20 w-auto sm:h-24"
           />
           <p className="mt-5 max-w-xs text-sm leading-relaxed">

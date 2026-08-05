@@ -76,8 +76,18 @@
     @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-orange-600;
   }
 
+  /* Vertical rhythm — two steps on one 16px scale. Everything that sets its own
+     py-* is drifting off the system; use these instead.
+       .section     64 / 80 / 112   major content sections
+       .section-sm  48 / 64 /  80   page heroes, full-bleed bands, logo strips
+     A section that follows a hero may tighten only its TOP with
+     `pt-12 sm:pt-16 lg:pt-20`, which is the same compact step. */
   .section {
     @apply py-16 sm:py-20 lg:py-28;
+  }
+
+  .section-sm {
+    @apply py-12 sm:py-16 lg:py-20;
   }
 
   .link-underline {

@@ -117,7 +117,7 @@ export default function Header() {
               width={1828}
               height={1028}
               priority
-              sizes="(max-width: 768px) 260px, 380px"
+              sizes="(max-width: 640px) 160px, 200px"
               className={`w-auto drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)] transition-all duration-300 ${scrolled ? "h-16 sm:h-20" : "h-20 sm:h-24"}`}
             />
           </Link>
@@ -235,6 +235,7 @@ export default function Header() {
             alt={site.name}
             width={1828}
             height={1028}
+            sizes="120px"
             className="h-14 w-auto"
           />
           <button

@@ -27,9 +27,9 @@ export default function BlogArchive() {
       <main>
         {/* Header band */}
         <section className="bg-navy-900">
-          <div className="container-x py-14 text-center sm:py-20">
+          <div className="container-x section-sm text-center">
             <span className="eyebrow text-gold-400">From Our Archive</span>
-            <h1 className="mt-3 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+            <h1 className="mt-3 text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
               Recovery Article Archive
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-white/70">

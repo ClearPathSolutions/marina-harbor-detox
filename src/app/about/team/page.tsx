@@ -64,13 +64,13 @@ export default async function TeamPage() {
             <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
             <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" />
           </div>
-          <div className="container-x py-14 sm:py-20">
+          <div className="container-x section-sm">
             <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs text-white/50" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-orange-300">Home</Link>
               <span aria-hidden>/</span>
               <Link href="/about" className="hover:text-orange-300">About</Link>
             </nav>
-            <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+            <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
               Our team
             </h1>
             <p className="mt-5 max-w-2xl leading-relaxed text-white/75">
@@ -80,7 +80,7 @@ export default async function TeamPage() {
           </div>
         </section>
 
-        <section className="section pt-12 sm:pt-14 lg:pt-16">
+        <section className="section pt-12 sm:pt-16 lg:pt-20">
           <div className="container-x">
             {/* One row per person: a portrait-framed photo beside the bio. Bios
                 run from two to five paragraphs, which a card grid cannot balance

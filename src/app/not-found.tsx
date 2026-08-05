@@ -13,7 +13,7 @@ export default function NotFound() {
     <>
       <Header />
       <main id="main" className="grid min-h-[70vh] place-items-center bg-navy-950 px-6 text-center">
-        <div className="max-w-lg py-20">
+        <div className="max-w-lg section-sm">
           <p className="font-display text-7xl font-extrabold text-gold-400 sm:text-8xl">404</p>
           <h1 className="mt-4 text-2xl font-bold text-white sm:text-3xl">This page has drifted out to sea</h1>
           <p className="mt-4 text-white/70">

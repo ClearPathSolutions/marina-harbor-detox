@@ -54,14 +54,16 @@ export default function Home() {
               sizes="100vw"
               className="object-cover object-center"
             />
-            {/* Still no flat wash or panel over the photo — the bridge, sky and bay on the
-                right stay completely clean. But the approved aerial is far brighter than the
-                stock shot this hero was originally tuned for (pale sky above, sunlit Marina
-                Green below), and white copy was failing contrast against it. So the darkening
-                is now DIRECTIONAL: a scrim that fades out well before the bridge, plus a
-                bottom fade. Text legibility still comes from white type + its own shadow. */}
-            <div className="absolute inset-0 bg-gradient-to-r from-navy-950/85 via-navy-950/45 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/55 via-transparent to-transparent" />
+            {/* The scrim has to follow the text, and the text changes shape:
+                on phones the copy spans the full column, so a left-to-right
+                gradient leaves the right half of every line sitting on bright
+                sky and grass (measured 1.86:1 on the h1). Below lg we darken
+                top-to-bottom across the full width; from lg the copy is back in
+                a left column, so we return to the directional scrim that keeps
+                the bridge and bay clean. */}
+            <div className="absolute inset-0 bg-gradient-to-b from-navy-950/80 via-navy-950/60 to-navy-950/80 lg:hidden" />
+            <div className="absolute inset-0 hidden lg:block lg:bg-gradient-to-r lg:from-navy-950/85 lg:via-navy-950/45 lg:to-transparent" />
+            <div className="absolute inset-0 hidden lg:block lg:bg-gradient-to-t lg:from-navy-950/55 lg:via-transparent lg:to-transparent" />
           </div>
 
           <div className="container-wide flex min-h-[76vh] items-center py-16 sm:min-h-[82vh] sm:py-20">
@@ -72,7 +74,7 @@ export default function Home() {
                 </span>
               </Reveal>
               <Reveal delay={80}>
-                <h1 className="mt-4 text-4xl font-bold leading-[1.08] text-white sm:text-5xl">
+                <h1 className="mt-4 text-4xl font-bold leading-[1.1] text-white sm:text-5xl sm:leading-[1.08]">
                   Premier Drug &amp; Alcohol Rehab in{" "}
                   <span className="text-orange-400">San Francisco</span>
                 </h1>
@@ -152,7 +154,7 @@ export default function Home() {
 
         {/* ══ ACCREDITATION STRIP ═══════════════════════════════ */}
         <section className="border-y border-navy-100 bg-sand-50">
-          <div className="container-x py-12">
+          <div className="container-x section-sm">
             <Reveal className="text-center">
               <span className="eyebrow">Certified for Clinical Excellence</span>
               <p className="mx-auto mt-3 max-w-2xl text-sm text-navy-900/60">
@@ -168,6 +170,7 @@ export default function Home() {
                   alt={a.name}
                   width={a.w}
                   height={a.h}
+                  sizes="(max-width: 640px) 150px, 180px"
                   className="h-14 w-auto object-contain opacity-80 transition-opacity hover:opacity-100 sm:h-16"
                 />
               ))}
@@ -218,9 +221,9 @@ export default function Home() {
         <section className="relative isolate overflow-hidden bg-navy-950">
           <div className="absolute inset-0 -z-10">
             <Image src="/images/photos/aerial-bridge-04.jpg" alt="" fill sizes="100vw" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-navy-950/92 via-navy-950/70 to-navy-900/45" />
+            <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/70 to-navy-900/45" />
           </div>
-          <div className="container-x flex flex-col items-center gap-8 py-16 text-center lg:flex-row lg:justify-between lg:py-14 lg:text-left">
+          <div className="container-x section-sm flex flex-col items-center gap-8 text-center lg:flex-row lg:justify-between lg:text-left">
             <Reveal className="max-w-2xl">
               <h2 className="text-2xl font-bold text-white sm:text-3xl">Speak with a recovery advocate today</h2>
               <p className="mt-3 text-white/75">
@@ -269,7 +272,7 @@ export default function Home() {
 
               <Reveal delay={100} className="mt-8 grid gap-8 sm:grid-cols-2">
                 <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-navy-700">Therapies</h3>
+                  <h3 className="text-base font-semibold uppercase tracking-wider text-navy-700">Therapies</h3>
                   <ul className="mt-4 space-y-3">
                     {therapies.map((t) => (
                       <li key={t} className="flex items-start gap-3 text-sm text-navy-900/75">
@@ -280,7 +283,7 @@ export default function Home() {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-navy-700">Amenities</h3>
+                  <h3 className="text-base font-semibold uppercase tracking-wider text-navy-700">Amenities</h3>
                   <ul className="mt-4 space-y-3">
                     {amenities.map((a) => (
                       <li key={a} className="flex items-start gap-3 text-sm text-navy-900/75">
@@ -348,6 +351,7 @@ export default function Home() {
                           alt={`${logo.name} insurance accepted`}
                           width={logo.w}
                           height={logo.h}
+                          sizes="170px"
                           className="max-h-8 w-auto object-contain opacity-90 [filter:brightness(0)_invert(1)]"
                         />
                       </div>
@@ -433,7 +437,7 @@ export default function Home() {
                         src={post.image ?? site.ogFallback}
                         alt={post.title}
                         fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        sizes="(max-width: 767px) 100vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       {post.category && (
@@ -479,9 +483,9 @@ export default function Home() {
             />
             <div className="absolute inset-0 bg-gradient-to-b from-navy-950/80 via-navy-950/55 to-navy-950/80" />
           </div>
-          <div className="container-x py-20 text-center lg:py-28">
+          <div className="container-x section text-center">
             <Reveal className="mx-auto max-w-2xl">
-              <h2 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+              <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
                 Escape the chaos of addiction today
               </h2>
               <p className="mt-6 leading-relaxed text-white/80">

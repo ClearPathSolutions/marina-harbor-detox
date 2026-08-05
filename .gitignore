@@ -34,3 +34,11 @@ next-env.d.ts
 # Remove these two lines if you want the full media library + raw HTML committed too.
 /archive/media/
 /archive/raw-html/
+
+# Throwaway analysis/screenshot scripts run against a local server.
+# These got committed once by an over-broad `git add -A`; keep them out.
+/audit-*.mjs
+/design-*.mjs
+/probe*.mjs
+/shot.mjs
+/crop.mjs
