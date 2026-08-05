@@ -59,6 +59,17 @@ const nextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+
+  // The team is one page now, not one page per person. These three URLs are live
+  // on production with accumulated equity, so they redirect to the matching
+  // anchor rather than 404. Permanent — the per-person pages are not coming back.
+  async redirects() {
+    return ["alicia-joslin", "gus-saadeh", "ashley-hurtado"].map((slug) => ({
+      source: `/about/${slug}`,
+      destination: `/about/team#${slug}`,
+      permanent: true,
+    }));
+  },
 };
 
 export default nextConfig;

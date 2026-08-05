@@ -72,9 +72,7 @@ export const nav: NavItem[] = [
       { label: "About Us", href: "/about", desc: "Our story & clinical philosophy" },
       { label: "FAQ", href: "/faq", desc: "Answers to common questions" },
       { label: "Blog", href: "/blog", desc: "Recovery news & resources" },
-      { label: "Alicia Joslin", href: "/about/alicia-joslin", desc: "Program Director" },
-      { label: "Gus Saadeh", href: "/about/gus-saadeh", desc: "Director of Operations" },
-      { label: "Ashley Hurtado", href: "/about/ashley-hurtado", desc: "Therapist, AMFT" },
+      { label: "Our Team", href: "/about/team", desc: "Clinical & operations staff" },
     ],
   },
   {

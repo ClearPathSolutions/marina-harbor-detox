@@ -50,7 +50,9 @@ export default function CookieConsent() {
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-3xl rounded-2xl border border-white/10 bg-navy-900/95 p-5 text-sm text-white/80 shadow-lift backdrop-blur-xl sm:inset-x-6 sm:bottom-6 lg:bottom-6"
+      // Sits above MobileCTABar on phones (bottom-0, 65px tall) — at bottom-3 it
+      // covered the Call/Text buttons while the banner was up.
+      className="fixed inset-x-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-[70] mx-auto max-w-3xl rounded-2xl border border-white/10 bg-navy-900/95 p-5 text-sm text-white/80 shadow-lift backdrop-blur-xl sm:inset-x-6 lg:bottom-6"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="leading-relaxed">

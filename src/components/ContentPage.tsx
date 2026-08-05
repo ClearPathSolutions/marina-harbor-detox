@@ -227,20 +227,31 @@ function buildSections(blocks: Block[], heroH1: string): Section[] {
 function Prose({ sections }: { sections: Section[] }) {
   return (
     <>
-      {sections.map((s, i) => (
-        <section
-          key={s.id || `intro-${i}`}
-          id={s.id || undefined}
-          className={
-            s.title
-              ? "scroll-mt-28 [&:not(:first-child)]:mt-14 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-navy-100 [&:not(:first-child)]:pt-10"
-              : "scroll-mt-28"
-          }
-        >
-          {s.title && <h2 className="text-2xl font-bold text-navy-900 sm:text-3xl">{s.title}</h2>}
-          {s.nodes}
-        </section>
-      ))}
+      {sections.map((s, i) => {
+        // Some archived pages carry a heading with no copy under it before the
+        // next heading ("Who We Are & How We Help" on /about). Given the full
+        // rule-plus-padding treatment those render as an empty boxed-off band.
+        // Treat them as a lead-in to the section that follows: keep the heading,
+        // drop the separator and the space it reserves for absent content.
+        const empty = Boolean(s.title) && s.nodes.length === 0;
+        const separated = s.title && !empty;
+        return (
+          <section
+            key={s.id || `intro-${i}`}
+            id={s.id || undefined}
+            className={
+              separated
+                ? "scroll-mt-28 [&:not(:first-child)]:mt-14 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-navy-100 [&:not(:first-child)]:pt-10"
+                : empty
+                  ? "scroll-mt-28 [&:not(:first-child)]:mt-12"
+                  : "scroll-mt-28"
+            }
+          >
+            {s.title && <h2 className="text-2xl font-bold text-navy-900 sm:text-3xl">{s.title}</h2>}
+            {s.nodes}
+          </section>
+        );
+      })}
     </>
   );
 }
@@ -392,6 +403,13 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const isAbout = slugPath === "/about";
   const withForm = isAdmission || isContact;
 
+  // A portrait headshot must never back the hero band: cropping a face to a
+  // wide strip and running white type across it is exactly the framing problem
+  // this pass exists to remove. Staff are presented on /about/team instead,
+  // where the crop is portrait and the face is the subject rather than wallpaper.
+  const isStaffBio = segs[0] === "about" && segs.length > 1;
+  const heroPhoto = isContact || isStaffBio ? null : hero;
+
   const crumbs =
     doc.type === "post"
       ? [{ label: "Blog", href: "/blog" }]
@@ -424,12 +442,35 @@ export default function ContentPage({ doc }: { doc: Doc }) {
       ))}
       <Header />
       <main id="main">
-        {/* Page hero */}
+        {/* Page hero.
+            The page photo lives HERE, as a banner behind the title — it used to
+            sit below as a separate full-width 16:9 slab, which rendered 1336x752
+            on desktop and ate ~75% of the fold on every one of 120 pages before
+            a word of copy. Same photo, a third of the height, and it now does a
+            job (backing the title) instead of being decoration you scroll past. */}
         <section className="relative isolate overflow-hidden bg-navy-900">
-          <div className="absolute inset-0 -z-10 opacity-40">
-            <div className="absolute inset-0 bg-gradient-to-br from-navy-700 via-navy-900 to-navy-950" />
-            <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
-            <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" />
+          <div className="absolute inset-0 -z-10">
+            {heroPhoto ? (
+              <>
+                <Image
+                  src={heroPhoto}
+                  alt=""
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover object-center"
+                />
+                {/* Copy has to stay legible over any photo in the set, so the
+                    scrim is heaviest on the left where the text sits. */}
+                <div className="absolute inset-0 bg-gradient-to-r from-navy-950/92 via-navy-950/75 to-navy-950/50" />
+              </>
+            ) : (
+              <div className="absolute inset-0 opacity-40">
+                <div className="absolute inset-0 bg-gradient-to-br from-navy-700 via-navy-900 to-navy-950" />
+                <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
+                <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" />
+              </div>
+            )}
           </div>
           <div className="container-x py-14 sm:py-20">
             <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs text-white/50" aria-label="Breadcrumb">
@@ -479,20 +520,14 @@ export default function ContentPage({ doc }: { doc: Doc }) {
           </div>
         </section>
 
-        {/* Lead image */}
-        {hero && !isContact && (
-          <div className="container-x -mt-8 sm:-mt-12">
-            <div className="relative aspect-[16/9] overflow-hidden rounded-4xl shadow-card ring-1 ring-navy-900/5">
-              <Image src={hero} alt={doc.h1} fill sizes="(max-width: 1024px) 100vw, 1000px" className="object-cover" priority />
-            </div>
-          </div>
-        )}
-
         {/* Body */}
         {/* Contact's archived prose is just duplicate contact fragments — the structured
             section below carries everything, so its article body is skipped entirely. */}
         {!isContact && (
-        <article className="section">
+        /* Tighter top padding than the default .section: the hero is now a
+           compact banner rather than a 752px photo slab, so the old spacing
+           left an obvious dead gap before the first line of copy. */
+        <article className="section pt-12 sm:pt-14 lg:pt-16">
           <div className="container-x">
             {withForm ? (
               <div className="mx-auto max-w-3xl">

@@ -41,6 +41,13 @@ export default function Clarion() {
   --clarion-chat-header-text: ${BRAND.headerText};
   --clarion-chat-font: ${BRAND.font};
   --clarion-chat-position: ${BRAND.position};
+}
+/* The launcher parks itself at bottom:20px, which on phones lands directly on
+   top of MobileCTABar (the fixed Call/Text bar, 65px tall, lg:hidden) and
+   covers the "Text Us" button. Lift it clear below lg. !important because the
+   widget's own stylesheet loads after this one. */
+@media (max-width: 1023.98px){
+  .clarion-chat{ bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important; }
 }`,
         }}
       />

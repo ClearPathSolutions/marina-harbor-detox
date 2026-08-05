@@ -114,6 +114,46 @@ const HEADSHOTS: Record<string, string> = {
   about__alicia_joslin: "/media/2026/06/MHD-Alicia-Joslin.png",
 };
 
+/**
+ * The team, as one page.
+ *
+ * Each person used to get their own route with their headshot blown up to a
+ * full-width 16:9 band — which cropped 55% off Alicia's portrait and clipped the
+ * top of Gus's head. They are presented together on /about/team now, in a
+ * portrait frame that fits the source photos, and the old per-person URLs
+ * redirect there (see next.config.mjs).
+ *
+ * Content still comes from the same content/pages/about_*.json files, so editing
+ * a bio is unchanged. Order is explicit — seniority, not filename.
+ */
+export type TeamMember = {
+  slug: string;
+  name: string;
+  title: string;
+  photo: string | null;
+  bio: string[];
+};
+
+export const TEAM_SLUGS = ["about__alicia-joslin", "about__gus-saadeh", "about__ashley-hurtado"];
+
+export function teamMembers(): TeamMember[] {
+  const bySlug = new Map(getPages().map((p) => [p.slug, p]));
+  return TEAM_SLUGS.flatMap((slug) => {
+    const doc = bySlug.get(slug);
+    if (!doc) return [];
+    return [
+      {
+        slug: slug.replace(/^about__/, ""),
+        name: doc.h1,
+        title: doc.blocks.find((b) => b.tag === "h3")?.text ?? "",
+        // HEADSHOTS is keyed with underscores; the doc slug uses hyphens.
+        photo: HEADSHOTS[slug.replace(/-/g, "_")] ?? null,
+        bio: doc.blocks.filter((b) => b.tag === "p").map((b) => b.text),
+      },
+    ];
+  });
+}
+
 const photos = approvedPhotos as { name: string; category: string; file: string }[];
 const byCategory = (...cats: string[]) =>
   photos.filter((p) => cats.includes(p.category)).map((p) => p.file);
