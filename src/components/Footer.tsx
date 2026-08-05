@@ -25,7 +25,7 @@ const offerLinks = [
 export default function Footer() {
   return (
     <footer className="bg-navy-950 pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-white/70 lg:pb-0">
-      <div className="container-wide section-sm grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <div className="container-x section-sm grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
         {/* Brand */}
         <div className="sm:col-span-2 lg:col-span-1">
           <Image
@@ -131,7 +131,7 @@ export default function Footer() {
 
       {/* License strip */}
       <div className="border-t border-white/10">
-        <div className="container-wide flex flex-col items-center justify-between gap-4 py-6 text-center text-xs text-white/50 sm:flex-row sm:text-left">
+        <div className="container-x flex flex-col items-center justify-between gap-4 py-6 text-center text-xs text-white/50 sm:flex-row sm:text-left">
           <p>{site.license}</p>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link href="/privacy-policy" className="hover:text-orange-400">

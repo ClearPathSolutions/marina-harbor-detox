@@ -66,7 +66,7 @@ export default function Home() {
             <div className="absolute inset-0 hidden lg:block lg:bg-gradient-to-t lg:from-navy-950/55 lg:via-transparent lg:to-transparent" />
           </div>
 
-          <div className="container-wide flex min-h-[76vh] items-center py-16 sm:min-h-[82vh] sm:py-20">
+          <div className="container-x flex min-h-[76vh] items-center py-16 sm:min-h-[82vh] sm:py-20">
             <div className="max-w-xl [text-shadow:0_2px_16px_rgba(7,15,32,0.65)]">
               <Reveal>
                 <span className="eyebrow !text-orange-200">
@@ -86,7 +86,10 @@ export default function Home() {
                 </p>
               </Reveal>
               <Reveal delay={240}>
-                <div className="mt-7 flex flex-col gap-3 [text-shadow:none] sm:flex-row sm:items-center">
+                {/* No `sm:items-center` here: it stops the row stretching, and
+                    the two buttons then render at different heights (48 vs 50).
+                    Default `stretch` makes a filled and an outline button match. */}
+                <div className="mt-7 flex flex-col gap-3 [text-shadow:none] sm:flex-row">
                   <a href={site.phones.primary.href} className="btn-orange text-base">
                     <Phone className="h-5 w-5" /> Get Help Now
                   </a>
@@ -114,10 +117,14 @@ export default function Home() {
 
         {/* ══ INTRO + STATS ═════════════════════════════════════ */}
         <section className="section">
-          <div className="container-x grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+          {/* items-stretch, not items-center: the stat grid is shorter than the
+              text column, and centring it left large empty bands above and below
+              so the right half read as a failed image. Now the cards divide the
+              full column height. */}
+          <div className="container-x grid gap-12 lg:grid-cols-2 lg:items-stretch lg:gap-16">
             <Reveal>
               <span className="eyebrow">San Francisco Medical Detox &amp; Rehab</span>
-              <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+              <h2 className="mt-3 h-section text-navy-900">
                 Safe, private addiction treatment in the Bay Area
               </h2>
               <p className="mt-5 leading-relaxed text-navy-900/70">
@@ -136,15 +143,18 @@ export default function Home() {
               </Link>
             </Reveal>
 
-            <Reveal delay={120}>
-              <div className="grid grid-cols-2 gap-4 sm:gap-5">
+            <Reveal delay={120} className="lg:h-full">
+              {/* h-full + two equal rows: the cards fill the column instead of
+                  floating in its middle. bg-sand-100 over sand-50 gives the
+                  cards an edge you can actually see against the white section. */}
+              <div className="grid h-full grid-cols-2 gap-4 sm:gap-5 lg:grid-rows-2">
                 {stats.map((s) => (
                   <div
                     key={s.label}
-                    className="rounded-3xl border border-navy-100 bg-sand-50 p-6 text-center shadow-soft"
+                    className="flex flex-col items-center justify-center rounded-3xl border border-navy-100 bg-sand-100 p-6 text-center shadow-soft"
                   >
                     <div className="font-display text-4xl font-extrabold text-navy-700 sm:text-5xl">{s.value}</div>
-                    <div className="mt-2 text-sm text-navy-900/60">{s.label}</div>
+                    <div className="mt-2 text-sm text-navy-900/70">{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -162,19 +172,31 @@ export default function Home() {
                 regulatory organizations.
               </p>
             </Reveal>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-16">
+            {/* Each mark sits in an identical box and is desaturated by default.
+                Rendered at their native proportions in full colour they had
+                wildly different optical weights — NAMI came out 168x64 against
+                LegitScript's 54x64, three times the width and the only saturated
+                blue/yellow on the page, so it dominated a strip whose whole job
+                is to make accreditation read as uniform. The insurance logos were
+                already normalised this way; these were the outlier. */}
+            <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-12">
               {accreditations.map((a) => (
-                <Image
-                  key={a.name}
-                  src={a.src}
-                  alt={a.name}
-                  width={a.w}
-                  height={a.h}
-                  sizes="(max-width: 640px) 150px, 180px"
-                  className="h-14 w-auto object-contain opacity-80 transition-opacity hover:opacity-100 sm:h-16"
-                />
+                <li key={a.name} className="grid h-16 w-[132px] place-items-center sm:w-[148px]">
+                  <Image
+                    src={a.src}
+                    alt={a.name}
+                    width={a.w}
+                    height={a.h}
+                    sizes="148px"
+                    // max-w caps the wide horizontal lockups (NAMI is 330x126)
+                    // so they can't out-weigh the square seals beside them:
+                    // at max-h alone NAMI rendered 147x56 against LegitScript's
+                    // 47x56, nearly three times the area.
+                    className="max-h-14 w-auto max-w-[104px] object-contain opacity-70 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0 sm:max-w-[120px]"
+                  />
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
 
@@ -183,7 +205,7 @@ export default function Home() {
           <div className="container-x">
             <Reveal className="mx-auto max-w-2xl text-center">
               <span className="eyebrow">Comprehensive Care</span>
-              <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+              <h2 className="mt-3 h-section text-navy-900">
                 Addiction treatment programs in San Francisco
               </h2>
               <p className="mt-5 leading-relaxed text-navy-900/70">
@@ -225,7 +247,7 @@ export default function Home() {
           </div>
           <div className="container-x section-sm flex flex-col items-center gap-8 text-center lg:flex-row lg:justify-between lg:text-left">
             <Reveal className="max-w-2xl">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl">Speak with a recovery advocate today</h2>
+              <h2 className="h-section text-white">Speak with a recovery advocate today</h2>
               <p className="mt-3 text-white/75">
                 If you or a loved one are ready to take the first step, our compassionate admissions team is available
                 24/7 to answer your questions and verify your insurance.
@@ -246,7 +268,7 @@ export default function Home() {
         <section className="section">
           <div className="container-x grid gap-12 lg:grid-cols-2 lg:items-stretch lg:gap-16">
             <Reveal className="order-2 lg:order-1 lg:h-full">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-4xl shadow-card lg:aspect-auto lg:h-full">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-card lg:aspect-auto lg:h-full">
                 <Image
                   src="/images/photos/lounge-sofa.jpg"
                   alt="Private living lounge with Marina District views at Marina Harbor Detox"
@@ -260,7 +282,7 @@ export default function Home() {
             <div className="order-1 lg:order-2">
               <Reveal>
                 <span className="eyebrow">Treatment That Cares About Outcomes</span>
-                <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+                <h2 className="mt-3 h-section text-navy-900">
                   Evidence-based therapies &amp; luxury amenities
                 </h2>
                 <p className="mt-5 leading-relaxed text-navy-900/70">
@@ -300,10 +322,10 @@ export default function Home() {
 
         {/* ══ FACILITY GALLERY ══════════════════════════════════ */}
         <section className="bg-sand-50 section">
-          <div className="container-wide">
+          <div className="container-x">
             <Reveal className="mx-auto max-w-2xl text-center">
               <span className="eyebrow">Explore Our Space</span>
-              <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+              <h2 className="mt-3 h-section text-navy-900">
                 Tour our San Francisco facility
               </h2>
               <p className="mt-5 leading-relaxed text-navy-900/70">
@@ -325,7 +347,7 @@ export default function Home() {
         {/* ══ INSURANCE ═════════════════════════════════════════ */}
         <section className="section">
           <div className="container-x">
-            <div className="overflow-hidden rounded-4xl bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 shadow-card">
+            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 shadow-card">
               <div className="grid gap-8 p-8 sm:p-12 lg:grid-cols-2 lg:items-center lg:gap-12">
                 <Reveal>
                   <span className="eyebrow text-gold-400">Insurance &amp; Admissions</span>
@@ -340,26 +362,32 @@ export default function Home() {
                   </Link>
                 </Reveal>
                 <Reveal delay={120}>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {/* 7 logos + the coverage note = 8 cells, which fills a 2- or
+                      4-column grid exactly. At 3 columns the 7th logo was an
+                      orphan on its own row and the note sat in the hole beside
+                      it. Folding the note into the grid as the 8th tile closes
+                      the gap and gives it somewhere deliberate to live. */}
+                  <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     {insuranceLogos.map((logo) => (
-                      <div
+                      <li
                         key={logo.name}
-                        className="grid h-16 place-items-center rounded-2xl border border-white/10 bg-white/5 px-4"
+                        className="grid h-16 place-items-center rounded-2xl border border-white/10 bg-white/5 px-3"
                       >
                         <Image
                           src={logo.src}
                           alt={`${logo.name} insurance accepted`}
                           width={logo.w}
                           height={logo.h}
-                          sizes="170px"
-                          className="max-h-8 w-auto object-contain opacity-90 [filter:brightness(0)_invert(1)]"
+                          sizes="150px"
+                          className="max-h-7 w-auto max-w-full object-contain opacity-90 [filter:brightness(0)_invert(1)]"
                         />
-                      </div>
+                      </li>
                     ))}
-                  </div>
-                  <p className="mt-4 text-center text-xs text-white/50 sm:text-left">
-                    …and many more. Coverage varies by plan.
-                  </p>
+                    <li className="grid h-16 place-items-center px-2 text-center text-xs leading-snug text-white/60">
+                      …and many more
+                    </li>
+                  </ul>
+                  <p className="mt-4 text-xs text-white/50">Coverage varies by plan.</p>
                 </Reveal>
               </div>
             </div>
@@ -371,7 +399,7 @@ export default function Home() {
           <div className="container-x grid gap-12 lg:grid-cols-2 lg:items-stretch lg:gap-16">
             <Reveal>
               <span className="eyebrow">Areas We Serve</span>
-              <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+              <h2 className="mt-3 h-section text-navy-900">
                 Serving San Francisco, the Bay Area &amp; beyond
               </h2>
               <p className="mt-5 leading-relaxed text-navy-900/70">
@@ -391,7 +419,7 @@ export default function Home() {
               </div>
             </Reveal>
             <Reveal delay={120} className="lg:h-full">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-4xl shadow-card lg:aspect-auto lg:h-full">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-card lg:aspect-auto lg:h-full">
                 <Image
                   src="/images/photos/aerial-bridge-01.jpg"
                   alt="The Golden Gate Bridge seen across the marina from Marina Harbor Detox"
@@ -413,7 +441,7 @@ export default function Home() {
             <Reveal className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-xl">
                 <span className="eyebrow">The Latest</span>
-                <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">
+                <h2 className="mt-3 h-section text-navy-900">
                   Recovery news &amp; resources
                 </h2>
                 <p className="mt-4 text-navy-900/70">
@@ -485,9 +513,7 @@ export default function Home() {
           </div>
           <div className="container-x section text-center">
             <Reveal className="mx-auto max-w-2xl">
-              <h2 className="text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
-                Escape the chaos of addiction today
-              </h2>
+              <h2 className="h-section text-balance text-white">Escape the chaos of addiction today</h2>
               <p className="mt-6 leading-relaxed text-white/80">
                 No two clients are alike. We offer each person a unique experience that fits their individual needs —
                 a safe, comfortable place to heal the core issues behind substance use. Our admissions coordinators

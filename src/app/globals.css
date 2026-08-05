@@ -25,7 +25,13 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-display;
-    text-wrap: balance;
+    /* `pretty` avoids a short last line without re-flowing the whole heading.
+       `balance` used to be global, which is right for a short centred heading
+       and wrong for a left-aligned multi-line h1 — it broke the homepage hero
+       as "Premier Drug & / Alcohol Rehab / in San Francisco", stranding a
+       preposition at the head of the last line. Opt into balance per-heading
+       with `text-balance` where the heading is centred and under ~8 words. */
+    text-wrap: pretty;
   }
 
   ::selection {
@@ -38,17 +44,33 @@
 }
 
 @layer components {
+  /* The single page container. `xl:px-12` keeps content off the window edge on
+     a 1440 laptop, where max-w-content (1400) leaves only a 20px outer margin. */
   .container-x {
-    @apply mx-auto w-full max-w-content px-5 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-content px-5 sm:px-6 lg:px-8 xl:px-12;
   }
 
-  .container-wide {
-    @apply mx-auto w-full max-w-wide px-5 sm:px-6 lg:px-8;
+  /* The reading frame: page-hero content and article grids both sit in this, so
+     a title and its body copy share a left edge. Left-aligned, not centred —
+     centring the article grid inside the container was what pushed body copy to
+     x=224 while its own h1 stayed at x=52. */
+  .container-article {
+    @apply w-full max-w-article;
   }
 
+  /* Prose with no sidebar beside it — same measure as the sidebar branch. */
+  .prose-col {
+    @apply w-full max-w-prose;
+  }
+
+  /* `border border-transparent` is load-bearing: without it the outline
+     variants below are 2px taller than the filled ones, because their border
+     adds to the same padding box. A filled and an outline button sitting side
+     by side then differ in height wherever the flex row doesn't stretch them. */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
-      tracking-wide transition-all duration-200 focus-visible:ring-2 focus-visible:ring-offset-2;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-transparent px-6 py-3
+      text-sm font-semibold tracking-wide transition-all duration-200 focus-visible:ring-2
+      focus-visible:ring-offset-2;
   }
 
   /* Golden Gate orange — the primary call-to-action */
@@ -74,6 +96,28 @@
 
   .eyebrow {
     @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-orange-600;
+  }
+
+  /* ── Heading scale ────────────────────────────────────────────────────────
+     One size per level, so a section heading doesn't change size depending on
+     which component rendered it. The homepage previously carried THREE h2
+     sizes (30 / 36 / 48): section headings at 36, the navy advocate band at 30,
+     and the closing CTA at 48.
+       .h-page     page titles (h1) in a page hero
+       .h-section  major section headings (h2) — always this, everywhere
+       .h-sub      sub-headings inside a section (h3) */
+  .h-page {
+    @apply text-3xl font-bold leading-tight sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1];
+  }
+
+  /* Size/weight only — colour stays with the caller, since these headings sit
+     on white, on sand and on navy. */
+  .h-section {
+    @apply text-3xl font-bold leading-tight sm:text-4xl;
+  }
+
+  .h-sub {
+    @apply text-xl font-bold sm:text-2xl;
   }
 
   /* Vertical rhythm — two steps on one 16px scale. Everything that sets its own

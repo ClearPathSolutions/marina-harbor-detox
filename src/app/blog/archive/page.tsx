@@ -49,7 +49,7 @@ export default function BlogArchive() {
           <div className="container-x">
             <Link
               href={fHref}
-              className="group grid overflow-hidden rounded-4xl border border-navy-100 bg-white shadow-soft transition-shadow hover:shadow-card lg:grid-cols-2"
+              className="group grid overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-soft transition-shadow hover:shadow-card lg:grid-cols-2"
             >
               <div className="relative aspect-[16/10] lg:aspect-auto">
                 {fImg && (
@@ -73,7 +73,7 @@ export default function BlogArchive() {
 
         {/* Grid */}
         <section className="bg-sand-50 section">
-          <div className="container-wide">
+          <div className="container-x">
             {/* Compact horizontal cards on phones (keeps the long list scannable),
                 full image cards on sm+ */}
             <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">

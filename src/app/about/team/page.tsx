@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileCTABar from "@/components/MobileCTABar";
 import CTASection from "@/components/CTASection";
+import PageHero from "@/components/PageHero";
 import { ArrowRight } from "@/components/Icons";
 import { teamMembers, type TeamMember } from "@/lib/content";
 import { bioParagraphs, fetchStaff, nameKey } from "@/lib/staff";
@@ -58,39 +59,27 @@ export default async function TeamPage() {
     <>
       <Header />
       <main id="main">
-        <section className="relative isolate overflow-hidden bg-navy-900">
-          <div className="absolute inset-0 -z-10 opacity-40">
-            <div className="absolute inset-0 bg-gradient-to-br from-navy-700 via-navy-900 to-navy-950" />
-            <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
-            <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" />
-          </div>
-          <div className="container-x section-sm">
-            <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs text-white/50" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-orange-300">Home</Link>
-              <span aria-hidden>/</span>
-              <Link href="/about" className="hover:text-orange-300">About</Link>
-            </nav>
-            <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
-              Our team
-            </h1>
-            <p className="mt-5 max-w-2xl leading-relaxed text-white/75">
-              A small, senior team — you will meet the same faces throughout your stay in our
-              six-bed San Francisco facility.
-            </p>
-          </div>
-        </section>
+        <PageHero
+          title="Our team"
+          crumbs={[{ label: "About", href: "/about" }]}
+          lead="A small, senior team — you will meet the same faces throughout your stay in our six-bed San Francisco facility."
+        />
 
         <section className="section pt-12 sm:pt-16 lg:pt-20">
           <div className="container-x">
             {/* One row per person: a portrait-framed photo beside the bio. Bios
                 run from two to five paragraphs, which a card grid cannot balance
-                — rows absorb the difference without leaving ragged whitespace. */}
-            <div className="mx-auto max-w-[64rem] divide-y divide-navy-100">
+                — rows absorb the difference without leaving ragged whitespace.
+                `container-article` is the same left-aligned frame PageHero uses,
+                so these rows start on the same edge as the page title. */}
+            <div className="container-article divide-y divide-navy-100">
               {team.map((m, i) => (
                 <article
                   key={m.slug}
                   id={m.slug}
-                  className={`grid scroll-mt-28 gap-8 sm:grid-cols-[13rem_minmax(0,1fr)] sm:gap-10 ${
+                  // The bio column is capped at the same ~64-character measure
+                  // the article template uses; unconstrained it ran to 776px.
+                  className={`grid scroll-mt-28 gap-8 sm:grid-cols-[13rem_minmax(0,39rem)] sm:gap-10 ${
                     i === 0 ? "pb-12" : "py-12"
                   }`}
                 >
@@ -140,7 +129,7 @@ export default async function TeamPage() {
               ))}
             </div>
 
-            <div className="mx-auto mt-14 max-w-[64rem] border-t border-navy-100 pt-8">
+            <div className="container-article mt-14 border-t border-navy-100 pt-8">
               <Link href="/about" className="inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
                 <ArrowRight className="h-4 w-4 rotate-180" /> Back to About
               </Link>

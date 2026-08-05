@@ -8,6 +8,8 @@ import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
 import ConsentMap from "./ConsentMap";
 import TeamPreview from "./TeamPreview";
+import PageHero from "./PageHero";
+import FaqAccordion, { buildFaq } from "./FaqAccordion";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
 import {
   type Block,
@@ -19,6 +21,7 @@ import {
   relatedLinks,
 } from "@/lib/content";
 import { site } from "@/lib/site";
+import { createLinker, type Linker } from "@/lib/prose";
 import {
   blogPostingSchema,
   breadcrumbSchema,
@@ -172,7 +175,7 @@ function normalizeHeadings(blocks: Block[], heroH1: string): Block[] {
   });
 }
 
-function buildSections(blocks: Block[], heroH1: string): Section[] {
+function buildSections(blocks: Block[], heroH1: string, linkify: Linker = (t) => t): Section[] {
   const isHeadingH1 = (b: Block) => b.tag === "h1" && norm(b.text) !== norm(heroH1);
   const hasH2 = blocks.some((b) => b.tag === "h2" || isHeadingH1(b));
   const splitTag: Block["tag"] = hasH2 ? "h2" : "h3";
@@ -272,8 +275,10 @@ function buildSections(blocks: Block[], heroH1: string): Section[] {
       );
     else
       push(
-        <p key={key} className="mt-5 break-words leading-[1.8] text-navy-900/75">
-          {b.text}
+        // mt-6 rather than mt-5: at 1.8 leading a 20px paragraph gap is on the
+        // tight side, and 24px separates blocks without opening the column up.
+        <p key={key} className="mt-6 break-words leading-[1.8] text-navy-900/75">
+          {linkify(b.text)}
         </p>
       );
   });
@@ -364,7 +369,7 @@ function MobileToc({ sections }: { sections: Section[] }) {
 function SidebarCTA() {
   return (
     <aside>
-      <div className="overflow-hidden rounded-4xl border border-navy-100 bg-white shadow-card">
+      <div className="overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-card">
         <div className="bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 p-6 text-white">
           <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-400">
             <Clock className="h-4 w-4" /> Available 24/7
@@ -456,12 +461,14 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const sections = buildSections(
     normalizeHeadings(dropTrailingHeadings(demoteSentenceHeadings(bodyBlocks)), doc.h1),
     doc.h1,
+    createLinker(slugPath),
   );
 
   const isFacility = slugPath === "/facility";
   const isAdmission = slugPath === "/admission";
   const isContact = slugPath === "/contact-location";
   const isAbout = slugPath === "/about";
+  const isFaq = slugPath === "/faq";
   const withForm = isAdmission || isContact;
 
   // A portrait headshot must never back the hero band: cropping a face to a
@@ -508,78 +515,49 @@ export default function ContentPage({ doc }: { doc: Doc }) {
             sit below as a separate full-width 16:9 slab, which rendered 1336x752
             on desktop and ate ~75% of the fold on every one of 120 pages before
             a word of copy. Same photo, a third of the height, and it now does a
-            job (backing the title) instead of being decoration you scroll past. */}
-        <section className="relative isolate overflow-hidden bg-navy-900">
-          <div className="absolute inset-0 -z-10">
-            {heroPhoto ? (
-              <>
-                <Image
-                  src={heroPhoto}
-                  alt=""
-                  fill
-                  priority
-                  sizes="100vw"
-                  className="object-cover object-center"
-                />
-                {/* Copy has to stay legible over any photo in the set, so the
-                    scrim is heaviest on the left where the text sits. */}
-                <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/75 to-navy-950/50" />
-              </>
-            ) : (
-              <div className="absolute inset-0 opacity-40">
-                <div className="absolute inset-0 bg-gradient-to-br from-navy-700 via-navy-900 to-navy-950" />
-                <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-orange-500/20 blur-3xl" />
-                <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" />
-              </div>
-            )}
-          </div>
-          <div className="container-x section-sm">
-            <nav className="mb-5 flex flex-wrap items-center gap-2 text-xs text-white/50" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-orange-300">Home</Link>
-              {crumbs.map((c) => (
-                <span key={c.href} className="flex items-center gap-2">
-                  <span aria-hidden>/</span>
-                  <Link href={c.href} className="hover:text-orange-300">{c.label}</Link>
-                </span>
-              ))}
-            </nav>
-
-            {doc.type === "post" && <span className="eyebrow mb-3 text-gold-400">Recovery Blog</span>}
-            <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
-              {doc.h1}
-            </h1>
-            {date && (
-              <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/70">
-                <span className="inline-flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-gold-400" /> {date.label}
-                </span>
-                <span aria-hidden className="text-white/30">·</span>
-                <span>{rt} min read</span>
-                <span aria-hidden className="text-white/30">·</span>
-                {/* Byline is contested (site.ts credits a named author, this
-                    hardcodes an editorial entity) — blocked on D-3 / MH-15. */}
-                <span>Marina Harbor Detox Clinical Team</span>
-              </p>
-            )}
-
-            {/* MH-13 — reviewer / last-updated byline, lifted out of the body
-                copy where the extractor had left it as stray list items. The
-                reviewer name is not yet linked: her bio page depends on D-5 /
-                MH-12. */}
-            {(reviewedBy || lastUpdated) && (
-              <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/70">
-                {reviewedBy && (
+            job (backing the title) instead of being decoration you scroll past.
+            The band itself is components/PageHero, shared with /about/team and
+            /blog so all three agree on alignment, scrim and the no-photo case. */}
+        <PageHero
+          title={doc.h1}
+          crumbs={crumbs}
+          photo={heroPhoto}
+          eyebrow={doc.type === "post" ? "Recovery Blog" : undefined}
+          meta={
+            <>
+              {date && (
+                <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/70">
                   <span className="inline-flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-gold-400" />
-                    Medically reviewed by <strong className="font-semibold text-white/90">{reviewedBy}</strong>
+                    <Clock className="h-4 w-4 text-gold-400" /> {date.label}
                   </span>
-                )}
-                {reviewedBy && lastUpdated && <span aria-hidden className="text-white/30">·</span>}
-                {lastUpdated && <span>Last updated {lastUpdated}</span>}
-              </p>
-            )}
-          </div>
-        </section>
+                  <span aria-hidden className="text-white/30">·</span>
+                  <span>{rt} min read</span>
+                  <span aria-hidden className="text-white/30">·</span>
+                  {/* Byline is contested (site.ts credits a named author, this
+                      hardcodes an editorial entity) — blocked on D-3 / MH-15. */}
+                  <span>Marina Harbor Detox Clinical Team</span>
+                </p>
+              )}
+
+              {/* MH-13 — reviewer / last-updated byline, lifted out of the body
+                  copy where the extractor had left it as stray list items. The
+                  reviewer name is not yet linked: her bio page depends on D-5 /
+                  MH-12. */}
+              {(reviewedBy || lastUpdated) && (
+                <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/70">
+                  {reviewedBy && (
+                    <span className="inline-flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-gold-400" />
+                      Medically reviewed by <strong className="font-semibold text-white/90">{reviewedBy}</strong>
+                    </span>
+                  )}
+                  {reviewedBy && lastUpdated && <span aria-hidden className="text-white/30">·</span>}
+                  {lastUpdated && <span>Last updated {lastUpdated}</span>}
+                </p>
+              )}
+            </>
+          }
+        />
 
         {/* Body */}
         {/* Contact's archived prose is just duplicate contact fragments — the structured
@@ -590,22 +568,38 @@ export default function ContentPage({ doc }: { doc: Doc }) {
            left an obvious dead gap before the first line of copy. */
         <article className="section pt-12 sm:pt-14 lg:pt-16">
           <div className="container-x">
+            {/* `container-article`, NOT `mx-auto max-w-…`: this frame is the same
+                one PageHero lays its title out in, and it is left-aligned. When
+                it was centred, body copy started at x=224 while the h1 above it
+                started at x=52 — a page title and its own first paragraph shared
+                no edge. */}
             {withForm ? (
-              <div className="mx-auto max-w-3xl">
+              <div className="container-article">
                 {doc.metaDescription && (
-                  <p className="mb-6 break-words text-lg leading-relaxed text-navy-900/80">{doc.metaDescription}</p>
+                  <p className="prose-col mb-6 break-words text-lg leading-relaxed text-navy-900/80">{doc.metaDescription}</p>
                 )}
-                <MobileToc sections={sections} />
-                <Prose sections={sections} />
+                {/* prose-col keeps the measure at ~64 characters. Unconstrained
+                    in a 3xl wrapper this branch ran to 80 cpl, well past
+                    comfortable, while the sidebar branch sat at 64. */}
+                <div className="prose-col">
+                  <MobileToc sections={sections} />
+                  <Prose sections={sections} />
+                </div>
               </div>
             ) : (
-              <div className="mx-auto grid max-w-[62rem] gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-12">
+              <div className="container-article grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-12">
                 <div className="min-w-0">
                   {doc.metaDescription && doc.type !== "post" && (
                     <p className="mb-6 break-words text-lg leading-relaxed text-navy-900/80">{doc.metaDescription}</p>
                   )}
-                  <MobileToc sections={sections} />
-                  <Prose sections={sections} />
+                  {isFaq ? (
+                    <FaqAccordion items={buildFaq(bodyBlocks)} />
+                  ) : (
+                    <>
+                      <MobileToc sections={sections} />
+                      <Prose sections={sections} />
+                    </>
+                  )}
 
                   {/* The archived "Dedicated Team" section listed two people as
                       plain text and predated Ashley Hurtado. Render the live
@@ -635,10 +629,10 @@ export default function ContentPage({ doc }: { doc: Doc }) {
         {/* Facility gallery */}
         {isFacility && (
           <section className="bg-sand-50 section">
-            <div className="container-wide">
+            <div className="container-x">
               <div className="mx-auto max-w-2xl text-center">
                 <span className="eyebrow">Explore Our Space</span>
-                <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">A closer look inside</h2>
+                <h2 className="mt-3 h-section text-navy-900">A closer look inside</h2>
                 <p className="mt-4 leading-relaxed text-navy-900/70">
                   A sophisticated, 6-bed boutique setting in San Francisco&rsquo;s iconic Marina District, where
                   healing begins with peace and privacy.
@@ -657,7 +651,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
             <div className="container-x grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
               <div>
                 <span className="eyebrow">Insurance &amp; Admissions</span>
-                <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">Verify your benefits in minutes</h2>
+                <h2 className="mt-3 h-section text-navy-900">Verify your benefits in minutes</h2>
                 <p className="mt-5 leading-relaxed text-navy-900/70">
                   Financial barriers should never stand between you and life-saving treatment. Share a few details and
                   our admissions team will confidentially review your coverage — with no obligation. Prefer to talk?
@@ -687,7 +681,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
             <div className="container-x grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
               <div>
                 <span className="eyebrow">Get In Touch</span>
-                <h2 className="mt-3 text-3xl font-bold text-navy-900 sm:text-4xl">We&rsquo;re here around the clock</h2>
+                <h2 className="mt-3 h-section text-navy-900">We&rsquo;re here around the clock</h2>
                 <ul className="mt-6 grid gap-5 text-navy-900/80">
                   <li className="flex items-start gap-3">
                     <Phone className="mt-0.5 h-5 w-5 shrink-0 text-orange-500" />
@@ -701,7 +695,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                     <Clock className="mt-0.5 h-5 w-5 shrink-0 text-orange-500" /> Open 24 hours · 7 days a week
                   </li>
                 </ul>
-                <div className="mt-8 overflow-hidden rounded-4xl border border-navy-100 bg-sand-100 shadow-soft">
+                <div className="mt-8 overflow-hidden rounded-3xl border border-navy-100 bg-sand-100 shadow-soft">
                   <ConsentMap query={mapsQuery} />
                 </div>
                 <a

@@ -48,6 +48,15 @@ export default function Clarion() {
    widget's own stylesheet loads after this one. */
 @media (max-width: 1023.98px){
   .clarion-chat{ bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important; }
+}
+/* While the cookie banner is up, the launcher has nowhere to go on a phone:
+   the banner occupies 4.75rem to ~17rem from the bottom and the CTA bar owns
+   everything below it, so the lift above dropped the launcher inside the
+   banner. The banner is a first-load, one-time decision — let it own that
+   moment and bring the launcher back the instant the choice is made.
+   html[data-consent-banner] is set by components/CookieConsent.tsx. */
+@media (max-width: 1023.98px){
+  html[data-consent-banner] .clarion-chat{ display: none !important; }
 }`,
         }}
       />

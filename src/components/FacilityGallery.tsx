@@ -44,7 +44,16 @@ export default function FacilityGallery() {
             }`}
             aria-label={`View photo: ${photo.alt}`}
           >
-            <div className={`relative ${i === 0 ? "aspect-square md:aspect-[4/3.4]" : "aspect-square md:aspect-[4/3]"}`}>
+            {/* The lead tile fills its 2x2 span (`md:h-full`) rather than
+                carrying its own aspect ratio. A hardcoded ratio can only match
+                the height of the two 4:3 rows beside it at one exact column
+                width; letting the grid size it keeps the edges flush at every
+                breakpoint. */}
+            <div
+              className={`relative ${
+                i === 0 ? "aspect-square md:aspect-auto md:h-full" : "aspect-square md:aspect-[4/3]"
+              }`}
+            >
               <Image
                 src={photo.src}
                 alt={photo.alt}

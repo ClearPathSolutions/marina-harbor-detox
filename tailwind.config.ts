@@ -73,8 +73,18 @@ const config: Config = {
         "4xl": "2rem",
       },
       maxWidth: {
+        // ONE page container. There used to be a second, wider token (1560) and
+        // sections picked between them, which put the header/hero left edge at
+        // x=32 and every other section at x=52 on a 1440 viewport — a 20px
+        // stagger, too small to read as intentional and too big to look aligned.
         content: "1400px",
-        wide: "1560px",
+        // The reading frame inside the container: article grid (prose + sidebar)
+        // and every page-hero's inner content share it, so a page title and the
+        // copy beneath it sit on the same left edge.
+        article: "62rem",
+        // Prose on its own, with no sidebar beside it. Keeps the measure at the
+        // same ~64 characters the sidebar branch gets instead of running to 80.
+        prose: "39rem",
       },
       keyframes: {
         "fade-up": {

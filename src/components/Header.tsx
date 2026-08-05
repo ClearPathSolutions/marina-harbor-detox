@@ -83,7 +83,7 @@ export default function Header() {
     <>
       {/* ── Utility bar ─────────────────────────────────────────── */}
       <div className="hidden bg-navy-950 text-white/80 md:block">
-        <div className="container-wide flex h-9 items-center justify-between text-xs">
+        <div className="container-x flex h-9 items-center justify-between text-xs">
           <p className="tracking-wide">
             <span className="text-gold-400">Accredited</span> Medical Detox &amp; Residential Rehab · San Francisco, CA
           </p>
@@ -108,7 +108,7 @@ export default function Header() {
           scrolled ? "shadow-lift" : ""
         }`}
       >
-        <div className="container-wide flex items-center justify-between gap-4 py-3">
+        <div className="container-x flex items-center justify-between gap-3 py-3">
           {/* Logo */}
           <Link href="/" className="flex shrink-0 items-center" aria-label={`${site.name} home`}>
             <Image
@@ -123,12 +123,18 @@ export default function Header() {
           </Link>
 
           {/* Desktop nav (shows at xl, where all 7 items + CTAs fit on one line; below that → hamburger) */}
-          <nav className="hidden items-center gap-0.5 xl:flex" aria-label="Primary">
+          {/* Gaps and padding here are tuned to fit 7 groups + the phone block +
+              the Verify button on ONE line inside `container-x`. The header used
+              to sit in a wider container than the page content, which put the
+              logo on a different left edge from every heading below it; sharing
+              the container costs ~70px of nav width, which is what these
+              tightened values buy back. Verified single-line at 1280/1366/1440. */}
+          <nav className="hidden items-center gap-0 xl:flex" aria-label="Primary">
             {nav.map((item) => (
               <div key={item.label} className="group relative">
                 <Link
                   href={item.href}
-                  className="flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+                  className="flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-sm font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   {item.label}
                   {item.children && (
@@ -138,17 +144,20 @@ export default function Header() {
 
                 {item.children && (
                   <div className="invisible absolute left-1/2 top-full z-50 w-[min(92vw,26rem)] -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                    <div className="grid grid-cols-1 gap-1 rounded-2xl border border-navy-100 bg-white p-3 shadow-lift sm:grid-cols-2">
+                    {/* Uniform single-line rows. Each row used to render an
+                        optional description line, and only 7 of 32 child links
+                        supplied one — so a one-line and a three-line item shared
+                        a row and the panel came out ragged. Dropping the
+                        descriptions makes every row the same height and the
+                        14-item menu far quicker to scan. */}
+                    <div className="grid grid-cols-1 gap-0.5 rounded-2xl border border-navy-100 bg-white p-3 shadow-lift sm:grid-cols-2">
                       {item.children.map((child) => (
                         <Link
                           key={child.label}
                           href={child.href}
-                          className="rounded-xl px-3 py-2 transition-colors hover:bg-sand-50"
+                          className="rounded-xl px-3 py-2 text-sm font-medium text-navy-900 transition-colors hover:bg-sand-50 hover:text-orange-700"
                         >
-                          <span className="block text-sm font-semibold text-navy-900">{child.label}</span>
-                          {child.desc && (
-                            <span className="mt-0.5 block text-xs text-navy-900/55">{child.desc}</span>
-                          )}
+                          {child.label}
                         </Link>
                       ))}
                     </div>
@@ -158,20 +167,31 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* Desktop CTAs */}
-          <div className="hidden items-center gap-3 xl:flex">
-            <a href={site.phones.primary.href} className="flex items-center gap-2 text-sm font-semibold text-white">
+          {/* Desktop CTAs.
+              The spelled-out number appears from 2xl and is an icon-only call
+              button between xl and 2xl. The full row — 171px logo + 739px of nav
+              + a 335px CTA block — needs ~1270px of inner width, and at 1280 the
+              container only has 1184. It used to "fit" by letting the nav
+              compress 71px into the CTA block, which collides the labels with
+              their chevrons. Dropping the number for that one band costs the
+              least: the number is still one tap away, and the nav never squashes. */}
+          <div className="hidden items-center gap-2.5 xl:flex">
+            <a
+              href={site.phones.primary.href}
+              aria-label={`Call ${site.phones.primary.label}, available 24/7`}
+              className="flex items-center gap-2 text-sm font-semibold text-white"
+            >
               <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-gold-400">
                 <Phone className="h-4 w-4" />
               </span>
-              <span className="whitespace-nowrap leading-tight">
+              <span className="hidden whitespace-nowrap leading-tight 2xl:block">
                 <span className="block text-[10px] font-medium uppercase tracking-wider text-white/50">
                   Call 24/7
                 </span>
                 {site.phones.primary.label}
               </span>
             </a>
-            <Link href="/admission#verify" className="btn-orange">
+            <Link href="/admission#verify" className="btn-orange whitespace-nowrap px-5">
               Verify Insurance
             </Link>
           </div>

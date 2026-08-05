@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import MobileCTABar from "@/components/MobileCTABar";
 import CTASection from "@/components/CTASection";
 import ClarionBlog from "@/components/ClarionBlog";
+import PageHero from "@/components/PageHero";
 import { ArrowRight } from "@/components/Icons";
 
 export const metadata: Metadata = {
@@ -20,22 +21,16 @@ export default function BlogIndex() {
     <>
       <Header />
       <main id="main">
-        {/* Header band */}
-        <section className="bg-navy-900">
-          <div className="container-x section-sm text-center">
-            <span className="eyebrow text-gold-400">The Latest</span>
-            <h1 className="mt-3 text-3xl font-bold leading-tight text-white sm:text-4xl sm:leading-[1.15] lg:text-5xl lg:leading-[1.1]">
-              Recovery News &amp; Resources
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-white/70">
-              Insights on addiction, detox, and lasting recovery from our clinical team.
-            </p>
-          </div>
-        </section>
+        <PageHero
+          title="Recovery News & Resources"
+          eyebrow="The Latest"
+          lead="Insights on addiction, detox, and lasting recovery from our clinical team."
+          align="center"
+        />
 
         {/* Clarion-managed posts render here */}
         <section className="section">
-          <div className="container-wide">
+          <div className="container-x">
             <ClarionBlog />
 
             {/* Link to the legacy WordPress article library, still live at its

@@ -20,6 +20,14 @@ export function Phone(props: IconProps) {
   );
 }
 
+export function Star(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M12 2.75l2.9 5.88 6.5.95-4.7 4.58 1.11 6.47L12 17.56l-5.81 3.07 1.11-6.47-4.7-4.58 6.5-.95L12 2.75z" />
+    </svg>
+  );
+}
+
 export function Menu(props: IconProps) {
   return (
     <svg {...base} {...props}>

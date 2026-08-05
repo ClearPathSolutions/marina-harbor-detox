@@ -164,7 +164,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         role="status"
         aria-live="polite"
         tabIndex={-1}
-        className="rounded-4xl border border-navy-100 bg-white p-8 text-center shadow-card outline-none sm:p-10"
+        className="rounded-3xl border border-navy-100 bg-white p-8 text-center shadow-card outline-none sm:p-10"
       >
         <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-orange-500 text-white">
           <Check className="h-7 w-7" />
@@ -210,7 +210,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         noValidate
         // Captured via window.ClarionForms.submit() in onSubmit (NOT the auto-wire
         // data-clarion-form attribute, which lets the native submit reload the page).
-        className="min-w-0 rounded-4xl border border-navy-100 bg-white p-6 shadow-card sm:p-8"
+        className="min-w-0 rounded-3xl border border-navy-100 bg-white p-6 shadow-card sm:p-8"
       >
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
           <Shield className="h-4 w-4" /> Verify your coverage
@@ -315,7 +315,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
 
   // ── Contact form (Clarion + /api/lead) ──────────────────────────────────────
   return (
-    <form onSubmit={onSubmit} noValidate className="min-w-0 rounded-4xl border border-navy-100 bg-white p-6 shadow-card sm:p-8">
+    <form onSubmit={onSubmit} noValidate className="min-w-0 rounded-3xl border border-navy-100 bg-white p-6 shadow-card sm:p-8">
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
         <Shield className="h-4 w-4" /> Send us a message
       </div>

@@ -61,7 +61,7 @@ export const insuranceLogos = [
   { name: "Beacon", src: "/images/insurance/beacon.png", w: 160, h: 80 },
 ] as const;
 
-export type NavChild = { label: string; href: string; desc?: string };
+export type NavChild = { label: string; href: string };
 export type NavItem = { label: string; href: string; children?: NavChild[] };
 
 export const nav: NavItem[] = [
@@ -69,33 +69,33 @@ export const nav: NavItem[] = [
     label: "About",
     href: "/about",
     children: [
-      { label: "About Us", href: "/about", desc: "Our story & clinical philosophy" },
-      { label: "FAQ", href: "/faq", desc: "Answers to common questions" },
-      { label: "Blog", href: "/blog", desc: "Recovery news & resources" },
-      { label: "Our Team", href: "/about/team", desc: "Clinical & operations staff" },
+      { label: "About Us", href: "/about" },
+      { label: "FAQ", href: "/faq" },
+      { label: "Blog", href: "/blog" },
+      { label: "Our Team", href: "/about/team" },
     ],
   },
   {
     label: "Who We Help",
     href: "/first-responders",
     children: [
-      { label: "First Responders", href: "/first-responders", desc: "Specialized care for first responders" },
-      { label: "Professionals", href: "/professionals", desc: "Discreet care for executives" },
-      { label: "Men", href: "/men", desc: "Treatment designed for men" },
-      { label: "Women", href: "/women", desc: "Treatment designed for women" },
-      { label: "Young Adults", href: "/young-adults", desc: "Care for young adults" },
-      { label: "College Students", href: "/college-students", desc: "Support for students in recovery" },
+      { label: "First Responders", href: "/first-responders" },
+      { label: "Professionals", href: "/professionals" },
+      { label: "Men", href: "/men" },
+      { label: "Women", href: "/women" },
+      { label: "Young Adults", href: "/young-adults" },
+      { label: "College Students", href: "/college-students" },
     ],
   },
   {
     label: "What We Offer",
     href: "/what-we-offer",
     children: [
-      { label: "Medical Detox", href: "/what-we-offer/detox-san-francisco", desc: "24/7 medically supervised detox" },
-      { label: "Residential Inpatient", href: "/what-we-offer/inpatient-rehab-san-francisco", desc: "Live-in residential rehab" },
-      { label: "Dual Diagnosis", href: "/what-we-offer/dual-diagnosis", desc: "Co-occurring mental health care" },
-      { label: "Aftercare", href: "/aftercare", desc: "Alumni & ongoing support" },
-      { label: "Holistic Therapy", href: "/what-we-offer/holistic-addiction-therapy", desc: "Mind-body healing" },
+      { label: "Medical Detox", href: "/what-we-offer/detox-san-francisco" },
+      { label: "Residential Inpatient", href: "/what-we-offer/inpatient-rehab-san-francisco" },
+      { label: "Dual Diagnosis", href: "/what-we-offer/dual-diagnosis" },
+      { label: "Aftercare", href: "/aftercare" },
+      { label: "Holistic Therapy", href: "/what-we-offer/holistic-addiction-therapy" },
       { label: "Alcohol Detox", href: "/what-we-offer/alcohol-detox" },
       { label: "Drug Detox", href: "/what-we-offer/drug-detox" },
       { label: "Benzodiazepines Detox", href: "/what-we-offer/benzodiazepines-detox" },
@@ -127,8 +127,8 @@ export const nav: NavItem[] = [
     label: "Admissions",
     href: "/admission",
     children: [
-      { label: "Admissions", href: "/admission", desc: "How to get started" },
-      { label: "Verify Insurance", href: "/admission#verify", desc: "Free, confidential benefits check" },
+      { label: "Admissions", href: "/admission" },
+      { label: "Verify Insurance", href: "/admission#verify" },
       { label: "Aetna", href: "/aetna" },
       { label: "Cigna", href: "/cigna" },
       { label: "CompPsych", href: "/comppsych" },
@@ -203,6 +203,10 @@ export const facilityPhotos = [
   { src: "/images/photos/bath-marble.jpg", alt: "Marble-tiled ensuite bathroom with a walk-in glass shower" },
   { src: "/images/photos/dining-conference.jpg", alt: "Dining and group meeting room at Marina Harbor Detox" },
   { src: "/images/photos/mural-marina-harbor.jpg", alt: "Hand-painted Marina Harbor Detox mural of the Golden Gate Bridge at sunset" },
+  // NINE, not eight. The gallery is a 4-column grid whose lead tile spans 2x2,
+  // so it holds 4 + 8 = 12 cells across 3 rows. At eight photos the last row
+  // ran 3-of-4 and left an empty cell in the bottom-right corner.
+  { src: "/images/photos/room-single-01.jpg", alt: "Private single guest room with natural light and a work area" },
 ] as const;
 
 export const serviceAreas = [
