@@ -107,11 +107,27 @@ export function getDocBySegments(segments: string[]): Doc | null {
  *
  * ONE exception: real staff headshots. The approved set is scenery and interiors
  * and contains no portraits, so a bio page would otherwise show a bedroom. These
- * two are photographs of actual people and are kept.
+ * are photographs of actual people and are kept.
+ *
+ * All three of the roster's people now have one. Ashley was the last gap — she
+ * rendered as an "AH" initials tile while her colleagues had faces — and her
+ * headshot came from the client's own "Staff Headshots/California/Cali NORTH"
+ * set, the same folder Alicia's and Gus's came from. The portal feed returns
+ * photoUrl: null for all three, so this map is the only source.
+ *
+ * Gus deliberately keeps the tight IMG_2660 crop rather than the higher-
+ * resolution MHD-Gus Saadeh.JPG in that folder: the latter is a full-body
+ * seated portrait, and in this page's 4:5 portrait frame his face would end up
+ * a small fraction of the tile. Resolution is not the only thing that matters
+ * in a headshot — framing is.
+ *
+ * The two legacy paths stay under /media (that is where they were mirrored from
+ * WordPress); new headshots go in /images/staff, which is what they actually are.
  */
 const HEADSHOTS: Record<string, string> = {
   about__gus_saadeh: "/media/2026/02/IMG_2660.jpg",
   about__alicia_joslin: "/media/2026/06/MHD-Alicia-Joslin.png",
+  about__ashley_hurtado: "/images/staff/ashley-hurtado.jpg",
 };
 
 /**
