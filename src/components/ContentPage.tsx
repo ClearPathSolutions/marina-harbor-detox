@@ -8,7 +8,6 @@ import FacilityGallery from "./FacilityGallery";
 import LeadForm from "./LeadForm";
 import ConsentMap from "./ConsentMap";
 import TeamPreview from "./TeamPreview";
-import SectionNav from "./SectionNav";
 
 import PageHero from "./PageHero";
 import FaqAccordion, { buildFaq } from "./FaqAccordion";
@@ -24,7 +23,6 @@ import {
   bodyPhotos,
 } from "@/lib/content";
 import { site } from "@/lib/site";
-import { tocLabel, type TocItem } from "@/lib/toc";
 import { createLinker, type Linker } from "@/lib/prose";
 import {
   blogPostingSchema,
@@ -478,13 +476,6 @@ export default function ContentPage({ doc }: { doc: Doc }) {
     photos,
   );
 
-  // Nav labels for the jump-nav. The h2s themselves are keyword sentences —
-  // see lib/toc.ts for why they cannot be used verbatim as link text.
-  const tocTaken = new Set<string>();
-  const tocItems: TocItem[] = sections
-    .filter((s) => s.title)
-    .map((s) => ({ id: s.id, label: tocLabel(s.title as string, tocTaken) }));
-
   const isFacility = slugPath === "/facility";
   const isAdmission = slugPath === "/admission";
   const isContact = slugPath === "/contact-location";
@@ -603,7 +594,6 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                     in a 3xl wrapper this branch ran to 80 cpl, well past
                     comfortable, while the sidebar branch sat at 64. */}
                 <div className="prose-col">
-                  <SectionNav items={tocItems} />
                   <Prose sections={sections} />
                 </div>
               </div>
@@ -618,7 +608,6 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                   {doc.metaDescription && doc.type !== "post" && (
                     <p className="mb-6 break-words text-lg leading-relaxed text-navy-900/80">{doc.metaDescription}</p>
                   )}
-                  <SectionNav items={tocItems} />
                   {isFaq ? (
                     <FaqAccordion items={buildFaq(bodyBlocks)} />
                   ) : (
