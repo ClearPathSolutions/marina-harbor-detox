@@ -21,6 +21,7 @@ import {
   postDate,
   readingTime,
   relatedLinks,
+  bodyPhotos,
 } from "@/lib/content";
 import { site } from "@/lib/site";
 import { tocLabel, type TocItem } from "@/lib/toc";
@@ -178,7 +179,15 @@ function normalizeHeadings(blocks: Block[], heroH1: string): Block[] {
   });
 }
 
-function buildSections(blocks: Block[], heroH1: string, linkify: Linker = (t) => t): Section[] {
+/** Insert a photo after every Nth body paragraph. */
+const PARAS_PER_PHOTO = 9;
+
+function buildSections(
+  blocks: Block[],
+  heroH1: string,
+  linkify: Linker = (t) => t,
+  photos: string[] = [],
+): Section[] {
   const isHeadingH1 = (b: Block) => b.tag === "h1" && norm(b.text) !== norm(heroH1);
   const hasH2 = blocks.some((b) => b.tag === "h2" || isHeadingH1(b));
   const splitTag: Block["tag"] = hasH2 ? "h2" : "h3";
@@ -186,20 +195,40 @@ function buildSections(blocks: Block[], heroH1: string, linkify: Linker = (t) =>
 
   const sections: Section[] = [];
   const seen = new Set<string>();
+  let paraCount = 0;
+  let shot = 0;
   let current: Section = { id: "", title: null, nodes: [], kinds: [] };
   let list: string[] = [];
 
   const flushList = () => {
     if (!list.length) return;
     const items = [...list];
+    // A run of short items is a checklist, not prose — as plain bullets it read
+    // as more grey text. Long items stay a bulleted list, because a card grid of
+    // 40-word sentences is worse than a list of them.
+    const short = items.every((x) => x.split(/\s+/).length <= 14) && items.length >= 3;
     current.nodes.push(
-      <ul key={`ul-${current.nodes.length}`} className="my-6 space-y-3">
-        {items.map((t, i) => (
-          <li key={i} className="relative [overflow-wrap:anywhere] pl-7 leading-relaxed text-navy-900/75 before:absolute before:left-0 before:top-[0.55em] before:h-2 before:w-2 before:rounded-full before:bg-orange-500/90">
-            {t}
-          </li>
-        ))}
-      </ul>
+      short ? (
+        <ul key={`ul-${current.nodes.length}`} className="my-7 grid gap-2.5 sm:grid-cols-2">
+          {items.map((t, i) => (
+            <li
+              key={i}
+              className="flex items-start gap-2.5 rounded-xl bg-sand-50 px-4 py-3 text-[15px] leading-snug text-navy-900/80"
+            >
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-orange-500" />
+              <span className="min-w-0 [overflow-wrap:anywhere]">{linkify(t)}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul key={`ul-${current.nodes.length}`} className="my-6 space-y-3">
+          {items.map((t, i) => (
+            <li key={i} className="relative [overflow-wrap:anywhere] pl-7 leading-relaxed text-navy-900/75 before:absolute before:left-0 before:top-[0.55em] before:h-2 before:w-2 before:rounded-full before:bg-orange-500/90">
+              {linkify(t)}
+            </li>
+          ))}
+        </ul>
+      )
     );
     current.kinds.push("content");
     list = [];
@@ -276,14 +305,46 @@ function buildSections(blocks: Block[], heroH1: string, linkify: Linker = (t) =>
           {b.text}
         </blockquote>
       );
-    else
+    else {
+      // The opening paragraph is the reader's way in. At the same size and
+      // colour as the forty that follow, it just started the wall a line early.
+      const isLead = !sections.length && current.nodes.length === 0 && !current.title;
       push(
         // mt-6 rather than mt-5: at 1.8 leading a 20px paragraph gap is on the
         // tight side, and 24px separates blocks without opening the column up.
-        <p key={key} className="mt-6 break-words leading-[1.8] text-navy-900/75">
+        <p
+          key={key}
+          className={
+            isLead
+              ? "mt-2 break-words text-[19px] leading-[1.75] text-navy-900/85"
+              : "mt-6 break-words leading-[1.8] text-navy-900/75"
+          }
+        >
           {linkify(b.text)}
         </p>
       );
+
+      paraCount++;
+      // Relief is driven by paragraph position, not section count. The heaviest
+      // pages — detox-san-francisco at 34 paragraphs — are a SINGLE section
+      // whose headings are inline h3s, so anything keyed to sections skipped
+      // exactly the pages that most needed breaking up.
+      if (paraCount % PARAS_PER_PHOTO === 0 && shot < photos.length) {
+        const src = photos[shot++];
+        push(
+          <figure key={`fig-${key}`} className="my-10">
+            <Image
+              src={src}
+              alt=""
+              width={1600}
+              height={1000}
+              sizes="(max-width: 1024px) 100vw, 928px"
+              className="aspect-[16/10] w-full rounded-2xl object-cover"
+            />
+          </figure>,
+        );
+      }
+    }
   });
   commit();
   return sections;
@@ -291,6 +352,13 @@ function buildSections(blocks: Block[], heroH1: string, linkify: Linker = (t) =>
 
 /** Render built sections; each titled section is a visually separated <section>. */
 function Prose({ sections }: { sections: Section[] }) {
+  // Number only the real, titled sections — an untitled intro block and the
+  // lead-in headings that carry no copy are not chapters.
+  const chapters = sections.filter((s) => s.title && s.nodes.length > 0).map((s) => s.id);
+  // A lone "01" is noise, not structure — only number when there are chapters
+  // to count through.
+  const numbered = chapters.length >= 3 ? chapters : [];
+
   return (
     <>
       {sections.map((s, i) => {
@@ -301,21 +369,36 @@ function Prose({ sections }: { sections: Section[] }) {
         // drop the separator and the space it reserves for absent content.
         const empty = Boolean(s.title) && s.nodes.length === 0;
         const separated = s.title && !empty;
+        const n = numbered.indexOf(s.id);
+
         return (
-          <section
-            key={s.id || `intro-${i}`}
-            id={s.id || undefined}
-            className={
-              separated
-                ? "scroll-mt-28 [&:not(:first-child)]:mt-14 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-navy-100 [&:not(:first-child)]:pt-10"
-                : empty
-                  ? "scroll-mt-28 [&:not(:first-child)]:mt-12"
-                  : "scroll-mt-28"
-            }
-          >
-            {s.title && <h2 className="text-2xl font-bold text-navy-900 sm:text-3xl">{s.title}</h2>}
-            {s.nodes}
-          </section>
+          <div key={s.id || `intro-${i}`}>
+            <section
+              id={s.id || undefined}
+              className={
+                separated
+                  ? "scroll-mt-28 [&:not(:first-child)]:mt-14"
+                  : empty
+                    ? "scroll-mt-28 [&:not(:first-child)]:mt-12"
+                    : "scroll-mt-28"
+              }
+            >
+              {s.title && (
+                <h2 className="flex items-baseline gap-3 text-2xl font-bold text-navy-900 sm:text-3xl">
+                  {n >= 0 && (
+                    <span
+                      aria-hidden
+                      className="shrink-0 font-display text-base font-bold tabular-nums text-orange-500/70 sm:text-lg"
+                    >
+                      {String(n + 1).padStart(2, "0")}
+                    </span>
+                  )}
+                  <span className="min-w-0">{s.title}</span>
+                </h2>
+              )}
+              {s.nodes}
+            </section>
+          </div>
         );
       })}
     </>
@@ -379,10 +462,20 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const rt = doc.type === "post" ? readingTime(doc) : null;
   // MH-13: lift the reviewer / last-updated bullets out before sectioning.
   const { reviewedBy, lastUpdated, blocks: bodyBlocks } = extractByline(doc.blocks);
+  // One photo per ~9 body paragraphs, capped so a very long page does not turn
+  // into a slideshow. Computed from the block stream because buildSections
+  // needs the list up front.
+  const bodyParaCount = bodyBlocks.filter((b) => b.tag === "p").length;
+  // Legal pages are excluded: a luxury-interior photograph dropped into the
+  // middle of a HIPAA notice reads as marketing inside a legal document.
+  const isLegal = slugPath === "/privacy-policy" || slugPath === "/thank-you";
+  const photos = isLegal ? [] : bodyPhotos(doc, Math.min(4, Math.floor(bodyParaCount / 9)));
+
   const sections = buildSections(
     normalizeHeadings(dropTrailingHeadings(demoteSentenceHeadings(bodyBlocks)), doc.h1),
     doc.h1,
     createLinker(slugPath),
+    photos,
   );
 
   // Nav labels for the jump-nav. The h2s themselves are keyword sentences —

@@ -335,6 +335,44 @@ function fallbackPool(): string[] {
 }
 
 /**
+ * Photographs to break up a long article body.
+ *
+ * Across 113 article bodies the build rendered a grand total of FOUR <img> —
+ * every page was an unbroken column of 43-word paragraphs with nothing for the
+ * eye to rest on. These are placed between sections purely as visual relief.
+ *
+ * Deterministic per slug so a page always gets the same photos, and the page's
+ * own hero is excluded so the same image never appears twice on one page.
+ */
+export function bodyPhotos(doc: Doc, count: number): string[] {
+  const hero = leadImage(doc);
+  // "room-fireplace-04" and "room-fireplace-02" are two frames of the same
+  // suite. Excluding only the exact hero file still put a near-identical shot
+  // of the same room a few paragraphs below it, which reads as a duplicate —
+  // so the whole family is excluded, and no family repeats within a page.
+  const family = (f: string) => f.replace(/-\d+(?=\.[a-z]+$)/i, "");
+  const heroFamily = hero ? family(hero) : null;
+
+  const pool = byCategory("lounge", "room", "detail", "aerial")
+    .filter((f) => !NOT_HERO_SAFE.has(f) && family(f) !== heroFamily);
+  if (!pool.length || count < 1) return [];
+
+  // Walk the pool from a slug-stable offset, skipping any family already taken,
+  // so a page gets visibly different spaces rather than three bedrooms.
+  const start = slugHash(doc.slug) % pool.length;
+  const out: string[] = [];
+  const takenFamilies = new Set<string>();
+  for (let i = 0; i < pool.length && out.length < count; i++) {
+    const pick = pool[(start + i * 7) % pool.length];
+    const fam = family(pick);
+    if (takenFamilies.has(fam)) continue;
+    takenFamilies.add(fam);
+    out.push(pick);
+  }
+  return out;
+}
+
+/**
  * Hero / social image for a doc — always an approved photograph, chosen to suit
  * the page. Never returns null, so nothing falls back to the logo (MH-19).
  */
