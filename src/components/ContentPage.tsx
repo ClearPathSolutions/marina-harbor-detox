@@ -373,16 +373,37 @@ function Prose({ sections }: { sections: Section[] }) {
           <div key={s.id || `intro-${i}`}>
             <section
               id={s.id || undefined}
+              // Spacing above a TITLED section now lives on the <h2> itself
+              // (see below), so it is not also applied here — doing both stacked
+              // two margins and pushed the sections ~100px apart.
               className={
                 separated
-                  ? "scroll-mt-28 [&:not(:first-child)]:mt-14"
+                  ? "scroll-mt-28"
                   : empty
                     ? "scroll-mt-28 [&:not(:first-child)]:mt-12"
                     : "scroll-mt-28"
               }
             >
+              {/* Tailwind's preflight resets every heading to `margin: 0`, so a
+                  section title carried none of its own spacing — everything
+                  around it came from the wrapper above and from the following
+                  paragraph's own top margin. The heading now owns both sides:
+                  a clear break before it, a tighter gap after it so it still
+                  binds to the copy it introduces.
+
+                  Deliberately NOT done with line-height. These titles wrap on
+                  most of these pages (5 of 6 on /professionals/), and leading
+                  tall enough to space the heading also forces its own two lines
+                  apart — at 4.25 the box goes 72px -> 255px and one title reads
+                  as two. `leading-tight` keeps a wrapped title as one block.
+
+                  No :first-child reset here: the <h2> is ALWAYS the first child
+                  of its <section>, so such a rule would zero the margin on every
+                  heading, not just the first — which is exactly what happened
+                  the first time round. The leading section gets the same space,
+                  which reads correctly after the intro paragraph. */}
               {s.title && (
-                <h2 className="flex items-baseline gap-3 text-2xl font-bold text-navy-900 sm:text-3xl">
+                <h2 className="mb-5 mt-16 flex items-baseline gap-3 text-2xl font-bold leading-tight text-navy-900 sm:text-3xl">
                   {n >= 0 && (
                     <span
                       aria-hidden
