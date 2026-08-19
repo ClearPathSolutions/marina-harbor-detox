@@ -76,17 +76,17 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
       const nextErrors: Record<string, string> = {};
       const digits = val("phone").replace(/\D/g, "");
       if (digits.length < 10) nextErrors.phone = "Please enter a valid phone number.";
+      // Both intents now collect a single `name`, so this rule is shared.
+      if (val("name").length < 2) nextErrors.name = "Please enter your name.";
       const email = val("email");
       const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
       if (isVerify) {
-        if (val("firstName").length < 1) nextErrors.firstName = "Please enter your first name.";
-        if (val("lastName").length < 1) nextErrors.lastName = "Please enter your last name.";
+        // Verification needs a reachable email, a DOB and a carrier; contact does not.
         if (!email || !emailOk) nextErrors.email = "Please enter a valid email.";
         if (!val("dob")) nextErrors.dob = "Date of birth is required for verification.";
         if (!val("insurance")) nextErrors.insurance = "Please enter your insurance provider.";
-      } else {
-        if (val("name").length < 2) nextErrors.name = "Please enter your name.";
-        if (email && !emailOk) nextErrors.email = "Please enter a valid email.";
+      } else if (email && !emailOk) {
+        nextErrors.email = "Please enter a valid email.";
       }
       if (Object.keys(nextErrors).length) {
         setErrors(nextErrors);
@@ -225,17 +225,13 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
           There is no cost and no obligation.
         </p>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="lf-first-name" className={labelCls}>First name{req}</label>
-            <input id="lf-first-name" name="firstName" type="text" autoComplete="given-name" required className={field} placeholder="First name" />
-            {err("firstName")}
-          </div>
-          <div>
-            <label htmlFor="lf-last-name" className={labelCls}>Last name{req}</label>
-            <input id="lf-last-name" name="lastName" type="text" autoComplete="family-name" required className={field} placeholder="Last name" />
-            {err("lastName")}
-          </div>
+        {/* One name field, not first + last. Matches the contact form and the
+            `name` key /api/lead already reads, so both intents post the same
+            shape. */}
+        <div className="mt-6">
+          <label htmlFor="lf-name" className={labelCls}>Full name{req}</label>
+          <input id="lf-name" name="name" type="text" autoComplete="name" required className={field} placeholder="Jane Doe" {...a11y("name")} />
+          {err("name")}
         </div>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
