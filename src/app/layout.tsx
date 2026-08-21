@@ -112,6 +112,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script async src="//264810.tctm.co/t.js" />
       </head>
       <body>
+        {/* GTM's no-JS fallback. Must be the first thing in <body> per Google's
+            install, and it is separate from the container loader in Analytics
+            because that one is a client component. */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${site.widgets.gtmId}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+            title="Google Tag Manager"
+          />
+        </noscript>
         {/* First focusable element on every page — lets keyboard and screen-reader
             users jump the header nav straight to <main id="main">. Visually hidden
             until focused. */}

@@ -42,6 +42,11 @@ export const site = {
   widgets: {
     trustindexLoader: "718a667695be9627c1963405c60",
     elfsightApp: "de52e11c-b5df-4d05-8281-0a00d33a23e0",
+    // Google Tag Manager container. Lives here rather than only in
+    // NEXT_PUBLIC_GTM_ID because the Vercel project has no env vars set, so an
+    // env-only gate meant GTM never actually loaded in production. The env var
+    // still wins if it is set, which keeps per-environment overrides possible.
+    gtmId: "GTM-5QPLKQHB",
     // Clarion Labs — hosts the chat widget + insurance-verification form capture.
     clarion: {
       siteKey: "cpx_8RF5FiJFYnDZgaFMY2fjSTtjCTQ84Wmk",

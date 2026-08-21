@@ -4,6 +4,7 @@ import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { analyticsPath, isClinicalRoute, REDACTED_TITLE } from "@/lib/clinicalRoutes";
+import { site } from "@/lib/site";
 
 /**
  * Marketing & analytics tags, ported from the WordPress site.
@@ -34,7 +35,8 @@ export default function Analytics() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
   const adsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
   const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
-  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+  // Env var wins; otherwise fall back to the container configured in site.ts.
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID || site.widgets.gtmId;
 
   const useGtag = Boolean(gaId || adsId);
   const enabled = useGtag || Boolean(pixelId) || Boolean(gtmId);

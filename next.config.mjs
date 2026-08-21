@@ -21,12 +21,12 @@ const csp = [
   "object-src 'none'",
   "frame-ancestors 'none'",
   "form-action 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://cdn.trustindex.io",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://cdn.trustindex.io https://*.tctm.co https://www.clarionlabs.ai",
   "style-src 'self' 'unsafe-inline' https://cdn.trustindex.io https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://www.facebook.com https://cdn.trustindex.io https://*.googleusercontent.com https://maps.gstatic.com",
+  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://www.facebook.com https://cdn.trustindex.io https://*.googleusercontent.com https://maps.gstatic.com https://*.tctm.co",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://connect.facebook.net https://cdn.trustindex.io",
-  "frame-src https://www.google.com https://maps.google.com https://cdn.trustindex.io",
+  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://connect.facebook.net https://cdn.trustindex.io https://*.tctm.co https://api.clarionlabs.ai https://www.clarionlabs.ai",
+  "frame-src https://www.google.com https://maps.google.com https://cdn.trustindex.io https://www.googletagmanager.com",
   // NOTE: `upgrade-insecure-requests` is ignored in a report-only policy and
   // logs a console warning, so it is omitted here. Add it back when this is
   // promoted to the enforcing `Content-Security-Policy` header.
