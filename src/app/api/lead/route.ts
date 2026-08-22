@@ -47,10 +47,83 @@ type Lead = {
   insurance?: string;
   message?: string;
   company?: string; // honeypot — real users never fill this
+
+  // Attribution, sent by lib/attribution.ts. Typed as unknown because this
+  // endpoint is public and unauthenticated — the shape is whatever the client
+  // chose to send, so every field is re-validated below rather than trusted.
+  page_url?: unknown;
+  landing_page_url?: unknown;
+  referrer?: unknown;
+  utm?: unknown;
+  gclid?: unknown;
+  wbraid?: unknown;
+  gbraid?: unknown;
+  fbclid?: unknown;
+  msclkid?: unknown;
+  ctm_visitor_sid?: unknown;
 };
 
 const clean = (v: unknown, max = 2000) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
+
+const cleanOrNull = (v: unknown, max: number) => clean(v, max) || null;
+
+// --- Attribution (CTM + Clarion rollout) -----------------------------------
+// The lead is delivered either way; attribution only decides whether the ad
+// click that produced it can be identified. Nothing below is ever allowed to
+// fail a submission.
+
+/** CTM's visitor session id is 24 hex, no dashes. A UUID is NOT one. */
+const CTM_ID = /^[0-9a-f]{24}$/i;
+
+/**
+ * The client sends ctm_visitor_sid, but __ctmid is a first-party cookie so it
+ * rides along on this request too. Preferring the client value and falling back
+ * to the cookie means a regression in the browser code cannot silently
+ * un-attribute every lead.
+ */
+function ctmVisitorSid(body: Lead, req: Request): string | null {
+  const fromClient = clean(body.ctm_visitor_sid, 128) || null;
+  if (fromClient && CTM_ID.test(fromClient)) return fromClient;
+
+  const raw = req.headers.get("cookie")?.match(/(?:^|;\s*)__ctmid=([^;]*)/)?.[1];
+  let fromCookie: string | null = null;
+  if (raw) {
+    try {
+      fromCookie = decodeURIComponent(raw);
+    } catch {
+      fromCookie = raw;
+    }
+  }
+
+  if (fromCookie && CTM_ID.test(fromCookie)) {
+    if (fromClient) console.warn("[lead] non-CTM sid from browser; using __ctmid cookie");
+    return fromCookie;
+  }
+  if (fromClient) {
+    console.warn("[lead] sid not CTM-shaped and no cookie — no visit will attach");
+    return fromClient;
+  }
+  console.warn("[lead] no CTM session id — t.js likely blocked");
+  return null;
+}
+
+/**
+ * Flatten `utm` to the five known keys as strings. Reading only a fixed key
+ * list off a non-array object caps depth, key count and length in one step, so
+ * a hostile 60 KB nested payload reduces to at most five short strings and
+ * `__proto__` has nowhere to land.
+ */
+function cleanUtm(v: unknown): Record<string, string> | null {
+  if (!v || typeof v !== "object" || Array.isArray(v)) return null;
+  const src = v as Record<string, unknown>;
+  const out: Record<string, string> = {};
+  for (const k of ["source", "medium", "campaign", "term", "content"]) {
+    const s = clean(src[k], 200);
+    if (s) out[k] = s;
+  }
+  return Object.keys(out).length ? out : null;
+}
 
 export async function POST(req: Request) {
   if (rateLimited(clientIp(req))) {
@@ -89,7 +162,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, errors }, { status: 422 });
   }
 
-  const lead = {
+  // The lead exactly as this endpoint has always delivered it. Kept separate so
+  // the webhook retry below can fall back to it.
+  const core = {
     intent,
     name,
     phone,
@@ -99,6 +174,23 @@ export async function POST(req: Request) {
     receivedAt: new Date().toISOString(),
     userAgent: req.headers.get("user-agent") ?? "",
   };
+
+  const attribution = {
+    page_url: cleanOrNull(body.page_url, 512),
+    landing_page_url: cleanOrNull(body.landing_page_url, 512),
+    referrer: cleanOrNull(body.referrer, 512),
+    utm: cleanUtm(body.utm),
+    gclid: cleanOrNull(body.gclid, 256),
+    wbraid: cleanOrNull(body.wbraid, 256),
+    gbraid: cleanOrNull(body.gbraid, 256),
+    fbclid: cleanOrNull(body.fbclid, 256),
+    msclkid: cleanOrNull(body.msclkid, 256),
+    // FLAT and top-level, deliberately. Nested, a downstream parser never finds
+    // it and the lead attaches to no visit.
+    ctm_visitor_sid: ctmVisitorSid(body, req),
+  };
+
+  const lead = { ...core, ...attribution };
 
   const webhookConfigured = Boolean(process.env.LEAD_WEBHOOK_URL);
   const resendConfigured = Boolean(
@@ -150,13 +242,25 @@ export async function POST(req: Request) {
 
   const webhook = process.env.LEAD_WEBHOOK_URL;
   if (webhook) {
-    await attempt("webhook", () =>
+    const post = (payload: unknown) =>
       fetch(webhook, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(lead),
-      }),
-    );
+        body: JSON.stringify(payload),
+      });
+
+    await attempt("webhook", async () => {
+      const res = await post(lead);
+      // Attribution adds keys the receiving webhook was never configured to
+      // accept. If its validation is strict, an unknown field would turn every
+      // lead into an error — so on a 4xx, resend the original shape. Losing
+      // admissions enquiries to gain attribution is not a trade worth making.
+      if (res.status >= 400 && res.status < 500) {
+        console.warn("[lead] webhook rejected the attributed payload; retrying without it", res.status);
+        return post(core);
+      }
+      return res;
+    });
   }
 
   const resendKey = process.env.RESEND_API_KEY;
@@ -167,6 +271,11 @@ export async function POST(req: Request) {
       intent === "verify"
         ? `Insurance verification request — ${name}`
         : `Website contact — ${name}`;
+    const utmSummary = attribution.utm
+      ? Object.entries(attribution.utm)
+          .map(([k, v]) => `${k}=${v}`)
+          .join(" ")
+      : "";
     const lines = [
       `Intent: ${intent}`,
       `Name: ${name}`,
@@ -175,6 +284,10 @@ export async function POST(req: Request) {
       insurance && `Insurance: ${insurance}`,
       message && `Message: ${message}`,
       `Received: ${lead.receivedAt}`,
+      utmSummary && `Campaign: ${utmSummary}`,
+      attribution.gclid && `Click id: ${attribution.gclid}`,
+      attribution.landing_page_url && `Landing page: ${attribution.landing_page_url}`,
+      attribution.referrer && `Referrer: ${attribution.referrer}`,
     ].filter(Boolean);
     await attempt("email", () =>
       fetch("https://api.resend.com/emails", {
@@ -213,6 +326,9 @@ export async function POST(req: Request) {
       receivedAt: lead.receivedAt,
       via: delivered,
       has: { name: Boolean(name), phone: Boolean(phone), email: Boolean(email), insurance: Boolean(insurance), message: Boolean(message) },
+      // Booleans only. landing_page_url on this site names a substance, so the
+      // URL itself is never written to a function log.
+      attributed: { ctm: Boolean(attribution.ctm_visitor_sid), campaign: Boolean(attribution.utm || attribution.gclid) },
     }),
   );
 

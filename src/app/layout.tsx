@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import { site } from "@/lib/site";
 import Analytics from "@/components/Analytics";
+import CampaignCapture from "@/components/CampaignCapture";
 import Clarion from "@/components/Clarion";
 import CookieConsent from "@/components/CookieConsent";
 import Elfsight from "@/components/Elfsight";
@@ -107,9 +108,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Marks JS as available before paint so scroll-reveal never hides content for no-JS users */}
         <script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add('js')` }} />
-        {/* Site-wide visitor tracking */}
+        {/* CallTrackingMetrics — site-wide visitor tracking, account 264810.
+            Absolute https (not protocol-relative) and deliberately NOT async:
+            t.js performs the dynamic number swap, so deferring it lets a visitor
+            read and dial the wrong number before it runs. Must be on every page
+            including campaign landing pages, which is why it lives in the root
+            layout rather than a per-route include. */}
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script async src="//264810.tctm.co/t.js" />
+        <script src="https://264810.tctm.co/t.js" />
       </head>
       <body>
         {/* GTM's no-JS fallback. Must be the first thing in <body> per Google's
@@ -134,6 +140,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <Analytics />
+        <CampaignCapture />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

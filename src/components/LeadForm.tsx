@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { attributionPayload, withRestoredCampaign } from "@/lib/attribution";
 import { site } from "@/lib/site";
 import { ArrowRight, Check, Phone, Shield } from "./Icons";
 import ProviderCombobox from "./ProviderCombobox";
@@ -96,13 +97,23 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
 
       // 1) Sync to Clarion. Track the outcome — whether this succeeded decides
       // below whether an /api/lead failure is actually visible to the visitor.
+      //
+      // Both intents go through here, so both get the campaign fix. Clarion's
+      // forms-capture.v1.js reads utm/gclid straight out of location.search as
+      // it builds the payload, which means anyone who browsed before converting
+      // submitted as direct traffic. withRestoredCampaign puts the first-touch
+      // campaign back for exactly that synchronous read and then restores the
+      // URL — we never leave ad parameters sitting on a clinical path. See
+      // lib/attribution.ts.
       let clarionOk = false;
       try {
         if (window.ClarionForms?.submit) {
-          const r = await window.ClarionForms.submit({
-            form_key: CLARION_FORM_KEY[intent],
-            data: { ...data, intent },
-          });
+          const r = await withRestoredCampaign(() =>
+            window.ClarionForms!.submit({
+              form_key: CLARION_FORM_KEY[intent],
+              data: { ...data, intent },
+            }),
+          );
           clarionOk = r ? r.ok : true;
         }
       } catch {
@@ -118,7 +129,11 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         const res = await fetch("/api/lead/", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ ...data, intent }),
+          // attributionPayload() adds the campaign, landing page, referrer and
+          // a flat top-level ctm_visitor_sid. Flat is load-bearing: nested, the
+          // parser on the other end never finds it and the lead attaches to no
+          // visit.
+          body: JSON.stringify({ ...data, intent, ...attributionPayload() }),
         });
         const json = await res.json().catch(() => ({}));
         if (!(res.ok && json.ok)) {
