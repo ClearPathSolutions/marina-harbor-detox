@@ -693,6 +693,37 @@ The missing-page list is accurate as of 2026-07-28 and **will be stale at launch
 
 ---
 
+### MH-38 · CTM + Clarion attribution · DONE
+
+**Traces to:** the CTM + Clarion attribution rollout spec. Both lead forms (`intent="verify"` on
+`/admission`, `intent="contact"` on `/contact-location`) now carry the ad click that produced them.
+
+**What was wrong:** only Fault B. `forms-capture.v1.js` builds its own envelope and reads `utm`/`gclid`
+live from `location.search` at submit time, so anyone who read a second page before converting filed as
+direct traffic — silently, because the CRM record still looked populated. `wbraid`/`gbraid` were never
+collected, so CTM attributed those clicks while Clarion could not.
+
+**Fix:** `lib/attribution.ts` + `components/CampaignCapture.tsx` record first touch and restore it for
+exactly the synchronous instant the vendor spends serialising its payload. The parameters are never left
+in the URL — our paths name a substance (MH-05) and `t.js`, the Clarion widget and Elfsight all read
+`location.href` on every pageview.
+
+**Deliberately NOT done — read this before re-opening:**
+
+| Rollout step | Why it does not apply here |
+|---|---|
+| Add `api/verify-insurance` server relay | **Q4 passes on this origin.** `OPTIONS /forms/public/submit` with `Origin: https://marinaharbordetox.com` returns `204` + `access-control-allow-origin` for that origin; the POST is not origin-pinned (invalid-key probe → `404` *with* the ACAO header). Spec §1: "Keep the vendor script." §6: "Do not port the server relay to a site where the browser POST works." Preflight now also passes for `desmoinesrecovery.com`, so the CORS/allowlist condition that justified the relay there has been fixed on Clarion's side. |
+| Delete `data-clarion-form` | Never present. No form here uses auto-wire — both call `window.ClarionForms.submit()` manually, so there is exactly one Clarion request per submit. Adding a relay *without* removing that call is what would double-send. |
+| Rebuild `ctm_visitor_sid` handling | Fault C absent. The vendor already reads `__ctm.config.sid`, hooks `__ctm_loaded` and polls as a fallback. Verified live: `6a8906e5…`, 24 hex, flat, equal to the `__ctmid` cookie. |
+| Add `async` to `t.js` | Spec §2 requires it eager: it performs the dynamic number swap, so deferring it lets a visitor read and dial the untracked number. CTM's own snippet uses `async` — this was a decision, not an oversight. |
+| Remove the Clarion key literal | The key is read in the browser by three scripts as `data-site-key`. `NEXT_PUBLIC_CLARION_SITE_KEY` now wins when set, but the literal stays as a fallback — an env-only gate is exactly what took GTM down in production before. |
+
+**Still open:** confirm in CTM that a test submission attaches to the visit and routes to Marina Harbor.
+No `200` substitutes for that, and it needs account access. Q4 was proven at the CORS layer, not by a
+real submission from the deployed origin.
+
+---
+
 ## Phase 5 — Portfolio (the other 11 sites)
 
 Not executable from this repo — tickets for each site's owner. Ordered by blast radius.

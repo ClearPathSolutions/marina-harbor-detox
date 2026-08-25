@@ -48,8 +48,21 @@ export const site = {
     // still wins if it is set, which keeps per-environment overrides possible.
     gtmId: "GTM-5QPLKQHB",
     // Clarion Labs — hosts the chat widget + insurance-verification form capture.
+    //
+    // The key is read from NEXT_PUBLIC_CLARION_SITE_KEY when it is set, so it can
+    // be managed in Vercel and overridden per environment. It MUST stay
+    // NEXT_PUBLIC_: three browser-side scripts read it as data-site-key (the chat
+    // widget and forms-capture in components/Clarion.tsx, the blog embed in
+    // components/ClarionBlog.tsx), and a server-only var is invisible to them.
+    // That is not a leak — a Clarion site key is public by design and already
+    // ships in the page source.
+    //
+    // The literal stays as the fallback for the same reason gtmId above does: this
+    // Vercel project has no env vars set, and an env-only gate would take the chat
+    // widget, form capture and the blog embed down with it — form capture being
+    // the only delivery path the insurance-verification form has.
     clarion: {
-      siteKey: "cpx_8RF5FiJFYnDZgaFMY2fjSTtjCTQ84Wmk",
+      siteKey: process.env.NEXT_PUBLIC_CLARION_SITE_KEY || "cpx_8RF5FiJFYnDZgaFMY2fjSTtjCTQ84Wmk",
       api: "https://api.clarionlabs.ai",
     },
   },
