@@ -42,3 +42,6 @@ next-env.d.ts
 /probe*.mjs
 /shot.mjs
 /crop.mjs
+
+# Playwright MCP scratch output (browser snapshots / console logs)
+.playwright-mcp/
