@@ -109,13 +109,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Marks JS as available before paint so scroll-reveal never hides content for no-JS users */}
         <script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add('js')` }} />
         {/* CallTrackingMetrics — site-wide visitor tracking, account 264810.
-            Absolute https (not protocol-relative) and deliberately NOT async:
-            t.js performs the dynamic number swap, so deferring it lets a visitor
-            read and dial the wrong number before it runs. Must be on every page
-            including campaign landing pages, which is why it lives in the root
-            layout rather than a per-route include. */}
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="https://264810.tctm.co/t.js" />
+            Must stay on every page including campaign landing pages, which is why
+            it lives in the root layout and not a per-route include.
+
+            KEEP `async`. DO NOT make this a synchronous tag. The CTM rollout
+            spec's Section 2 says to load t.js eagerly "so a visitor cannot dial
+            the wrong number"; that guidance is wrong and following it breaks the
+            number swap outright. Two independent failures, both silent:
+
+              1. A sync tag in <head> runs before <body> exists. CTM's number scan
+                 defaults its root to document.body and no-ops when that is null,
+                 so it never finds the page's numbers. A session is still created,
+                 which is what makes this invisible — CTM looks installed.
+              2. Even when it does swap, it rewrites the DOM before hydration and
+                 React then reverts it, replacing the server HTML wholesale.
+
+            Measured on the deployed preview with the sync tag: config.sid was a
+            valid 24-hex session, __ctm_tracked_numbers was {} (zero numbers), and
+            every tel: link still matched the hardcoded 1-866-525-3026 — i.e. no
+            swap at all, so inbound calls could not be tied to a web session.
+
+            Verify after any change to this tag (on a deployment, not locally):
+              document.querySelector('script[src*="tctm.co/t.js"]').async === true
+              Object.keys(window.__ctm_tracked_numbers).length > 0   ← the real check
+            Count copies with script[src*="tctm.co/t.js"] — it must be exactly 1.
+            Do NOT count with script[src*="tctm.co"]: that returns 2 on a correct
+            install because t.js injects its own p.js, and removing the "extra"
+            breaks CTM. */}
+        <script async src="https://264810.tctm.co/t.js" />
       </head>
       <body>
         {/* GTM's no-JS fallback. Must be the first thing in <body> per Google's

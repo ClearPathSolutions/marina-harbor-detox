@@ -1,0 +1,251 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - generic [ref=e4]:
+    - paragraph [ref=e5]: Accredited Medical Detox & Residential Rehab · San Francisco, CA
+    - generic [ref=e6]:
+      - generic [ref=e7]: Confidential & available 24/7
+      - link "info@marinaharbordetox.com" [ref=e8] [cursor=pointer]:
+        - /url: mailto:info@marinaharbordetox.com
+  - banner [ref=e9]:
+    - generic [ref=e10]:
+      - link "Marina Harbor Detox home" [ref=e11] [cursor=pointer]:
+        - /url: /
+        - img "Marina Harbor Detox" [ref=e12]
+      - navigation "Primary" [ref=e13]:
+        - link "About" [ref=e15] [cursor=pointer]:
+          - /url: /about/
+        - link "Who We Help" [ref=e19] [cursor=pointer]:
+          - /url: /first-responders/
+        - link "What We Offer" [ref=e23] [cursor=pointer]:
+          - /url: /what-we-offer/
+        - link "Areas We Serve" [ref=e27] [cursor=pointer]:
+          - /url: /what-we-offer/drug-rehab-marin-county/
+        - link "Facility" [ref=e31] [cursor=pointer]:
+          - /url: /facility/
+        - link "Admissions" [ref=e33] [cursor=pointer]:
+          - /url: /admission/
+        - link "Contact" [ref=e37] [cursor=pointer]:
+          - /url: /contact-location/
+      - generic [ref=e38]:
+        - link "Call 1-866-525-3026, available 24/7" [ref=e39] [cursor=pointer]:
+          - /url: tel:+18665253026
+        - link "Verify Insurance" [ref=e43] [cursor=pointer]:
+          - /url: /admission/#verify
+  - main [ref=e44]:
+    - heading "Drug & Alcohol Rehab Admissions San Francisco" [level=1] [ref=e50]
+    - article [ref=e51]:
+      - generic [ref=e53]:
+        - paragraph [ref=e54]: Begin your journey at Marina Harbor. We offer seamless rehab admissions in San Francisco with 24/7 support and insurance verification.
+        - generic [ref=e55]:
+          - generic [ref=e57]:
+            - heading "Take the First Step Toward Renewal" [level=2] [ref=e58]:
+              - generic [ref=e59]: "01"
+            - paragraph [ref=e61]: Deciding to seek treatment is a courageous turning point. At Marina Harbor, we make the admissions process as seamless and discreet as possible, allowing you to focus entirely on your recovery. From the moment you contact us, our compassionate admissions team serves as your personal advocate, handling everything from insurance verification to travel logistics with the utmost professionalism. Whether you are seeking care for yourself or a loved one, we are here to provide the clinical guidance and logistical support you need to start your journey today.
+            - heading "I Need Help For Myself" [level=3] [ref=e62]
+            - paragraph [ref=e63]: Take the courageous first step toward a private, boutique recovery experience designed to help you reclaim your health and professional life.
+            - heading "I Need Help For A Loved One" [level=3] [ref=e64]
+            - paragraph [ref=e65]: Find peace of mind with our dedicated admissions advocates, who will guide you through insurance verification and concierge travel for your family member.
+          - generic [ref=e67]:
+            - heading "Begin Your Journey to Recovery Today" [level=2] [ref=e68]:
+              - generic [ref=e69]: "02"
+            - paragraph [ref=e71]: Your privacy is our highest priority. Use the secure form below to submit a confidential inquiry. Our admissions specialists will review your information and contact you shortly to discuss your unique needs, answer clinical questions, and provide a comprehensive verification of your insurance benefits.
+            - paragraph [ref=e72]: A Streamlined Path to Recovery
+          - generic [ref=e74]:
+            - heading "The Step-by-Step Admissions Process" [level=2] [ref=e75]:
+              - generic [ref=e76]: "03"
+            - paragraph [ref=e78]: "We have refined our intake process to ensure you can enter our San Francisco facility quickly and safely. Our goal is to remove the hurdles between you and the high-level care you deserve. You can expect:"
+            - heading "1. Initial Consultation" [level=3] [ref=e79]
+            - paragraph [ref=e80]: Speak directly with an admissions expert to discuss your history, current needs, and the specialized programs we offer, such as our executive or first responder tracks.
+            - heading "2. Insurance Verification" [level=3] [ref=e81]
+            - paragraph [ref=e82]: Our team performs a rapid, comprehensive verification of your PPO insurance benefits to maximize your coverage and minimize out-of-pocket costs.
+            - heading "3. Clinical Assessment" [level=3] [ref=e83]
+            - paragraph [ref=e84]:
+              - text: A brief, confidential screening to ensure our levels of care, from
+              - link "medical detox" [ref=e85] [cursor=pointer]:
+                - /url: /what-we-offer/detox-san-francisco/
+              - text: to
+              - link "residential treatment" [ref=e86] [cursor=pointer]:
+                - /url: /what-we-offer/inpatient-rehab-san-francisco/
+              - text: ", are perfectly aligned with your recovery goals."
+            - figure [ref=e87]
+            - heading "4. Concierge Arrival" [level=3] [ref=e88]
+            - paragraph [ref=e89]: We coordinate all logistics, including private, discreet transport from SFO, OAK, or SJC airports directly to our boutique San Francisco facility.
+            - paragraph [ref=e90]: Safeguarding Your Professional Future
+          - generic [ref=e92]:
+            - heading "Career Protection & FMLA Support" [level=2] [ref=e93]:
+              - generic [ref=e94]: "04"
+            - paragraph [ref=e96]: We understand that for our San Francisco executives and professionals, the decision to enter residential treatment involves navigating complex career responsibilities. You shouldn’t have to choose between your health and your livelihood. Our admissions team provides expert guidance on navigating the Family and Medical Leave Act (FMLA) and other job protection resources available to California employees.
+          - generic [ref=e98]:
+            - heading "Hear from Our Alumni" [level=2] [ref=e99]:
+              - generic [ref=e100]: "05"
+            - paragraph [ref=e102]: At Marina Harbor, the success of our residents is the true measure of our clinical excellence. We are honored to have played a role in the recovery journeys of professionals, executives, and families from across San Francisco and beyond. These testimonials reflect our commitment to providing a private, compassionate, and highly effective healing environment.
+    - generic [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]: Insurance & Admissions
+        - heading "Verify your benefits in minutes" [level=2] [ref=e107]
+        - paragraph [ref=e108]:
+          - text: Financial barriers should never stand between you and life-saving treatment. Share a few details and our admissions team will confidentially review your coverage — with no obligation. Prefer to talk? Call us any time at
+          - link "1-866-525-3026" [ref=e109] [cursor=pointer]:
+            - /url: tel:+18665253026
+          - text: .
+        - list [ref=e110]:
+          - listitem [ref=e111]: 100% free & confidential benefits check
+          - listitem [ref=e114]: Most major PPO plans accepted
+          - listitem [ref=e117]: A real coordinator responds — not a bot
+      - generic [ref=e120]:
+        - generic [ref=e121]: Verify your coverage
+        - heading "Confidential insurance verification" [level=3] [ref=e125]
+        - paragraph [ref=e126]: Share a few details and our admissions team will confirm your benefits — usually within the same day. There is no cost and no obligation.
+        - generic [ref=e127]:
+          - generic [ref=e128]: Full name *
+          - textbox "Full name" [ref=e129]:
+            - /placeholder: Jane Doe
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - generic [ref=e132]: Phone *
+            - textbox "Phone" [ref=e133]:
+              - /placeholder: (000) 000-0000
+          - generic [ref=e134]:
+            - generic [ref=e135]: Email *
+            - textbox "Email" [ref=e136]:
+              - /placeholder: you@example.com
+        - generic [ref=e137]:
+          - generic [ref=e138]: Date of birth *
+          - textbox "Date of birth" [ref=e139]
+          - paragraph [ref=e140]: Required — insurers use your date of birth to confirm coverage.
+        - generic [ref=e141]:
+          - generic [ref=e142]: Insurance provider *
+          - generic [ref=e143]:
+            - combobox "Insurance provider" [ref=e144]
+            - button "Open provider list" [ref=e145] [cursor=pointer]
+          - paragraph [ref=e148]: Choose from the list or type your plan if it isn’t shown.
+        - generic [ref=e149]:
+          - generic [ref=e150]: Member / Policy ID (optional)
+          - textbox "Member / Policy ID (optional)" [ref=e151]:
+            - /placeholder: Found on the front of your insurance card
+        - generic [ref=e152]:
+          - generic [ref=e153]: Anything we should know? (optional)
+          - textbox "Anything we should know? (optional)" [ref=e154]:
+            - /placeholder: Who is seeking treatment, timing, questions…
+        - generic [ref=e155]:
+          - text: Company
+          - textbox [ref=e156]
+        - button "Verify My Insurance" [ref=e157] [cursor=pointer]
+        - paragraph [ref=e161]:
+          - text: Your information is kept strictly confidential and is never shared with third parties. This is not an emergency service — if you are in crisis, call or text 988. You can also reach our admissions team directly at
+          - link "1-866-525-3026" [ref=e162] [cursor=pointer]:
+            - /url: tel:+18665253026
+          - text: .
+    - generic [ref=e164]:
+      - generic [ref=e165]: Explore more
+      - heading "Related programs & resources" [level=2] [ref=e166]
+      - generic [ref=e167]:
+        - link "Aetna" [ref=e168] [cursor=pointer]:
+          - /url: /aetna/
+        - link "Cigna" [ref=e172] [cursor=pointer]:
+          - /url: /cigna/
+        - link "CompPsych" [ref=e176] [cursor=pointer]:
+          - /url: /comppsych/
+        - link "First Health Network" [ref=e180] [cursor=pointer]:
+          - /url: /first-health-network/
+    - generic [ref=e186]:
+      - text: Available 24/7
+      - heading "Ready to take the first step?" [level=2] [ref=e187]
+      - paragraph [ref=e188]: Our compassionate admissions team is available 24/7 to answer your questions and verify your insurance — confidentially and with no obligation.
+      - generic [ref=e189]:
+        - link "Call 1-866-525-3026" [ref=e190] [cursor=pointer]:
+          - /url: tel:+18665253026
+        - link "Text Us Now" [ref=e193] [cursor=pointer]:
+          - /url: sms:+18665253026
+      - link "Or verify your insurance in minutes" [ref=e196] [cursor=pointer]:
+        - /url: /admission/#verify
+      - list [ref=e199]:
+        - listitem [ref=e200]: Joint Commission Accredited
+        - listitem [ref=e204]: Most PPO insurance accepted
+        - listitem [ref=e207]: San Francisco, CA
+  - contentinfo [ref=e211]:
+    - generic [ref=e212]:
+      - generic [ref=e213]:
+        - img "Marina Harbor Detox" [ref=e214]
+        - paragraph [ref=e215]: Marina Harbor Detox offers evidence-based treatment for substance abuse in a private, luxury setting in the San Francisco Bay Area.
+        - generic [ref=e216]:
+          - link "Facebook" [ref=e217] [cursor=pointer]:
+            - /url: https://www.facebook.com/Marina-Harbor-Detox-102211298893099
+          - link "Instagram" [ref=e220] [cursor=pointer]:
+            - /url: https://www.instagram.com/marinaharbordetox_/?hl=en
+      - generic [ref=e224]:
+        - heading "Quick Links" [level=3] [ref=e225]
+        - list [ref=e226]:
+          - listitem [ref=e227]:
+            - link "Home" [ref=e228] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e229]:
+            - link "About Us" [ref=e230] [cursor=pointer]:
+              - /url: /about/
+          - listitem [ref=e231]:
+            - link "Tour Facility" [ref=e232] [cursor=pointer]:
+              - /url: /facility/
+          - listitem [ref=e233]:
+            - link "Admissions" [ref=e234] [cursor=pointer]:
+              - /url: /admission/
+          - listitem [ref=e235]:
+            - link "Contact" [ref=e236] [cursor=pointer]:
+              - /url: /contact-location/
+          - listitem [ref=e237]:
+            - link "FAQ" [ref=e238] [cursor=pointer]:
+              - /url: /faq/
+      - generic [ref=e239]:
+        - heading "What We Offer" [level=3] [ref=e240]
+        - list [ref=e241]:
+          - listitem [ref=e242]:
+            - link "Medical Detox" [ref=e243] [cursor=pointer]:
+              - /url: /what-we-offer/detox-san-francisco/
+          - listitem [ref=e244]:
+            - link "Alcohol Detox" [ref=e245] [cursor=pointer]:
+              - /url: /what-we-offer/alcohol-detox/
+          - listitem [ref=e246]:
+            - link "Meth Detox" [ref=e247] [cursor=pointer]:
+              - /url: /what-we-offer/meth-detox/
+          - listitem [ref=e248]:
+            - link "Heroin Detox" [ref=e249] [cursor=pointer]:
+              - /url: /what-we-offer/heroin-detox/
+          - listitem [ref=e250]:
+            - link "Benzo Detox" [ref=e251] [cursor=pointer]:
+              - /url: /what-we-offer/benzodiazepines-detox/
+          - listitem [ref=e252]:
+            - link "Fentanyl Detox" [ref=e253] [cursor=pointer]:
+              - /url: /fentanyl-detox/
+      - generic [ref=e254]:
+        - heading "Contact" [level=3] [ref=e255]
+        - list [ref=e256]:
+          - listitem [ref=e257]:
+            - link "1-866-525-3026" [ref=e258] [cursor=pointer]:
+              - /url: tel:+18665253026
+          - listitem [ref=e261]:
+            - link [ref=e262] [cursor=pointer]:
+              - /url: https://www.google.com/maps/place/Marina+Harbor+Detox/@37.806261,-122.4370412,15z
+              - generic [ref=e266]: 289 Marina BlvdSan Francisco, CA 94123
+          - listitem [ref=e267]:
+            - link "info@marinaharbordetox.com" [ref=e268] [cursor=pointer]:
+              - /url: mailto:info@marinaharbordetox.com
+          - listitem [ref=e272]: Open 24 hours · 7 days a week
+    - generic [ref=e277]:
+      - paragraph [ref=e278]: "Licensed by the State Department of Health Care Services · DHCS License #380106AP · Expires 8/31/2027"
+      - generic [ref=e279]:
+        - link "Privacy Policy" [ref=e280] [cursor=pointer]:
+          - /url: /privacy-policy/
+        - generic [ref=e281]: © 2026 Marina Harbor Detox. All Rights Reserved.
+  - button "Open contact menu" [ref=e283] [cursor=pointer]: Call 24/7
+  - button "Open chat" [ref=e288] [cursor=pointer]
+  - alert [ref=e291]
+  - dialog "Cookie consent" [ref=e292]:
+    - generic [ref=e293]:
+      - paragraph [ref=e294]:
+        - text: We use cookies to analyze traffic and improve your experience. See our
+        - link "Privacy Policy" [ref=e295] [cursor=pointer]:
+          - /url: /privacy-policy/
+        - text: .
+      - generic [ref=e296]:
+        - button "Decline" [ref=e297] [cursor=pointer]
+        - button "Accept" [ref=e298] [cursor=pointer]
