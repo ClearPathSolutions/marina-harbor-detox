@@ -123,15 +123,20 @@ export function getDocBySegments(segments: string[]): Doc | null {
  *
  * The two legacy paths stay under /media (that is where they were mirrored from
  * WordPress); new headshots go in /images/staff, which is what they actually are.
+ *
+ * Dr. Tambini is the fourth and is not on that roster at all — she is network
+ * leadership rather than facility staff (NETWORK_SLUGS below), and her portrait
+ * is the same one the group publishes.
  */
 const HEADSHOTS: Record<string, string> = {
   about__gus_saadeh: "/media/2026/02/IMG_2660.jpg",
   about__alicia_joslin: "/media/2026/06/MHD-Alicia-Joslin.png",
   about__ashley_hurtado: "/images/staff/ashley-hurtado.jpg",
+  about__pamela_tambini: "/images/staff/pamela-tambini.jpg",
 };
 
 /**
- * The team, as one page.
+ * The facility team, as one page.
  *
  * Each person used to get their own route with their headshot blown up to a
  * full-width 16:9 band — which cropped 55% off Alicia's portrait and clipped the
@@ -152,9 +157,30 @@ export type TeamMember = {
 
 export const TEAM_SLUGS = ["about__alicia-joslin", "about__gus-saadeh", "about__ashley-hurtado"];
 
-export function teamMembers(): TeamMember[] {
+/**
+ * Network leadership — Quadrant Health Group people, not this house's staff.
+ *
+ * Dr. Tambini provides medical oversight across the group's facilities rather
+ * than working out of Marina Harbor, so she is listed apart from the facility
+ * team and is the one person here who keeps a page of her own,
+ * /about/team/pamela-tambini (app/about/team/[slug]). That page canonicalises to
+ * the group's copy of the bio, because the same text is published on
+ * quadranthealthgroup.com and on every other Quadrant facility site — see
+ * CANONICAL_AT_PARENT in that route.
+ */
+export const NETWORK_SLUGS = ["about__pamela-tambini"];
+
+/**
+ * Every bio doc, and none of them are routed by the catch-all: the facility team
+ * renders on /about/team (next.config.mjs redirects the old per-person URLs
+ * there) and network leadership has its own route. Both the catch-all and
+ * sitemap.ts skip these slugs.
+ */
+export const BIO_SLUGS = [...TEAM_SLUGS, ...NETWORK_SLUGS];
+
+function membersFrom(slugs: string[]): TeamMember[] {
   const bySlug = new Map(getPages().map((p) => [p.slug, p]));
-  return TEAM_SLUGS.flatMap((slug) => {
+  return slugs.flatMap((slug) => {
     const doc = bySlug.get(slug);
     if (!doc) return [];
     return [
@@ -168,6 +194,19 @@ export function teamMembers(): TeamMember[] {
       },
     ];
   });
+}
+
+export function teamMembers(): TeamMember[] {
+  return membersFrom(TEAM_SLUGS);
+}
+
+export function networkLeadership(): TeamMember[] {
+  return membersFrom(NETWORK_SLUGS);
+}
+
+/** The bio JSON behind a person, keyed by their route slug ("pamela-tambini"). */
+export function bioDoc(slug: string): Doc | null {
+  return getPages().find((p) => p.slug === `about__${slug}`) ?? null;
 }
 
 const photos = approvedPhotos as { name: string; category: string; file: string }[];

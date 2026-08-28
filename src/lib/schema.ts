@@ -97,7 +97,19 @@ export function medicalWebPageSchema(doc: Doc, path: string, reviewedBy: string 
   };
 }
 
-export function personSchema(doc: Doc, path: string, jobTitle: string | null, image: string | null) {
+/**
+ * `Person` for a bio page. `worksFor` defaults to this facility because that is
+ * who the bios on this site are about; network leadership passes the group
+ * instead, since saying Dr. Tambini works for Marina Harbor Detox would simply
+ * be untrue — her oversight is Quadrant-wide.
+ */
+export function personSchema(
+  doc: Doc,
+  path: string,
+  jobTitle: string | null,
+  image: string | null,
+  worksFor: Record<string, string> = { "@type": "MedicalBusiness", name: site.name, url: site.url },
+) {
   return {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -105,6 +117,6 @@ export function personSchema(doc: Doc, path: string, jobTitle: string | null, im
     ...(jobTitle ? { jobTitle } : {}),
     ...(image ? { image: abs(image) } : {}),
     url: abs(path),
-    worksFor: { "@type": "MedicalBusiness", name: site.name, url: site.url },
+    worksFor,
   };
 }

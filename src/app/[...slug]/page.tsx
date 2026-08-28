@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ContentPage from "@/components/ContentPage";
-import { getAllDocs, getDocBySegments, leadImage, pathSegments, TEAM_SLUGS } from "@/lib/content";
+import { BIO_SLUGS, getAllDocs, getDocBySegments, leadImage, pathSegments } from "@/lib/content";
 import { site } from "@/lib/site";
 
 // Only build the archived pages/posts; anything else 404s.
@@ -10,14 +10,15 @@ export const dynamicParams = false;
 type Params = { slug: string[] };
 
 export function generateStaticParams(): Params[] {
-  // Staff bios are no longer routes of their own — the whole team lives on
-  // /about/team, and next.config.mjs redirects the old per-person URLs there.
-  // Their JSON stays put; teamMembers() still reads it for the bio copy.
-  const retired = new Set(TEAM_SLUGS.map((s) => s.replace(/__/g, "/")));
+  // Staff bios are not routes of their own here — the facility team lives on
+  // /about/team, and next.config.mjs redirects the old per-person URLs there;
+  // network leadership is served by app/about/team/[slug]. Their JSON stays put;
+  // teamMembers()/networkLeadership() still read it for the bio copy.
+  const bios = new Set(BIO_SLUGS);
   return getAllDocs()
+    .filter((d) => !bios.has(d.slug))
     .map((d) => pathSegments(d.url))
     .filter((seg) => seg.length > 0 && seg.join("/") !== "blog")
-    .filter((seg) => !retired.has(seg.join("/")))
     .map((slug) => ({ slug }));
 }
 

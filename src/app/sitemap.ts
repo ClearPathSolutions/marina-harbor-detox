@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
-import { getAllDocs, pathSegments, postDate, TEAM_SLUGS } from "@/lib/content";
+import { BIO_SLUGS, getAllDocs, networkLeadership, pathSegments, postDate } from "@/lib/content";
 
 // MH-35 — every submitted URL must be the trailing-slash form, which is what
 // this build now serves (next.config.mjs `trailingSlash: true`) and what the
@@ -16,13 +16,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: url("blog/archive"), changeFrequency: "monthly", priority: 0.6 },
   ];
 
-  // Staff bios redirect to /about/team, so they must not be submitted as URLs.
-  const retired = new Set(TEAM_SLUGS.map((s) => s.replace(/__/g, "/")));
+  // Bio JSON is content, not a route: the facility team redirects to /about/team,
+  // so those URLs must not be submitted.
+  const bios = new Set(BIO_SLUGS);
   entries.push({ url: url("about/team"), changeFrequency: "monthly", priority: 0.7 });
+
+  // Network-leadership bios DO have pages, and they are linked from /about/team,
+  // so they are submitted — but at a low priority: each canonicalises to the
+  // group's original on quadranthealthgroup.com (see app/about/team/[slug]), so
+  // this copy is not the one we are asking Google to index.
+  for (const m of networkLeadership()) {
+    entries.push({ url: url(`about/team/${m.slug}`), changeFrequency: "yearly", priority: 0.4 });
+  }
 
   for (const doc of getAllDocs()) {
     const path = pathSegments(doc.url).join("/");
-    if (!path || path === "blog" || retired.has(path)) continue;
+    if (!path || path === "blog" || bios.has(doc.slug)) continue;
     entries.push({
       url: url(path),
       changeFrequency: doc.type === "post" ? "monthly" : "monthly",
