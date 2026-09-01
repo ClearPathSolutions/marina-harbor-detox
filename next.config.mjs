@@ -23,7 +23,7 @@ const csp = [
   "form-action 'self'",
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://cdn.trustindex.io https://*.tctm.co https://www.clarionlabs.ai",
   "style-src 'self' 'unsafe-inline' https://cdn.trustindex.io https://fonts.googleapis.com",
-  "img-src 'self' data: blob: https://www.google-analytics.com https://www.googletagmanager.com https://www.facebook.com https://cdn.trustindex.io https://*.googleusercontent.com https://maps.gstatic.com https://*.tctm.co",
+  "img-src 'self' data: blob: https://api.clarionlabs.ai https://www.google-analytics.com https://www.googletagmanager.com https://www.facebook.com https://cdn.trustindex.io https://*.googleusercontent.com https://maps.gstatic.com https://*.tctm.co",
   "font-src 'self' data: https://fonts.gstatic.com",
   "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://connect.facebook.net https://cdn.trustindex.io https://*.tctm.co https://api.clarionlabs.ai https://www.clarionlabs.ai",
   "frame-src https://www.google.com https://maps.google.com https://cdn.trustindex.io https://www.googletagmanager.com",
