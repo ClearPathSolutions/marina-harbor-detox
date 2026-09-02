@@ -153,9 +153,34 @@ export type TeamMember = {
   title: string;
   photo: string | null;
   bio: string[];
+  /** Bio is published by the group — link to it rather than reprinting it. */
+  bioAtParent?: boolean;
 };
 
-export const TEAM_SLUGS = ["about__alicia-joslin", "about__gus-saadeh", "about__ashley-hurtado"];
+/**
+ * The roster, in published order. Explicit because it is an org chart, not an
+ * alphabetical list: medical oversight, then executive, then the directors,
+ * then supervisors, then front-line staff.
+ *
+ * Facility staff and Quadrant Health Group network people are deliberately in
+ * ONE list. Splitting them into "our team" and "network leadership" sections
+ * implied the group people were an appendix, when several of them — the Clinical
+ * Director, the Nursing Director — are the clinical line of authority over this
+ * house.
+ */
+export const TEAM_SLUGS = [
+  "about__pamela-tambini",
+  "about__shawn-young",
+  "about__gus-saadeh",
+  "about__michael-mcarthur",
+  "about__riky-hanaumi",
+  "about__alicia-joslin",
+  "about__jacob-cameron",
+  "about__ashley-ruiz",
+  "about__monica-olivares",
+  "about__ashley-hurtado",
+  "about__bj-thome",
+];
 
 /**
  * Network leadership — Quadrant Health Group people, not this house's staff.
@@ -171,12 +196,22 @@ export const TEAM_SLUGS = ["about__alicia-joslin", "about__gus-saadeh", "about__
 export const NETWORK_SLUGS = ["about__pamela-tambini"];
 
 /**
+ * People whose bio is published by the group rather than by this site. Their
+ * row links to their own page instead of reprinting the text, because the same
+ * words appear on quadranthealthgroup.com and on every other Quadrant facility
+ * site — reprinting them here would put syndicated copy on a page that
+ * canonicalises to itself. Verified 2026-08-06: of this roster only
+ * Dr. Tambini's bio is actually published on the parent.
+ */
+const BIO_LIVES_AT_PARENT = new Set(NETWORK_SLUGS);
+
+/**
  * Every bio doc, and none of them are routed by the catch-all: the facility team
  * renders on /about/team (next.config.mjs redirects the old per-person URLs
  * there) and network leadership has its own route. Both the catch-all and
  * sitemap.ts skip these slugs.
  */
-export const BIO_SLUGS = [...TEAM_SLUGS, ...NETWORK_SLUGS];
+export const BIO_SLUGS = [...new Set([...TEAM_SLUGS, ...NETWORK_SLUGS])];
 
 function membersFrom(slugs: string[]): TeamMember[] {
   const bySlug = new Map(getPages().map((p) => [p.slug, p]));
@@ -191,6 +226,7 @@ function membersFrom(slugs: string[]): TeamMember[] {
         // HEADSHOTS is keyed with underscores; the doc slug uses hyphens.
         photo: HEADSHOTS[slug.replace(/-/g, "_")] ?? null,
         bio: doc.blocks.filter((b) => b.tag === "p").map((b) => b.text),
+        bioAtParent: BIO_LIVES_AT_PARENT.has(slug),
       },
     ];
   });

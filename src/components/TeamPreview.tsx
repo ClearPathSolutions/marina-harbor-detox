@@ -21,9 +21,19 @@ function initials(name: string) {
  * third person was published. This reads the same source as /about/team, so the
  * two can never disagree.
  */
+/**
+ * How many of the roster this strip shows. The full list is 11 people; all of
+ * them here filled four rows and made /about a second copy of /about/team.
+ * Six is two clean rows of three, in roster order, with the link below carrying
+ * the rest.
+ */
+const PREVIEW_COUNT = 6;
+
 export default function TeamPreview() {
-  const team = teamMembers();
-  if (!team.length) return null;
+  const roster = teamMembers();
+  if (!roster.length) return null;
+  const team = roster.slice(0, PREVIEW_COUNT);
+  const remaining = roster.length - team.length;
 
   return (
     /* Full container width, three across. At the old two-across the third
@@ -68,7 +78,8 @@ export default function TeamPreview() {
         href="/about/team"
         className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700"
       >
-        Meet the full team <ArrowRight className="h-4 w-4" />
+        {remaining > 0 ? `Meet the full team — ${remaining} more` : "Meet the full team"}{" "}
+        <ArrowRight className="h-4 w-4" />
       </Link>
     </div>
   );
