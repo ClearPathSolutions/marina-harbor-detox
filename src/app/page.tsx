@@ -51,6 +51,7 @@ export default function Home() {
               alt="Aerial view over the Marina District and marina toward the Golden Gate Bridge"
               fill
               priority
+              fetchPriority="high"
               sizes="100vw"
               className="object-cover object-center"
             />
@@ -190,7 +191,10 @@ export default function Home() {
                     alt={a.name}
                     width={a.w}
                     height={a.h}
-                    sizes="148px"
+                    // Matches the max-w cap below, not the 132/148px cell.
+                    // At 148px the browser bought a 360px candidate for a
+                    // badge that renders at 104px.
+                    sizes="(max-width: 640px) 104px, 120px"
                     // max-w caps the wide horizontal lockups (NAMI is 330x126)
                     // so they can't out-weigh the square seals beside them:
                     // at max-h alone NAMI rendered 147x56 against LegitScript's

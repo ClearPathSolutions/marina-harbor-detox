@@ -50,7 +50,18 @@ export default function PageHero({
       <div className="absolute inset-0 -z-10">
         {photo ? (
           <>
-            <Image src={photo} alt="" fill priority sizes="100vw" className="object-cover object-center" />
+            {/* `priority` alone only emits the preload LINK in Next 15.5 — it does not
+                mark it high priority, so the hero queued behind ~500 KiB of
+                third-party JS. fetchPriority has to be passed explicitly. */}
+            <Image
+              src={photo}
+              alt=""
+              fill
+              priority
+              fetchPriority="high"
+              sizes="100vw"
+              className="object-cover object-center"
+            />
             {/* Below lg the copy is full-width, so darken top-to-bottom across
                 the whole band. From lg it returns to a left-weighted scrim,
                 which keeps the right of the photo open. */}

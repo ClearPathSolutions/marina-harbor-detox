@@ -106,6 +106,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${poppins.variable} ${montserrat.variable}`} suppressHydrationWarning>
       <head>
+        {/* Warm connections for the third parties that still load during the
+            initial page, so their TLS handshake is not serialised after the HTML.
+            GTM is deliberately absent — it is deferred to lazyOnload, and
+            preconnecting to an origin we will not use until after load wastes
+            one of the browser's connections. */}
+        <link rel="preconnect" href="https://264810.tctm.co" />
+        <link rel="preconnect" href="https://www.clarionlabs.ai" />
+        <link rel="preconnect" href="https://api.clarionlabs.ai" />
         {/* Marks JS as available before paint so scroll-reveal never hides content for no-JS users */}
         <script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add('js')` }} />
         {/* CallTrackingMetrics — site-wide visitor tracking, account 264810.

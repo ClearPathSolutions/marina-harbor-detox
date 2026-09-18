@@ -97,9 +97,15 @@ export default function Analytics() {
         `}
       </Script>
 
-      {/* Google Tag Manager (optional container) */}
+      {/* Google Tag Manager.
+          `lazyOnload`, not `afterInteractive`: this container pulls ~446 KiB
+          (gtm.js + two gtag bundles) plus Microsoft Clarity, and on a throttled
+          connection that saturated the link while the hero image was still in
+          flight — LCP measured 9.8s. Deferring it past the load event takes the
+          whole container off the critical path. Tags still fire; they fire a
+          beat later. */}
       {gtmId && (
-        <Script id="gtm" strategy="afterInteractive">
+        <Script id="gtm" strategy="lazyOnload">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
             var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
