@@ -109,11 +109,8 @@ export function getDocBySegments(segments: string[]): Doc | null {
  * and contains no portraits, so a bio page would otherwise show a bedroom. These
  * are photographs of actual people and are kept.
  *
- * All three of the roster's people now have one. Ashley was the last gap — she
- * rendered as an "AH" initials tile while her colleagues had faces — and her
- * headshot came from the client's own "Staff Headshots/California/Cali NORTH"
- * set, the same folder Alicia's and Gus's came from. The portal feed returns
- * photoUrl: null for all three, so this map is the only source.
+ * Every one of the eleven now has a real photograph. The portal feed returns
+ * photoUrl: null for all of them, so this map is the only source.
  *
  * Gus deliberately keeps the tight IMG_2660 crop rather than the higher-
  * resolution MHD-Gus Saadeh.JPG in that folder: the latter is a full-body
@@ -133,6 +130,15 @@ const HEADSHOTS: Record<string, string> = {
   about__alicia_joslin: "/media/2026/06/MHD-Alicia-Joslin.png",
   about__ashley_hurtado: "/images/staff/ashley-hurtado.jpg",
   about__pamela_tambini: "/images/staff/pamela-tambini.jpg",
+  // The California set, supplied 2026-09-21. Sources were 1.7-1.9 MB PNGs;
+  // resized to 800px on the long edge and re-encoded (11 MB -> 250 KB total).
+  about__shawn_young: "/images/staff/shawn-young.jpg",
+  about__michael_mcarthur: "/images/staff/michael-mcarthur.jpg",
+  about__riky_hanaumi: "/images/staff/riky-hanaumi.jpg",
+  about__jacob_cameron: "/images/staff/jacob-cameron.jpg",
+  about__monica_olivares: "/images/staff/monica-olivares.jpg",
+  about__bj_thome: "/images/staff/bj-thome.jpg",
+  about__ashley_ruiz: "/images/staff/ashley-ruiz.jpg",
 };
 
 /**
