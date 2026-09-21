@@ -98,7 +98,7 @@ const structuredData = {
     opens: "00:00",
     closes: "23:59",
   },
-  sameAs: [site.social.facebook, site.social.instagram],
+  sameAs: [site.social.facebook, site.social.instagram, site.social.linkedin],
   medicalSpecialty: "Addiction Medicine",
 };
 

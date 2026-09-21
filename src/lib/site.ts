@@ -36,6 +36,7 @@ export const site = {
   social: {
     facebook: "https://www.facebook.com/Marina-Harbor-Detox-102211298893099",
     instagram: "https://www.instagram.com/marinaharbordetox_/?hl=en",
+    linkedin: "https://www.linkedin.com/company/marina-harbor-detox/",
   },
   // Third-party widget IDs carried over from the WordPress site.
   // Trustindex renders the "Hear From Our Patients" Google reviews wall + star rich snippet.

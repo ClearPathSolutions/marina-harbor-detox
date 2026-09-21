@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { nav, site } from "@/lib/site";
-import { ChevronDown, Clock, Close, Facebook, Instagram, MapPin, Menu, Phone } from "./Icons";
+import { ChevronDown, Clock, Close, Facebook, Instagram, LinkedIn, MapPin, Menu, Phone } from "./Icons";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -364,6 +364,15 @@ export default function Header() {
                 className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition-colors active:bg-orange-500"
               >
                 <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href={site.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition-colors active:bg-orange-500"
+              >
+                <LinkedIn className="h-4 w-4" />
               </a>
             </div>
           </div>

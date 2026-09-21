@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/lib/site";
-import { Clock, Facebook, Instagram, Mail, MapPin, Phone } from "./Icons";
+import { Clock, Facebook, Instagram, LinkedIn, Mail, MapPin, Phone } from "./Icons";
 import CopyrightYear from "./CopyrightYear";
 
 const quickLinks = [
@@ -58,6 +58,15 @@ export default function Footer() {
               className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-orange-500 hover:text-white"
             >
               <Instagram className="h-4 w-4" />
+            </a>
+            <a
+              href={site.social.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-orange-500 hover:text-white"
+            >
+              <LinkedIn className="h-4 w-4" />
             </a>
           </div>
         </div>

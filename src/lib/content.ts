@@ -112,11 +112,11 @@ export function getDocBySegments(segments: string[]): Doc | null {
  * Every one of the eleven now has a real photograph. The portal feed returns
  * photoUrl: null for all of them, so this map is the only source.
  *
- * Gus deliberately keeps the tight IMG_2660 crop rather than the higher-
- * resolution MHD-Gus Saadeh.JPG in that folder: the latter is a full-body
- * seated portrait, and in this page's 4:5 portrait frame his face would end up
- * a small fraction of the tile. Resolution is not the only thing that matters
- * in a headshot — framing is.
+ * Gus now uses MHD-Gus Saadeh.JPG, cropped. That source is a seated, full-body
+ * environmental portrait at 2500x3750; dropped into the 4:5 frame whole, his
+ * face occupies a small fraction of the tile, which is why the tight IMG_2660
+ * crop was preferred previously. Cropping to head-and-shoulders keeps the newer
+ * photo without losing the scale the other ten headshots share.
  *
  * The two legacy paths stay under /media (that is where they were mirrored from
  * WordPress); new headshots go in /images/staff, which is what they actually are.
@@ -126,7 +126,7 @@ export function getDocBySegments(segments: string[]): Doc | null {
  * is the same one the group publishes.
  */
 const HEADSHOTS: Record<string, string> = {
-  about__gus_saadeh: "/media/2026/02/IMG_2660.jpg",
+  about__gus_saadeh: "/images/staff/gus-saadeh.jpg",
   about__alicia_joslin: "/media/2026/06/MHD-Alicia-Joslin.png",
   about__ashley_hurtado: "/images/staff/ashley-hurtado.jpg",
   about__pamela_tambini: "/images/staff/pamela-tambini.jpg",
