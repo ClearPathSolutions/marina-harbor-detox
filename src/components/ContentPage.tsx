@@ -542,7 +542,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
         />
       ))}
       <Header />
-      <main id="main">
+      <main id="main" suppressHydrationWarning>
         {/* Page hero.
             The page photo lives HERE, as a banner behind the title — it used to
             sit below as a separate full-width 16:9 slab, which rendered 1336x752
@@ -689,7 +689,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                   Financial barriers should never stand between you and life-saving treatment. Share a few details and
                   our admissions team will confidentially review your coverage — with no obligation. Prefer to talk?
                   Call us any time at{" "}
-                  <a href={site.phones.primary.href} className="font-semibold text-orange-600">{site.phones.primary.label}</a>.
+                  <a href={site.phones.primary.href} className="font-semibold text-orange-600" suppressHydrationWarning>{site.phones.primary.label}</a>.
                 </p>
                 <ul className="mt-8 grid gap-4">
                   {[
@@ -718,7 +718,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                 <ul className="mt-6 grid gap-5 text-navy-900/80">
                   <li className="flex items-start gap-3">
                     <Phone className="mt-0.5 h-5 w-5 shrink-0 text-orange-500" />
-                    <a href={site.phones.primary.href} className="font-semibold hover:text-orange-600">{site.phones.primary.label}</a>
+                    <a href={site.phones.primary.href} className="font-semibold hover:text-orange-600" suppressHydrationWarning>{site.phones.primary.label}</a>
                   </li>
                   <li className="flex items-start gap-3">
                     <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-orange-500" />

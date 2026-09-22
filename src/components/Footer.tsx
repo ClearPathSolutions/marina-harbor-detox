@@ -104,7 +104,7 @@ export default function Footer() {
           <h3 className="text-sm font-semibold uppercase tracking-[0.15em] text-white">Contact</h3>
           <ul className="mt-5 space-y-4 text-sm">
             <li>
-              <a href={site.phones.primary.href} className="flex items-start gap-3 hover:text-orange-400">
+              <a href={site.phones.primary.href} className="flex items-start gap-3 hover:text-orange-400" suppressHydrationWarning>
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold-400" />
                 {site.phones.primary.label}
               </a>

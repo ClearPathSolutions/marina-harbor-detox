@@ -33,7 +33,7 @@ export default function CTASection({
               alternative, and verifying insurance is a step you take on the way,
               so it reads as a link rather than a third competing filled button. */}
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href={site.phones.primary.href} className="btn-orange w-full text-base sm:w-auto">
+            <a href={site.phones.primary.href} className="btn-orange w-full text-base sm:w-auto" suppressHydrationWarning>
               <Phone className="h-5 w-5" /> Call {site.phones.primary.label}
             </a>
             <a href={site.sms} className="btn-outline w-full text-base sm:w-auto">

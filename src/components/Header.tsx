@@ -179,12 +179,12 @@ export default function Header() {
             <a
               href={site.phones.primary.href}
               aria-label={`Call ${site.phones.primary.label}, available 24/7`}
-              className="flex items-center gap-2 text-sm font-semibold text-white"
+              className="flex items-center gap-2 text-sm font-semibold text-white" suppressHydrationWarning
             >
               <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-gold-400">
                 <Phone className="h-4 w-4" />
               </span>
-              <span className="hidden whitespace-nowrap leading-tight 2xl:block">
+              <span className="hidden whitespace-nowrap leading-tight 2xl:block" suppressHydrationWarning>
                 <span className="block text-[10px] font-medium uppercase tracking-wider text-white/50">
                   Call 24/7
                 </span>
@@ -201,7 +201,7 @@ export default function Header() {
             <a
               href={site.phones.primary.href}
               aria-label="Call us now"
-              className="grid h-11 w-11 place-items-center rounded-full bg-orange-500 text-white shadow-soft active:scale-95"
+              className="grid h-11 w-11 place-items-center rounded-full bg-orange-500 text-white shadow-soft active:scale-95" suppressHydrationWarning
             >
               <Phone className="h-5 w-5" />
             </a>
@@ -326,11 +326,11 @@ export default function Header() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-400">
               Confidential &amp; available 24/7
             </p>
-            <a href={site.phones.primary.href} className="mt-3 flex items-center gap-3 text-white active:opacity-80">
+            <a href={site.phones.primary.href} className="mt-3 flex items-center gap-3 text-white active:opacity-80" suppressHydrationWarning>
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-gold-400">
                 <Phone className="h-4 w-4" />
               </span>
-              <span className="font-display text-base font-bold">{site.phones.primary.label}</span>
+              <span className="font-display text-base font-bold" suppressHydrationWarning>{site.phones.primary.label}</span>
             </a>
             <a
               href={site.address.maps}
@@ -379,7 +379,7 @@ export default function Header() {
         </nav>
 
         <div className="space-y-2 border-t border-white/10 p-4">
-          <a href={site.phones.primary.href} className="btn-orange w-full">
+          <a href={site.phones.primary.href} className="btn-orange w-full" suppressHydrationWarning>
             <Phone className="h-4 w-4" /> Call {site.phones.primary.label}
           </a>
           <Link href="/admission#verify" onClick={() => setOpen(false)} className="btn-gold w-full">

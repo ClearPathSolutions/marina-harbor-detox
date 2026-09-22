@@ -196,7 +196,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
             ? "We’ll begin running a verification of your insurance benefits right away. One of our admissions specialists will reach out to you shortly to review your coverage — confidentially and with no obligation."
             : "One of our admissions specialists will be reaching out to you shortly. If it’s urgent, you can call us any time."}
         </p>
-        <a href={site.phones.primary.href} className="btn-orange mt-7">
+        <a href={site.phones.primary.href} className="btn-orange mt-7" suppressHydrationWarning>
           <Phone className="h-5 w-5" /> Call {site.phones.primary.label}
         </a>
       </div>
@@ -229,7 +229,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         noValidate
         // Captured via window.ClarionForms.submit() in onSubmit (NOT the auto-wire
         // data-clarion-form attribute, which lets the native submit reload the page).
-        className="min-w-0 rounded-3xl border border-navy-100 bg-white p-6 shadow-card sm:p-8"
+        className="min-w-0 rounded-3xl border border-navy-100 bg-white p-6 shadow-card sm:p-8" suppressHydrationWarning
       >
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
           <Shield className="h-4 w-4" /> Verify your coverage
@@ -250,7 +250,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         </div>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div>
+          <div suppressHydrationWarning>
             <label htmlFor="lf-phone" className={labelCls}>Phone{req}</label>
             <input id="lf-phone" name="phone" type="tel" autoComplete="tel" required className={field} placeholder="(000) 000-0000" />
             {err("phone")}
@@ -311,7 +311,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
         {status === "error" && !Object.keys(errors).length && (
           <p className="mt-3 text-sm text-orange-600">
             Something went wrong. Please call us at{" "}
-            <a href={site.phones.primary.href} className="font-semibold underline">{site.phones.primary.label}</a>.
+            <a href={site.phones.primary.href} className="font-semibold underline" suppressHydrationWarning>{site.phones.primary.label}</a>.
           </p>
         )}
 
@@ -319,7 +319,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
           Your information is kept strictly confidential and is never shared with third parties. This is not an
           emergency service — if you are in crisis, call or text 988. You can also reach our admissions team directly
           at{" "}
-          <a href={site.phones.primary.href} className="font-semibold text-navy-900/70 underline">
+          <a href={site.phones.primary.href} className="font-semibold text-navy-900/70 underline" suppressHydrationWarning>
             {site.phones.primary.label}
           </a>
           .
@@ -330,7 +330,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
 
   // ── Contact form (Clarion + /api/lead) ──────────────────────────────────────
   return (
-    <form onSubmit={onSubmit} noValidate className="min-w-0 rounded-3xl border border-navy-100 bg-white p-6 shadow-card sm:p-8">
+    <form onSubmit={onSubmit} noValidate className="min-w-0 rounded-3xl border border-navy-100 bg-white p-6 shadow-card sm:p-8" suppressHydrationWarning>
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
         <Shield className="h-4 w-4" /> Send us a message
       </div>
@@ -345,7 +345,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
           <input id="lf-c-name" name="name" type="text" autoComplete="name" required className={field} placeholder="Jane Doe" {...a11y("name")} />
           {err("name")}
         </div>
-        <div>
+        <div suppressHydrationWarning>
           <label htmlFor="lf-c-phone" className={labelCls}>Phone</label>
           <input id="lf-c-phone" name="phone" type="tel" autoComplete="tel" required className={field} placeholder="(415) 555-0123" {...a11y("phone")} />
           {err("phone")}
@@ -376,7 +376,7 @@ export default function LeadForm({ intent = "verify" }: { intent?: Intent }) {
       {status === "error" && formError && (
         <p role="alert" className="mt-3 text-center text-sm text-orange-600">
           {formError}{" "}
-          <a href={site.phones.primary.href} className="font-semibold underline">
+          <a href={site.phones.primary.href} className="font-semibold underline" suppressHydrationWarning>
             {site.phones.primary.label}
           </a>
         </p>

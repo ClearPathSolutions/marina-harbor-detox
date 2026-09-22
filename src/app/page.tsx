@@ -94,7 +94,7 @@ export default function Home() {
                     the two buttons then render at different heights (48 vs 50).
                     Default `stretch` makes a filled and an outline button match. */}
                 <div className="mt-7 flex flex-col gap-3 [text-shadow:none] sm:flex-row">
-                  <a href={site.phones.primary.href} className="btn-orange text-base">
+                  <a href={site.phones.primary.href} className="btn-orange text-base" suppressHydrationWarning>
                     <Phone className="h-5 w-5" /> Get Help Now
                   </a>
                   <Link href="/what-we-offer" className="btn-outline text-base">
@@ -261,7 +261,7 @@ export default function Home() {
               </p>
             </Reveal>
             <Reveal delay={120} className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <a href={site.phones.primary.href} className="btn-orange whitespace-nowrap">
+              <a href={site.phones.primary.href} className="btn-orange whitespace-nowrap" suppressHydrationWarning>
                 <Phone className="h-4 w-4" /> Call {site.phones.primary.label}
               </a>
               <Link href="/admission#verify" className="btn-outline whitespace-nowrap">
@@ -527,7 +527,7 @@ export default function Home() {
                 are standing by day and night to help you find your personal solution.
               </p>
               <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                <a href={site.phones.primary.href} className="btn-orange text-base">
+                <a href={site.phones.primary.href} className="btn-orange text-base" suppressHydrationWarning>
                   <Phone className="h-5 w-5" /> Call {site.phones.primary.label}
                 </a>
                 <a href={site.sms} className="btn-outline text-base">

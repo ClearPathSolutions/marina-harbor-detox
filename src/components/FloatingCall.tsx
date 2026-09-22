@@ -14,7 +14,7 @@ export default function FloatingCall() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 left-6 z-[55] hidden flex-col items-start gap-3 lg:flex">
+    <div className="fixed bottom-6 left-6 z-[55] hidden flex-col items-start gap-3 lg:flex" suppressHydrationWarning>
       {open && (
         <div className="w-64 overflow-hidden rounded-2xl border border-navy-100 bg-white shadow-lift">
           <div className="bg-navy-900 px-4 py-3">
@@ -26,7 +26,7 @@ export default function FloatingCall() {
           <div className="flex flex-col p-2">
             <a
               href={site.phones.primary.href}
-              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy-900 transition-colors hover:bg-sand-50"
+              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy-900 transition-colors hover:bg-sand-50" suppressHydrationWarning
             >
               <span className="grid h-9 w-9 place-items-center rounded-full bg-orange-500 text-white">
                 <Phone className="h-4 w-4" />
@@ -59,7 +59,7 @@ export default function FloatingCall() {
         aria-expanded={open}
         className="flex items-center gap-2.5 rounded-full bg-orange-500 py-3 pl-3 pr-5 font-semibold text-white shadow-lift transition-all hover:bg-orange-600 hover:shadow-card"
       >
-        <span className="grid h-8 w-8 place-items-center rounded-full bg-white/20">
+        <span className="grid h-8 w-8 place-items-center rounded-full bg-white/20" suppressHydrationWarning>
           {open ? <Close className="h-5 w-5" /> : <Phone className="h-5 w-5" />}
         </span>
         {open ? "Close" : "Call 24/7"}

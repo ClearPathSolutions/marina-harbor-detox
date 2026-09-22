@@ -79,7 +79,7 @@ export default async function TeamPage() {
                 — rows absorb the difference without leaving ragged whitespace.
                 `container-article` is the same left-aligned frame PageHero uses,
                 so these rows start on the same edge as the page title. */}
-            <div className="container-article divide-y divide-navy-100">
+            <div className="container-article divide-y divide-navy-100" suppressHydrationWarning>
               {team.map((m, i) => (
                 <article
                   key={m.slug}
