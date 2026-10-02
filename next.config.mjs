@@ -137,6 +137,16 @@ const nextConfig = {
         destination: "/blog/",
         permanent: false,
       },
+
+      // Careers lives on ADP Workforce Now, not on this site. Temporary (307) on
+      // purpose: ADP job-board URLs change when the account is reconfigured, and
+      // a 308 would be cached by browsers and point at a dead link indefinitely.
+      {
+        source: "/careers",
+        destination:
+          "https://workforcenow.adp.com/mascsr/default/mdf/recruitment/recruitment.html?cid=e1094ba9-8b93-4f55-9dab-3102a4eaaa49&ccId=19000101_000001&lang=en_US",
+        permanent: false,
+      },
     ];
   },
 };
