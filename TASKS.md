@@ -128,7 +128,7 @@ treatment, not just trust.
 **Traces to:** issue.md §1.1 · **Blocks:** MH-12
 
 Four full bios exist and are published nowhere: Riky Hanaumi (Clinical Director CA), Michael McArthur
-(Nursing Director CA), Monica Olivares (Clinical Supervisor CA), Jacob Cameron (Client Care Director).
+(Nursing Director CA), Monica Olivares (Clinical Operations Director CA), Jacob Cameron (Client Care Director).
 Shawn Young's bio says *Southern* California — probably out of scope for a NorCal site; confirm.
 
 **Ask marketing:** facility sites, parent only, or both? Note Hanaumi is *already* named on MH pages as

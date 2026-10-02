@@ -45,3 +45,4 @@ next-env.d.ts
 
 # Playwright MCP scratch output (browser snapshots / console logs)
 .playwright-mcp/
+.env*

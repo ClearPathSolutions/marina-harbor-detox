@@ -34,7 +34,7 @@ Marina Harbor staff appear across **four** doc headings, not two: `Cali Leadersh
 |---|---|---|---|
 | **Erika "Riky" Hanaumi, LCSW** | Clinical Director, CA facilities | ✅ full | **Already cited on the site as the medical reviewer** — see 1.7 |
 | **Michael McArthur** | Director of Nursing, CA facilities | ✅ full | Oversees medical staff at CA sites |
-| **Monica Olivares, CADC II** | Clinical Supervisor, CA facilities | ✅ full | Also the subject of V0054 at Hillside |
+| **Monica Olivares, CADC II** | Clinical Operations Director, CA facilities | ✅ full | Also the subject of V0054 at Hillside |
 | **Jacob Cameron, SUDCC I** | Client Care Director, QHG | ✅ full | Org-wide client care |
 | Shawn Young | Executive Director | ✅ full | Bio says **Southern** California — likely *not* Marina Harbor. Confirm scope |
 
