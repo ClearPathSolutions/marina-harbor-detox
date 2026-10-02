@@ -182,8 +182,8 @@ export const TEAM_SLUGS = [
   "about__riky-hanaumi",
   "about__alicia-joslin",
   "about__jacob-cameron",
-  "about__ashley-ruiz",
   "about__monica-olivares",
+  "about__ashley-ruiz",
   "about__ashley-hurtado",
   "about__bj-thome",
 ];
