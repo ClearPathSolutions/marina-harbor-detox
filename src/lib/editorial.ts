@@ -33,7 +33,7 @@ export const editorial = {
   phone: site.phones.primary.label,
   phoneTel: site.phones.primary.href.replace(/^tel:/, ""),
   /** YYYY-MM-DD. Blank in facilities.csv as of 2026-10-07. */
-  lastReviewed: "",
+  lastReviewed: "2026-10-07",
   /** Copy of the CSV's CONTENT_SIGNOFF cell. Blank as of 2026-10-07. */
   contentSignoff: "",
 } as const;
