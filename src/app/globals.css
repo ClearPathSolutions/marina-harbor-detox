@@ -176,3 +176,44 @@
     transform: none !important;
   }
 }
+
+/* Unlayered on purpose: these classes appear in data/editorial-policy.html,
+   which Tailwind's content scan does not cover, so @layer components would
+   purge them. */
+/* ── Editorial policy package (templates/article-byline.css) ─────────────
+   Article byline: sits in the post hero on navy, so colours follow the
+   surrounding text via currentColor, as the template intends. */
+.article-byline {
+  margin: 1rem 0 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.article-byline p { margin: 0.15rem 0; }
+.article-byline .byline-meta { color: color-mix(in srgb, currentColor 65%, transparent); font-size: 0.875rem; }
+.article-byline a { text-decoration: underline; text-underline-offset: 2px; }
+.article-byline a:hover { @apply text-orange-300; }
+
+/* Policy page body: raw template HTML, so it is styled here to match the
+   ContentPage prose (Tailwind's preflight strips heading/list defaults). */
+.editorial-policy h2 {
+  @apply mb-5 mt-16 scroll-mt-28 text-2xl font-bold leading-tight text-navy-900 sm:text-3xl;
+}
+.editorial-policy h2:first-child { @apply mt-0; }
+.editorial-policy p,
+.editorial-policy li { @apply break-words leading-[1.8] text-navy-900/75; }
+.editorial-policy p { @apply mt-6; }
+.editorial-policy h2 + p { @apply mt-0; }
+.editorial-policy strong { @apply font-semibold text-navy-900; }
+.editorial-policy a { @apply font-semibold text-orange-600 underline underline-offset-2 hover:text-orange-700; }
+.editorial-policy ol { @apply my-6 list-decimal space-y-3 pl-6 marker:font-semibold marker:text-orange-500; }
+.editorial-policy ul { @apply my-6 list-disc space-y-3 pl-6 marker:text-orange-500; }
+/* Terminology table: scrolls sideways on phones instead of overflowing. */
+.editorial-policy .table-scroll { @apply my-8 rounded-2xl border border-navy-100; overflow-x: auto; max-width: 100%; }
+.editorial-policy table { border-collapse: collapse; width: 100%; min-width: 28rem; @apply text-[15px]; }
+.editorial-policy th,
+.editorial-policy td { @apply border-b border-navy-100 px-4 py-3 text-left align-top leading-snug text-navy-900/75; }
+.editorial-policy th { @apply bg-sand-50 font-semibold text-navy-900; }
+.editorial-policy tbody tr:last-child td { @apply border-b-0; }

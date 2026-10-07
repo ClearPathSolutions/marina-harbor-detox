@@ -1,4 +1,5 @@
-import { type Block, type Doc, postDate } from "./content";
+import { type ArticleByline, type BylinePerson, type Block, type Doc, postDate } from "./content";
+import { ORGANIZATION_ID } from "./editorial";
 import { site } from "./site";
 
 /**
@@ -10,8 +11,8 @@ import { site } from "./site";
  * `Person` for the staff bio pages.
  *
  * Deliberately NOT asserted here:
- *   • `author` on BlogPosting beyond the editorial entity — authorship is
- *     contested and blocked on D-3 / MH-15.
+ *   • A named `author` on BlogPosting unless the post's `written_by` field sets
+ *     one — authorship is otherwise contested and blocked on D-3 / MH-15.
  *   • Any `reviewedBy` that the page does not already state in visible copy.
  */
 
@@ -58,25 +59,48 @@ export function faqSchema(blocks: Block[]) {
   };
 }
 
-export function blogPostingSchema(doc: Doc, path: string, image: string | null, reviewedBy: string | null) {
+const person = (p: BylinePerson) => ({ "@type": "Person", name: p.name, url: abs(p.bioPath) });
+
+/**
+ * Post schema, per the editorial policy package's schema/clinical-article.jsonld:
+ * a MedicalWebPage + BlogPosting graph. `reviewedBy` / `lastReviewed` appear
+ * only when the post has both a reviewer and a review date (no default
+ * reviewer). `author` is the named writer when `written_by` is set, otherwise
+ * the site's existing editorial entity (the one Organization node, by @id).
+ * People are inline Person nodes: bio pages with Person schema of their own
+ * have not been built yet.
+ */
+export function blogPostingSchema(doc: Doc, path: string, image: string | null, byline: ArticleByline) {
   const d = postDate(doc.url);
+  // Trailing slash, matching the canonical (next.config.mjs `trailingSlash`).
+  const url = abs(path.endsWith("/") ? path : `${path}/`);
+  const org = { "@id": ORGANIZATION_ID };
   return {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: doc.h1 || doc.title,
-    description: doc.metaDescription,
-    mainEntityOfPage: { "@type": "WebPage", "@id": abs(path) },
-    url: abs(path),
-    ...(image ? { image: abs(image) } : {}),
-    ...(d ? { datePublished: d.iso, dateModified: d.iso } : {}),
-    // Editorial entity, not a named person — see D-3 / MH-15.
-    author: { "@type": "Organization", name: site.name },
-    publisher: {
-      "@type": "Organization",
-      name: site.name,
-      logo: { "@type": "ImageObject", url: abs("/images/brand/logo-mark.png") },
-    },
-    ...(reviewedBy ? { reviewedBy: { "@type": "Person", name: reviewedBy } } : {}),
+    "@graph": [
+      {
+        "@type": "MedicalWebPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: doc.h1 || doc.title,
+        ...(byline.reviewer && byline.lastReviewed
+          ? { lastReviewed: byline.lastReviewed, reviewedBy: person(byline.reviewer) }
+          : {}),
+        publisher: org,
+      },
+      {
+        "@type": "BlogPosting",
+        "@id": `${url}#article`,
+        headline: doc.h1 || doc.title,
+        description: doc.metaDescription,
+        mainEntityOfPage: { "@id": `${url}#webpage` },
+        url,
+        ...(image ? { image: abs(image) } : {}),
+        ...(d ? { datePublished: d.iso, dateModified: d.iso } : {}),
+        author: byline.author ? person(byline.author) : org,
+        publisher: org,
+      },
+    ],
   };
 }
 

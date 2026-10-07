@@ -22,6 +22,16 @@ export type Doc = {
   ogImage: string;
   blocks: Block[];
   images: string[];
+  /**
+   * Posts only — the editorial policy package's per-post fields, all optional.
+   * People are bio slugs (the part after `about_` in content/pages, e.g.
+   * "riky-hanaumi"), so every name links to that person's bio. A missing value
+   * means no line: there is never a default author or site-wide reviewer.
+   */
+  written_by?: string;
+  reviewed_by?: string;
+  /** YYYY-MM-DD. */
+  last_reviewed?: string;
 };
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
@@ -542,4 +552,44 @@ export function relatedLinks(doc: Doc, limit = 4): RelatedLink[] {
   fallback.forEach((f) => push(f.label, f.href));
 
   return out.slice(0, limit);
+}
+
+/** Someone a post can credit: always a bio on this site, so always linkable. */
+export type BylinePerson = { slug: string; name: string; bioPath: string };
+
+export function bylinePerson(slug: string): BylinePerson {
+  const doc = bioDoc(slug);
+  // Fail the build: a byline naming someone without a bio is exactly what the
+  // editorial policy promises never to publish.
+  if (!doc || !BIO_SLUGS.includes(doc.slug)) {
+    throw new Error(`Byline references unknown bio slug "${slug}" (expected content/pages/about_${slug}.json)`);
+  }
+  return {
+    slug,
+    name: doc.h1,
+    // Network leadership has its own page; the facility team is one page with
+    // a row (and anchor) per person.
+    bioPath: NETWORK_SLUGS.includes(doc.slug) ? `/about/team/${slug}/` : `/about/team/#${slug}`,
+  };
+}
+
+export type ArticleByline = {
+  author: BylinePerson | null;
+  /** Set only when the post has both a reviewer and a review date. */
+  reviewer: BylinePerson | null;
+  lastReviewed: string | null;
+};
+
+export function getArticleByline(doc: Doc): ArticleByline {
+  if (doc.last_reviewed && !/^\d{4}-\d{2}-\d{2}$/.test(doc.last_reviewed)) {
+    throw new Error(`${doc.slug}: last_reviewed must be YYYY-MM-DD, got "${doc.last_reviewed}"`);
+  }
+  const lastReviewed = doc.last_reviewed || null;
+  // Resolved even when undated, so a typo'd slug still fails the build.
+  const reviewer = doc.reviewed_by ? bylinePerson(doc.reviewed_by) : null;
+  return {
+    author: doc.written_by ? bylinePerson(doc.written_by) : null,
+    reviewer: lastReviewed ? reviewer : null,
+    lastReviewed,
+  };
 }

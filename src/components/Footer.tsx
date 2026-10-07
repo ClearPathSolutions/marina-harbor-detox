@@ -3,6 +3,7 @@ import Link from "next/link";
 import { site } from "@/lib/site";
 import { Clock, Facebook, Instagram, LinkedIn, Mail, MapPin, Phone } from "./Icons";
 import CopyrightYear from "./CopyrightYear";
+import { editorialPolicyServed, EDITORIAL_POLICY_PATH } from "@/lib/editorial";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -146,6 +147,12 @@ export default function Footer() {
             <Link href="/privacy-policy" className="hover:text-orange-400">
               Privacy Policy
             </Link>
+            {/* Withheld in production until the policy is signed off (lib/editorial.ts). */}
+            {editorialPolicyServed && (
+              <Link href={EDITORIAL_POLICY_PATH} className="hover:text-orange-400">
+                Editorial Policy
+              </Link>
+            )}
             <span>© <CopyrightYear buildYear={new Date().getFullYear()} /> {site.name}. All Rights Reserved.</span>
           </div>
         </div>

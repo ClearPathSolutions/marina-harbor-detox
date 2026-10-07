@@ -10,6 +10,7 @@ import ConsentMap from "./ConsentMap";
 import TeamPreview from "./TeamPreview";
 
 import PageHero from "./PageHero";
+import ArticleByline from "./ArticleByline";
 import FaqAccordion, { buildFaq } from "./FaqAccordion";
 import { ArrowRight, Check, ChevronDown, Clock, MapPin, Phone, Shield } from "./Icons";
 import {
@@ -21,7 +22,9 @@ import {
   readingTime,
   relatedLinks,
   bodyPhotos,
+  getArticleByline,
 } from "@/lib/content";
+import { editorialPolicyServed, EDITORIAL_POLICY_PATH } from "@/lib/editorial";
 import { site } from "@/lib/site";
 import { createLinker, type Linker } from "@/lib/prose";
 import {
@@ -481,6 +484,8 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const rt = doc.type === "post" ? readingTime(doc) : null;
   // MH-13: lift the reviewer / last-updated bullets out before sectioning.
   const { reviewedBy, lastUpdated, blocks: bodyBlocks } = extractByline(doc.blocks);
+  // Editorial policy package: per-post written_by / reviewed_by / last_reviewed.
+  const articleByline = doc.type === "post" ? getArticleByline(doc) : null;
   // One photo per ~9 body paragraphs, capped so a very long page does not turn
   // into a slideshow. Computed from the block stream because buildSections
   // needs the list up front.
@@ -526,7 +531,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const bioTitle = isBio ? doc.blocks.find((b) => b.tag === "h3")?.text ?? null : null;
   const schemas = [
     breadcrumbSchema(crumbs),
-    doc.type === "post" ? blogPostingSchema(doc, slugPath, hero, reviewedBy) : null,
+    articleByline ? blogPostingSchema(doc, slugPath, hero, articleByline) : null,
     doc.type !== "post" ? medicalWebPageSchema(doc, slugPath, reviewedBy) : null,
     slugPath === "/faq" ? faqSchema(doc.blocks) : null,
     isBio ? personSchema(doc, slugPath, bioTitle, hero) : null,
@@ -565,11 +570,24 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                   </span>
                   <span aria-hidden className="text-white/30">·</span>
                   <span>{rt} min read</span>
-                  <span aria-hidden className="text-white/30">·</span>
                   {/* Byline is contested (site.ts credits a named author, this
-                      hardcodes an editorial entity) — blocked on D-3 / MH-15. */}
-                  <span>Marina Harbor Detox Clinical Team</span>
+                      hardcodes an editorial entity) — blocked on D-3 / MH-15.
+                      A post whose written_by names a real author shows that in
+                      the article byline below instead. */}
+                  {!articleByline?.author && (
+                    <>
+                      <span aria-hidden className="text-white/30">·</span>
+                      <span>Marina Harbor Detox Clinical Team</span>
+                    </>
+                  )}
                 </p>
+              )}
+
+              {/* Editorial policy article byline (templates/article-byline.html). */}
+              {articleByline && (
+                <div className="max-w-2xl text-white/80">
+                  <ArticleByline byline={articleByline} />
+                </div>
               )}
 
               {/* MH-13 — reviewer / last-updated byline, lifted out of the body
@@ -652,6 +670,20 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                   <div className="prose-col">
                     <TeamPreview />
                   </div>
+                )}
+
+                {/* Editorial policy link; withheld in production until signed off. */}
+                {isAbout && editorialPolicyServed && (
+                  <p className="prose-col mt-12 text-sm leading-relaxed text-navy-900/70">
+                    Learn how we research, write and review the health information on this site in our{" "}
+                    <Link
+                      href={EDITORIAL_POLICY_PATH}
+                      className="font-semibold text-orange-600 underline underline-offset-2 hover:text-orange-700"
+                    >
+                      Editorial Policy
+                    </Link>
+                    .
+                  </p>
                 )}
               </div>
             )}

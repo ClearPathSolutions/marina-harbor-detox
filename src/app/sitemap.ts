@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
 import { BIO_SLUGS, getAllDocs, networkLeadership, pathSegments, postDate } from "@/lib/content";
+import { editorialPolicyReady } from "@/lib/editorial";
 
 // MH-35 — every submitted URL must be the trailing-slash form, which is what
 // this build now serves (next.config.mjs `trailingSlash: true`) and what the
@@ -38,6 +39,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: doc.type === "post" ? 0.6 : 0.7,
       lastModified: postDate(doc.url)?.iso,
     });
+  }
+
+  // Bespoke route with no content JSON; submitted only once it may be indexed
+  // (signed off in lib/editorial.ts). Previews render it noindex, so it stays
+  // out of their sitemap too.
+  if (editorialPolicyReady) {
+    entries.push({ url: url("editorial-policy"), changeFrequency: "yearly", priority: 0.3 });
   }
 
   return entries;

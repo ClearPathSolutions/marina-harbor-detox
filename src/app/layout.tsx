@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat, Poppins } from "next/font/google";
 import { site } from "@/lib/site";
+import {
+  CORRECTIONS_ANCHOR,
+  editorialPolicyReady,
+  EDITORIAL_POLICY_URL,
+  ORGANIZATION_ID,
+} from "@/lib/editorial";
 import Analytics from "@/components/Analytics";
 import CampaignCapture from "@/components/CampaignCapture";
 import Clarion from "@/components/Clarion";
@@ -76,6 +82,9 @@ export const viewport: Viewport = {
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "MedicalBusiness",
+  // Referenced by the editorial policy's WebPage node and by post schema
+  // (publisher), so there is only ever this one Organization node.
+  "@id": ORGANIZATION_ID,
   name: site.name,
   description: site.description,
   url: site.url,
@@ -83,6 +92,9 @@ const structuredData = {
   email: site.email,
   foundingDate: site.founded,
   image: `${site.url}/images/photos/lounge-01.jpg`,
+  // Was on the inline publisher in post schema; posts now reference this node
+  // by @id instead, so the logo moves here rather than being lost.
+  logo: `${site.url}/images/brand/logo-mark.png`,
   address: {
     "@type": "PostalAddress",
     streetAddress: site.address.street,
@@ -100,6 +112,14 @@ const structuredData = {
   },
   sameAs: [site.social.facebook, site.social.instagram, site.social.linkedin],
   medicalSpecialty: "Addiction Medicine",
+  // Editorial policy package: merged into this node, never a second one.
+  // Only once the policy is signed off (lib/editorial.ts).
+  ...(editorialPolicyReady
+    ? {
+        publishingPrinciples: EDITORIAL_POLICY_URL,
+        correctionsPolicy: `${EDITORIAL_POLICY_URL}#${CORRECTIONS_ANCHOR}`,
+      }
+    : {}),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
