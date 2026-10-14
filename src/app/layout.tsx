@@ -69,6 +69,9 @@ export const metadata: Metadata = {
     images: [site.ogFallback],
   },
   robots: { index: true, follow: true },
+  verification: {
+    google: "2-9rrGnGnTEePSwbvSqq1p6i7wxzqtd4n5in8CCR1yI",
+  },
   // Favicon + apple touch icon are auto-detected from app/icon.png & app/apple-icon.png
 };
 
