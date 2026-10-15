@@ -25,7 +25,7 @@ import {
   getArticleByline,
 } from "@/lib/content";
 import { editorialPolicyServed, EDITORIAL_POLICY_PATH } from "@/lib/editorial";
-import { site } from "@/lib/site";
+import { site, tourPhotos } from "@/lib/site";
 import { createLinker, type Linker } from "@/lib/prose";
 import {
   blogPostingSchema,
@@ -502,7 +502,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
     photos,
   );
 
-  const isFacility = slugPath === "/facility";
+  const isFacility = slugPath === "/tour";
   const isAdmission = slugPath === "/admission";
   const isContact = slugPath === "/contact-location";
   const isAbout = slugPath === "/about";
@@ -704,7 +704,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
                 </p>
               </div>
               <div className="mt-10">
-                <FacilityGallery />
+                <FacilityGallery photos={tourPhotos} lead={false} />
               </div>
             </div>
           </section>

@@ -296,7 +296,7 @@ const NOT_HERO_SAFE = new Set([
 const PAGE_PHOTO: Record<string, string> = {
   // ── Core ────────────────────────────────────────────────────────────────
   about: "/images/photos/mural-marina-harbor.jpg",      // the hand-painted house mural
-  facility: "/images/photos/lounge-01.jpg",             // the signature common room
+  tour: "/images/photos/tour-lounge-bridge-view.jpg",   // from the tour set: living room, bridge view
   admission: "/images/photos/seating-art.jpg",          // the intake / waiting area
   "contact-location": "/images/photos/aerial-marina-01.jpg",
   faq: "/images/photos/lounge-group.jpg",               // chairs in a circle = conversation
@@ -547,7 +547,7 @@ export function relatedLinks(doc: Doc, limit = 4): RelatedLink[] {
     { label: "Residential Inpatient", href: "/what-we-offer/inpatient-rehab-san-francisco" },
     { label: "Dual Diagnosis", href: "/what-we-offer/dual-diagnosis" },
     { label: "Verify Your Insurance", href: "/admission" },
-    { label: "Tour Our Facility", href: "/facility" },
+    { label: "Tour Our Facility", href: "/tour" },
   ];
   fallback.forEach((f) => push(f.label, f.href));
 

@@ -36,7 +36,7 @@ export default function NotFound() {
               {[
                 { href: "/what-we-offer", label: "What We Offer" },
                 { href: "/admission", label: "Admissions" },
-                { href: "/facility", label: "Our Facility" },
+                { href: "/tour", label: "Our Facility" },
                 { href: "/about", label: "About Us" },
                 { href: "/blog", label: "Recovery Blog" },
                 { href: "/contact-location", label: "Contact & Location" },

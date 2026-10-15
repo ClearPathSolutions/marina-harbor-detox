@@ -141,7 +141,7 @@ export const nav: NavItem[] = [
       { label: "Elk Grove", href: "/elk-grove" },
     ],
   },
-  { label: "Facility", href: "/facility" },
+  { label: "Facility", href: "/tour" },
   {
     label: "Admissions",
     href: "/admission",
@@ -226,6 +226,21 @@ export const facilityPhotos = [
   // so it holds 4 + 8 = 12 cells across 3 rows. At eight photos the last row
   // ran 3-of-4 and left an empty cell in the bottom-right corner.
   { src: "/images/photos/room-single-01.jpg", alt: "Private single guest room with natural light and a work area" },
+] as const;
+
+/**
+ * The /tour gallery. Eight photos, shown without the 2x2 lead tile so they fill
+ * exactly two rows of four (a lead tile would leave 4 + 7 = 11 of 12 cells).
+ */
+export const tourPhotos = [
+  { src: "/images/photos/tour-lounge-bridge-view.jpg", alt: "Living room armchair beside tall windows framing the Golden Gate Bridge" },
+  { src: "/images/photos/tour-dining-room.jpg", alt: "Dining room with a long table, black leather chairs and a mirrored wall" },
+  { src: "/images/photos/tour-hallway.jpg", alt: "Main hallway with hardwood floors and a curved staircase" },
+  { src: "/images/photos/tour-room-fireplace.jpg", alt: "Guest room with a brick fireplace, bookshelves and an ensuite bathroom" },
+  { src: "/images/photos/tour-room-queen.jpg", alt: "Quiet guest room with a queen bed and a softly shaded window" },
+  { src: "/images/photos/tour-lounge-chaise.jpg", alt: "Lounge corner with a chaise and arc lamp beside windows over Marina Green" },
+  { src: "/images/photos/tour-window-view.jpg", alt: "View from the lounge windows across Marina Green to the Golden Gate Bridge" },
+  { src: "/images/photos/tour-sitting-room.jpg", alt: "Sitting area with white armchairs, a glass coffee table and blue abstract art" },
 ] as const;
 
 export const serviceAreas = [

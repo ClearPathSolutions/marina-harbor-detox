@@ -103,6 +103,10 @@ const nextConfig = {
         permanent: true,
       })),
 
+      // The facility tour moved from /facility/ to /tour/. Permanent, so the
+      // indexed URL and its inbound links pass their equity to the new slug.
+      { source: "/facility", destination: "/tour/", permanent: true },
+
       // The three 2021-08-26 posts are empty WordPress stubs — title and heading,
       // no post body, two titles truncated mid-phrase. Dropping them from the
       // build was correct; porting them would publish thin duplicate-boilerplate

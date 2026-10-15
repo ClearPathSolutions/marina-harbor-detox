@@ -3,16 +3,25 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { facilityPhotos } from "@/lib/site";
+
+type Photo = { readonly src: string; readonly alt: string };
 import { Close } from "./Icons";
 
-export default function FacilityGallery() {
+export default function FacilityGallery({
+  photos = facilityPhotos,
+  lead = true,
+}: {
+  photos?: readonly Photo[];
+  /** Span the first photo across a 2x2 tile. */
+  lead?: boolean;
+}) {
   const [active, setActive] = useState<number | null>(null);
 
   const close = useCallback(() => setActive(null), []);
   const move = useCallback(
     (dir: number) =>
-      setActive((i) => (i === null ? i : (i + dir + facilityPhotos.length) % facilityPhotos.length)),
-    []
+      setActive((i) => (i === null ? i : (i + dir + photos.length) % photos.length)),
+    [photos.length]
   );
 
   useEffect(() => {
@@ -34,13 +43,13 @@ export default function FacilityGallery() {
     <>
       {/* Masonry-ish responsive grid; first tile spans larger on desktop */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-        {facilityPhotos.map((photo, i) => (
+        {photos.map((photo, i) => (
           <button
             key={photo.src}
             type="button"
             onClick={() => setActive(i)}
             className={`group relative overflow-hidden rounded-2xl bg-navy-100 shadow-soft focus-visible:ring-2 focus-visible:ring-gold-400 ${
-              i === 0 ? "col-span-2 row-span-2 md:col-span-2 md:row-span-2" : ""
+              lead && i === 0 ? "col-span-2 row-span-2 md:col-span-2 md:row-span-2" : ""
             }`}
             aria-label={`View photo: ${photo.alt}`}
           >
@@ -51,7 +60,7 @@ export default function FacilityGallery() {
                 breakpoint. */}
             <div
               className={`relative ${
-                i === 0 ? "aspect-square md:aspect-auto md:h-full" : "aspect-square md:aspect-[4/3]"
+                lead && i === 0 ? "aspect-square md:aspect-auto md:h-full" : "aspect-square md:aspect-[4/3]"
               }`}
             >
               <Image
@@ -98,8 +107,8 @@ export default function FacilityGallery() {
 
           <figure className="relative max-h-[85vh] w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
             <Image
-              src={facilityPhotos[active].src}
-              alt={facilityPhotos[active].alt}
+              src={photos[active].src}
+              alt={photos[active].alt}
               width={2560}
               height={1707}
               sizes="(max-width: 1024px) 95vw, 1200px"
@@ -107,7 +116,7 @@ export default function FacilityGallery() {
               priority
             />
             <figcaption className="mt-3 text-center text-sm text-white/80">
-              {facilityPhotos[active].alt}
+              {photos[active].alt}
             </figcaption>
           </figure>
 

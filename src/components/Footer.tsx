@@ -8,7 +8,7 @@ import { editorialPolicyServed, EDITORIAL_POLICY_PATH } from "@/lib/editorial";
 const quickLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Tour Facility", href: "/facility" },
+  { label: "Tour Facility", href: "/tour" },
   { label: "Admissions", href: "/admission" },
   { label: "Contact", href: "/contact-location" },
   { label: "FAQ", href: "/faq" },

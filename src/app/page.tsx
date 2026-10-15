@@ -344,7 +344,7 @@ export default function Home() {
               <FacilityGallery />
             </Reveal>
             <div className="mt-10 text-center">
-              <Link href="/facility" className="btn-navy">
+              <Link href="/tour" className="btn-navy">
                 Learn More About Our Facility <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
