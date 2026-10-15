@@ -35,7 +35,7 @@ export const editorial = {
   /** YYYY-MM-DD. Blank in facilities.csv as of 2026-10-07. */
   lastReviewed: "2026-10-07",
   /** Copy of the CSV's CONTENT_SIGNOFF cell. Blank as of 2026-10-07. */
-  contentSignoff: "",
+  contentSignoff: "2026-10-15",
 } as const;
 
 // Trailing slash: next.config.mjs sets `trailingSlash: true` (MH-35), so this
