@@ -50,6 +50,7 @@ export default function Footer() {
               className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-orange-500 hover:text-white"
             >
               <Facebook className="h-4 w-4" />
+              <span className="sr-only">Facebook</span>
             </a>
             <a
               href={site.social.instagram}
@@ -59,6 +60,7 @@ export default function Footer() {
               className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-orange-500 hover:text-white"
             >
               <Instagram className="h-4 w-4" />
+              <span className="sr-only">Instagram</span>
             </a>
             <a
               href={site.social.linkedin}
@@ -68,6 +70,7 @@ export default function Footer() {
               className="grid h-10 w-10 place-items-center rounded-full bg-white/10 transition-colors hover:bg-orange-500 hover:text-white"
             >
               <LinkedIn className="h-4 w-4" />
+              <span className="sr-only">LinkedIn</span>
             </a>
           </div>
         </div>

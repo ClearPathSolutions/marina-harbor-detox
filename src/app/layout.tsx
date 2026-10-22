@@ -29,10 +29,13 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
+// Kept under the 70-char title limit; the full tagline ran to 71.
+const HOME_TITLE = `${site.name} | Drug & Alcohol Rehab in San Francisco, CA`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} | ${site.tagline}`,
+    default: HOME_TITLE,
     template: `%s | ${site.name}`,
   },
   description: site.description,
@@ -51,7 +54,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: site.url,
     siteName: site.name,
-    title: `${site.name} | ${site.tagline}`,
+    title: HOME_TITLE,
     description: site.description,
     images: [
       {
@@ -64,7 +67,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} | ${site.tagline}`,
+    title: HOME_TITLE,
     description: site.description,
     images: [site.ogFallback],
   },
@@ -84,7 +87,10 @@ export const viewport: Viewport = {
 
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "MedicalBusiness",
+  // MedicalClinic is the MedicalBusiness subtype that is also a
+  // MedicalOrganization, which is what makes `medicalSpecialty` valid here; on
+  // a plain MedicalBusiness validators report it as a markup error.
+  "@type": ["MedicalBusiness", "MedicalClinic"],
   // Referenced by the editorial policy's WebPage node and by post schema
   // (publisher), so there is only ever this one Organization node.
   "@id": ORGANIZATION_ID,

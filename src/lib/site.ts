@@ -9,7 +9,7 @@ export const site = {
   // claim) are still open, so this shortens the sentence without settling either.
   description:
     "Compassionate, accredited medical detox and residential rehab from clinicians with 15+ years of addiction expertise, in a private San Francisco setting.",
-  url: "https://marinaharbordetox.com",
+  url: "https://www.marinaharbordetox.com",
   email: "info@marinaharbordetox.com",
   // ONE tracked website number, per the business record. Every CTA, the header,
   // the footer and the JSON-LD all resolve here — do not reintroduce alternates

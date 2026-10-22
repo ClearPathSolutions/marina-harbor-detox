@@ -53,6 +53,14 @@ export function getPosts(): Doc[] {
   return readDir("posts").sort((a, b) => (postDate(b.url)?.iso ?? "").localeCompare(postDate(a.url)?.iso ?? ""));
 }
 
+/**
+ * Network-leadership bios whose canonical is the group's original on
+ * quadranthealthgroup.com (see app/about/team/[slug]). Keyed by slug.
+ */
+export const CANONICAL_AT_PARENT: Record<string, string> = {
+  "pamela-tambini": "https://www.quadranthealthgroup.com/team/pamela-tambini/",
+};
+
 export function getAllDocs(): Doc[] {
   return [...getPages(), ...getPosts()];
 }
@@ -519,7 +527,14 @@ export function relatedLinks(doc: Doc, limit = 4): RelatedLink[] {
   const selfPath = "/" + pathSegments(doc.url).join("/");
 
   if (doc.type === "post") {
-    return getPosts()
+    // Rotate from this post's position instead of always listing the newest
+    // four: with a fixed list, most older posts were reachable from a single
+    // internal link (the archive). Rotating links each post from the posts
+    // just before it.
+    const all = getPosts();
+    const idx = all.findIndex((p) => p.url === doc.url);
+    const ordered = idx >= 0 ? [...all.slice(idx + 1), ...all.slice(0, idx)] : all;
+    return ordered
       .filter((p) => p.url !== doc.url)
       .slice(0, limit)
       .map((p) => ({ label: p.h1 || p.title, href: "/" + pathSegments(p.url).join("/") }));

@@ -204,6 +204,7 @@ export default function Header() {
               className="grid h-11 w-11 place-items-center rounded-full bg-orange-500 text-white shadow-soft active:scale-95" suppressHydrationWarning
             >
               <Phone className="h-5 w-5" />
+              <span className="sr-only">Call us now</span>
             </a>
             <button
               ref={toggleRef}
@@ -355,6 +356,7 @@ export default function Header() {
                 className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition-colors active:bg-orange-500"
               >
                 <Facebook className="h-4 w-4" />
+                <span className="sr-only">Facebook</span>
               </a>
               <a
                 href={site.social.instagram}
@@ -364,6 +366,7 @@ export default function Header() {
                 className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition-colors active:bg-orange-500"
               >
                 <Instagram className="h-4 w-4" />
+                <span className="sr-only">Instagram</span>
               </a>
               <a
                 href={site.social.linkedin}
@@ -373,6 +376,7 @@ export default function Header() {
                 className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white transition-colors active:bg-orange-500"
               >
                 <LinkedIn className="h-4 w-4" />
+                <span className="sr-only">LinkedIn</span>
               </a>
             </div>
           </div>

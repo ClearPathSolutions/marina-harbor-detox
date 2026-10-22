@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
-import { BIO_SLUGS, getAllDocs, networkLeadership, pathSegments, postDate } from "@/lib/content";
+import { BIO_SLUGS, CANONICAL_AT_PARENT, getAllDocs, networkLeadership, pathSegments, postDate } from "@/lib/content";
 import { editorialPolicyReady } from "@/lib/editorial";
 
 // MH-35 — every submitted URL must be the trailing-slash form, which is what
@@ -22,11 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const bios = new Set(BIO_SLUGS);
   entries.push({ url: url("about/team"), changeFrequency: "monthly", priority: 0.7 });
 
-  // Network-leadership bios DO have pages, and they are linked from /about/team,
-  // so they are submitted — but at a low priority: each canonicalises to the
-  // group's original on quadranthealthgroup.com (see app/about/team/[slug]), so
-  // this copy is not the one we are asking Google to index.
+  // Network-leadership bios have pages and are linked from /about/team. Those
+  // that canonicalise to the group's original on quadranthealthgroup.com are
+  // NOT submitted: a sitemap URL whose canonical points elsewhere is reported
+  // as an incorrect sitemap page.
   for (const m of networkLeadership()) {
+    if (CANONICAL_AT_PARENT[m.slug]) continue;
     entries.push({ url: url(`about/team/${m.slug}`), changeFrequency: "yearly", priority: 0.4 });
   }
 

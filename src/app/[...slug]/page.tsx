@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageTitle, pageTitleText } from "@/lib/title";
 import { notFound } from "next/navigation";
 import ContentPage from "@/components/ContentPage";
 import { BIO_SLUGS, getAllDocs, getDocBySegments, leadImage, pathSegments } from "@/lib/content";
@@ -41,12 +42,12 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   // Thin transactional confirmation page shouldn't appear in search results.
   const noindex = canonicalPath === "/thank-you";
   return {
-    title: doc.title,
+    title: pageTitle(doc.title),
     description: doc.metaDescription,
     alternates: { canonical: canonicalPath },
     robots: noindex ? { index: false, follow: true } : undefined,
     openGraph: {
-      title: doc.title,
+      title: pageTitleText(doc.title),
       description: doc.metaDescription,
       url: canonicalPath,
       type: doc.type === "post" ? "article" : "website",

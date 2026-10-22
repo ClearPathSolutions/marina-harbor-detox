@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { CANONICAL_AT_PARENT } from "@/lib/content";
+import { pageTitle, pageTitleText } from "@/lib/title";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -45,9 +47,7 @@ export function generateStaticParams(): Params[] {
  * anyone without an entry keeps the normal self-referential canonical, and no
  * other page on the site is touched.
  */
-const CANONICAL_AT_PARENT: Record<string, string> = {
-  "pamela-tambini": "https://www.quadranthealthgroup.com/team/pamela-tambini/",
-};
+// Lives in lib/content so the sitemap can leave these URLs out.
 
 /** The group these people actually work for — used in metadata and JSON-LD. */
 const NETWORK = { name: "Quadrant Health Group", url: "https://www.quadranthealthgroup.com/" };
@@ -71,14 +71,14 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const person = networkLeadership().find((m) => m.slug === slug);
 
   return {
-    title: doc.title,
+    title: pageTitle(doc.title),
     description: doc.metaDescription,
     // The one page on this site whose canonical leaves the domain — see
     // CANONICAL_AT_PARENT above. og:url stays this page, which is where the
     // share actually lands.
     alternates: { canonical: CANONICAL_AT_PARENT[slug] ?? path },
     openGraph: {
-      title: doc.title,
+      title: pageTitleText(doc.title),
       description: doc.metaDescription,
       url: path,
       type: "profile",
