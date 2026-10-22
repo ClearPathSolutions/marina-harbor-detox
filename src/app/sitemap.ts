@@ -34,6 +34,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const doc of getAllDocs()) {
     const path = pathSegments(doc.url).join("/");
     if (!path || path === "blog" || bios.has(doc.slug)) continue;
+    // /thank-you is rendered noindex (src/app/[...slug]/page.tsx); a noindex
+    // URL in the sitemap is reported as an incorrect sitemap page.
+    if (path === "thank-you") continue;
     entries.push({
       url: url(path),
       changeFrequency: doc.type === "post" ? "monthly" : "monthly",
