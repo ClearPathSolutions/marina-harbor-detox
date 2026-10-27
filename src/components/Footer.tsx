@@ -145,7 +145,13 @@ export default function Footer() {
       {/* License strip */}
       <div className="border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-4 py-6 text-center text-xs text-white/50 sm:flex-row sm:text-left">
-          <p>{site.license}</p>
+          <p>
+            Licensed by the California Department of Health Care Services · {site.license} · Expires{" "}
+            {site.licenseExpires} ·{" "}
+            <a href={site.licenseVerifyUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-orange-400">
+              Verify on DHCS website
+            </a>
+          </p>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link href="/privacy-policy" className="hover:text-orange-400">
               Privacy Policy

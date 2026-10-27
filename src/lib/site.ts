@@ -29,7 +29,13 @@ export const site = {
     // Google Business Profile "write a review" shortlink
     review: "https://g.page/r/CfD3cn_q2hyLEAI/review",
   },
-  license: "Licensed by the State Department of Health Care Services · DHCS License #380106AP · Expires 8/31/2027",
+  // DHCS BHIN 22-022: license number, expiry, and a link to the DHCS page that
+  // lists both must be shown on the site. The GIS Data Hub table is DHCS's
+  // public register of licensed SUD facilities (number + expiration columns).
+  license: "DHCS License #380106BP",
+  licenseExpires: "3/31/2028",
+  licenseVerifyUrl:
+    "https://gis.dhcs.ca.gov/datasets/CADHCS::sud-recovery-treatment-facilities/explore?showTable=true",
   // Social-card fallback for pages with no usable hero of their own. leadImage()
   // deliberately refuses logos/seals, so this is what stands in — never the logo.
   ogFallback: "/images/photos/aerial-bridge-04.jpg",
