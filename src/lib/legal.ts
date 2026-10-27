@@ -45,6 +45,7 @@ const fields: Record<string, string> = {
   DOMAIN: "marinaharbordetox.com",
   LEGAL_ENTITY_LINE: "",
   STATE_NAME: "California",
+  STATE_NAME_CAPS: "CALIFORNIA",
   STREET_ADDRESS: escapeHtml(`${site.address.street}, ${site.address.city}, ${site.address.state} ${site.address.zip}`),
   PHONE: `<a href="${escapeHtml(site.phones.primary.href)}">${escapeHtml(site.phones.primary.label)}</a>`,
   PRIVACY_EMAIL: `<a href="mailto:${escapeHtml(site.email)}">${escapeHtml(site.email)}</a>`,
