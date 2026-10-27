@@ -4,6 +4,7 @@ import { site } from "@/lib/site";
 import { Clock, Facebook, Instagram, LinkedIn, Mail, MapPin, Phone } from "./Icons";
 import CopyrightYear from "./CopyrightYear";
 import { editorialPolicyServed, EDITORIAL_POLICY_PATH } from "@/lib/editorial";
+import { LEGAL_PATHS } from "@/lib/legal";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -153,8 +154,14 @@ export default function Footer() {
             </a>
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-            <Link href="/privacy-policy" className="hover:text-orange-400">
+            <Link href={LEGAL_PATHS.privacy} className="hover:text-orange-400">
               Privacy Policy
+            </Link>
+            <Link href={LEGAL_PATHS.npp} className="hover:text-orange-400">
+              Notice of Privacy Practices
+            </Link>
+            <Link href={LEGAL_PATHS.sms} className="hover:text-orange-400">
+              SMS Terms
             </Link>
             {/* Withheld in production until the policy is signed off (lib/editorial.ts). */}
             {editorialPolicyServed && (

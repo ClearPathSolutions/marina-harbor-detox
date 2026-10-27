@@ -45,6 +45,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
+  // Standard legal pages (src/lib/legal.ts): bespoke routes with no content JSON.
+  entries.push(
+    { url: url("privacy-policy"), changeFrequency: "yearly", priority: 0.3 },
+    { url: url("notice-of-privacy-practices"), changeFrequency: "yearly", priority: 0.3 },
+    { url: url("sms-terms"), changeFrequency: "yearly", priority: 0.3 },
+  );
+
   // Bespoke route with no content JSON; submitted only once it may be indexed
   // (signed off in lib/editorial.ts). Previews render it noindex, so it stays
   // out of their sitemap too.
