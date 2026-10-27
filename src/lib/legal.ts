@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 /**
  * Standard legal pages, shared by every site in the portfolio (Clear Path
  * legal-pages package, 2026-10-27): privacy policy, notice of privacy
- * practices and SMS terms.
+ * practices, SMS terms and terms of service.
  *
  * data/legal/*.html are unedited copies of the package's approved text. The
  * wording must not be changed here; only the merge fields below differ per
@@ -20,12 +20,20 @@ export const LEGAL_PATHS = {
   privacy: "/privacy-policy/",
   npp: "/notice-of-privacy-practices/",
   sms: "/sms-terms/",
+  terms: "/terms-of-service/",
 } as const;
 
 /** Last revision of the legal copy. Bump by hand when the text changes. */
 const LEGAL_REVISED = "October 27, 2026";
 
-export type LegalDoc = "privacy-policy" | "notice-of-privacy-practices" | "sms-terms";
+/** Terms of service effective date. Bump by hand when the terms change. */
+const TOS_EFFECTIVE_DATE = "October 27, 2026";
+
+export type LegalDoc =
+  | "privacy-policy"
+  | "notice-of-privacy-practices"
+  | "sms-terms"
+  | "terms-of-service";
 
 const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -38,9 +46,11 @@ const fields: Record<string, string> = {
   STREET_ADDRESS: escapeHtml(`${site.address.street}, ${site.address.city}, ${site.address.state} ${site.address.zip}`),
   PHONE: `<a href="${escapeHtml(site.phones.primary.href)}">${escapeHtml(site.phones.primary.label)}</a>`,
   PRIVACY_EMAIL: `<a href="mailto:${escapeHtml(site.email)}">${escapeHtml(site.email)}</a>`,
+  CONTACT_EMAIL: `<a href="mailto:${escapeHtml(site.email)}">${escapeHtml(site.email)}</a>`,
   PP_LAST_UPDATED: LEGAL_REVISED,
   SMS_LAST_UPDATED: LEGAL_REVISED,
   NPP_EFFECTIVE_DATE: LEGAL_REVISED,
+  TOS_EFFECTIVE_DATE,
 };
 
 /** The page body with merge fields filled. Server-only (reads the filesystem). */

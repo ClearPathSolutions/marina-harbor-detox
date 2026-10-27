@@ -7,7 +7,7 @@ import { legalBody, type LegalDoc } from "@/lib/legal";
 
 /**
  * Shell for the standard legal pages (privacy policy, notice of privacy
- * practices, SMS terms): the same layout as the editorial policy, and its
+ * practices, SMS terms, terms of service): the same layout as the editorial policy, and its
  * long-form prose styles (.editorial-policy in globals.css).
  */
 export default function LegalPage({ doc, title }: { doc: LegalDoc; title: string }) {

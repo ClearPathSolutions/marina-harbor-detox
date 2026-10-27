@@ -50,6 +50,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: url("privacy-policy"), changeFrequency: "yearly", priority: 0.3 },
     { url: url("notice-of-privacy-practices"), changeFrequency: "yearly", priority: 0.3 },
     { url: url("sms-terms"), changeFrequency: "yearly", priority: 0.3 },
+    { url: url("terms-of-service"), changeFrequency: "yearly", priority: 0.3 },
   );
 
   // Bespoke route with no content JSON; submitted only once it may be indexed

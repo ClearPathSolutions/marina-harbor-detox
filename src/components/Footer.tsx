@@ -169,6 +169,9 @@ export default function Footer() {
                 Editorial Policy
               </Link>
             )}
+            <Link href={LEGAL_PATHS.terms} className="hover:text-orange-400">
+              Terms of Service
+            </Link>
             <span>© <CopyrightYear buildYear={new Date().getFullYear()} /> {site.name}. All Rights Reserved.</span>
           </div>
         </div>
