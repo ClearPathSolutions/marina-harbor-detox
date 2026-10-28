@@ -217,3 +217,9 @@
 .editorial-policy td { @apply border-b border-navy-100 px-4 py-3 text-left align-top leading-snug text-navy-900/75; }
 .editorial-policy th { @apply bg-sand-50 font-semibold text-navy-900; }
 .editorial-policy tbody tr:last-child td { @apply border-b-0; }
+
+/* Clarion blog embed — listing card covers. The embed boxes them at 16:9, but
+   Clarion draws its covers at 1200x630 with the headline near the left edge,
+   so object-fit: cover was trimming the artwork's sides. Matching the cover's
+   own shape shows all of it. The post view already sizes its cover naturally. */
+[data-clarion-blog] .clarion-blog-card .clarion-blog-cover { aspect-ratio: 1200 / 630; }

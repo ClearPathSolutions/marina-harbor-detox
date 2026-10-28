@@ -36,7 +36,7 @@ const GIVE_UP_MS = 6000;
 function CardSkeleton() {
   return (
     <div aria-hidden className="overflow-hidden rounded-3xl border border-navy-100 bg-white shadow-soft">
-      <div className="aspect-[16/10] animate-pulse bg-navy-100" />
+      <div className="aspect-[1200/630] animate-pulse bg-navy-100" />
       <div className="space-y-3 p-6">
         <div className="h-3 w-24 animate-pulse rounded-full bg-navy-100" />
         <div className="h-5 w-full animate-pulse rounded-full bg-navy-100" />
