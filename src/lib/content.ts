@@ -59,6 +59,7 @@ export function getPosts(): Doc[] {
  */
 export const CANONICAL_AT_PARENT: Record<string, string> = {
   "pamela-tambini": "https://www.quadranthealthgroup.com/team/pamela-tambini/",
+  "casey-hyatt": "https://www.quadranthealthgroup.com/team/casey-hyatt/",
 };
 
 export function getAllDocs(): Doc[] {
@@ -148,6 +149,7 @@ const HEADSHOTS: Record<string, string> = {
   about__alicia_joslin: "/media/2026/06/MHD-Alicia-Joslin.png",
   about__ashley_hurtado: "/images/staff/ashley-hurtado.jpg",
   about__pamela_tambini: "/images/staff/pamela-tambini.jpg",
+  about__casey_hyatt: "/images/staff/casey-hyatt.jpg",
   // The California set, supplied 2026-09-21. Sources were 1.7-1.9 MB PNGs;
   // resized to 800px on the long edge and re-encoded (11 MB -> 250 KB total).
   about__shawn_young: "/images/staff/shawn-young.jpg",
@@ -193,6 +195,7 @@ export type TeamMember = {
  */
 export const TEAM_SLUGS = [
   "about__pamela-tambini",
+  "about__casey-hyatt",
   "about__shawn-young",
   "about__gus-saadeh",
   "about__michael-mcarthur",
@@ -215,7 +218,19 @@ export const TEAM_SLUGS = [
  * quadranthealthgroup.com and on every other Quadrant facility site — see
  * CANONICAL_AT_PARENT in that route.
  */
-export const NETWORK_SLUGS = ["about__pamela-tambini"];
+export const NETWORK_SLUGS = ["about__pamela-tambini", "about__casey-hyatt"];
+
+/** What each network leader does for the group, for the roster row and the profile hero. */
+export const NETWORK_SCOPE: Record<string, { row: string; lead: string }> = {
+  "pamela-tambini": {
+    row: "Provides medical oversight across Quadrant Health Group facilities, including this program.",
+    lead: "Network-wide medical oversight across Quadrant Health Group facilities",
+  },
+  "casey-hyatt": {
+    row: "Leads family services across Quadrant Health Group facilities, including this program.",
+    lead: "Network-wide family services leadership across Quadrant Health Group facilities",
+  },
+};
 
 /**
  * People whose bio is published by the group rather than by this site. Their

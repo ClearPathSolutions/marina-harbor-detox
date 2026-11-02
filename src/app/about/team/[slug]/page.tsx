@@ -10,7 +10,7 @@ import MobileCTABar from "@/components/MobileCTABar";
 import CTASection from "@/components/CTASection";
 import PageHero from "@/components/PageHero";
 import { ArrowRight } from "@/components/Icons";
-import { bioDoc, networkLeadership } from "@/lib/content";
+import { NETWORK_SCOPE, bioDoc, networkLeadership } from "@/lib/content";
 import { breadcrumbSchema, personSchema } from "@/lib/schema";
 import { site } from "@/lib/site";
 
@@ -122,7 +122,7 @@ export default async function NetworkLeaderPage({ params }: { params: Promise<Pa
           title={person.name}
           crumbs={crumbs}
           eyebrow={NETWORK.name}
-          lead={`Network-wide medical oversight across ${NETWORK.name} facilities, including ${site.name}.`}
+          lead={`${NETWORK_SCOPE[person.slug]?.lead ?? `Serves ${NETWORK.name}`}, including ${site.name}.`}
         />
 
         <section className="section pt-12 sm:pt-16 lg:pt-20">

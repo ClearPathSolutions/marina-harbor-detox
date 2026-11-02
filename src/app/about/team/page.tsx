@@ -7,7 +7,7 @@ import MobileCTABar from "@/components/MobileCTABar";
 import CTASection from "@/components/CTASection";
 import PageHero from "@/components/PageHero";
 import { ArrowRight } from "@/components/Icons";
-import { networkLeadership, teamMembers, type TeamMember } from "@/lib/content";
+import { NETWORK_SCOPE, networkLeadership, teamMembers, type TeamMember } from "@/lib/content";
 import { bioParagraphs, fetchStaff, nameKey } from "@/lib/staff";
 import { site } from "@/lib/site";
 
@@ -131,8 +131,8 @@ export default async function TeamPage() {
                          her own page, which points at the group's original. */
                       <div className="mt-5">
                         <p className="leading-[1.8] text-navy-900/75">
-                          Provides medical oversight across Quadrant Health Group facilities,
-                          including this program.
+                          {NETWORK_SCOPE[m.slug]?.row ??
+                            "Serves the whole Quadrant Health Group network, including this program."}
                         </p>
                         <Link
                           href={`/about/team/${m.slug}`}
