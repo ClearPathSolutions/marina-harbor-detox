@@ -103,6 +103,43 @@ const nextConfig = {
         permanent: true,
       })),
 
+      // Staff who left before cutover. Their WordPress bios were indexed and
+      // 404'd after cutover (found 2026-11-11 from the Wayback Machine). They
+      // point at the team hub, never at another person's bio.
+      ...[
+        "carla-corona",
+        "david-smith-md",
+        "jessica-hassan-rn",
+        "michael-dillingham-md",
+        "sharon-valentino-lmft",
+        "trevor-amador",
+      ].map((slug) => ({
+        source: `/about/${slug}`,
+        destination: "/about/team/",
+        permanent: true,
+      })),
+
+      // Substance detox pages sat at the root on WordPress and now live under
+      // /what-we-offer/. They 404'd after cutover; these are high-intent
+      // ranking pages, so each goes to its exact new address.
+      ...[
+        "benzodiazepines-detox",
+        "cocaine-detox",
+        "heroin-detox",
+        "meth-detox",
+        "prescription-drugs-detox",
+      ].map((slug) => ({
+        source: `/${slug}`,
+        destination: `/what-we-offer/${slug}/`,
+        permanent: true,
+      })),
+
+      // WordPress archive URLs (paginated blog, categories, tags) have no
+      // route in the rebuild. Wildcarded so any other archive URL lands too.
+      { source: "/blog/:n(\\d+)", destination: "/blog/", permanent: true },
+      { source: "/category/:slug*", destination: "/blog/", permanent: true },
+      { source: "/tag/:slug*", destination: "/blog/", permanent: true },
+
       // The facility tour moved from /facility/ to /tour/. Permanent, so the
       // indexed URL and its inbound links pass their equity to the new slug.
       { source: "/facility", destination: "/tour/", permanent: true },
