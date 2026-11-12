@@ -73,7 +73,10 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   verification: {
-    google: "2-9rrGnGnTEePSwbvSqq1p6i7wxzqtd4n5in8CCR1yI",
+    google: [
+      "2-9rrGnGnTEePSwbvSqq1p6i7wxzqtd4n5in8CCR1yI",
+      "40zOuyOXSRAr07fq0_dhMuLRp4kDzHVzbJ-2-D0U3aA",
+    ],
   },
   // Favicon + apple touch icon are auto-detected from app/icon.png & app/apple-icon.png
 };
