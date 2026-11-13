@@ -90,8 +90,9 @@ const nextConfig = {
   // produce the redirect chain MH-36's acceptance criterion forbids (measured:
   // /about/alicia-joslin/ -> 308 -> /about/team#alicia-joslin -> 308).
   //
-  // Verified against all 120 URLs in production's live sitemap: 117 resolve 200
-  // with no hop, 3 redirect once, 0 chains, 1 known gap (see codeine note).
+  // Re-verified 2026-11-13 against every published WordPress post and page (WP
+  // REST + Yoast sitemaps from the still-running WP Engine install): every old
+  // URL now resolves 200 or redirects once, with no chains.
   async redirects() {
     return [
       // The team is one page now, not one page per person. These three URLs are
@@ -166,18 +167,36 @@ const nextConfig = {
         permanent: true,
       },
 
-      // /2026/07/17/codeine-cough-syrup/ is REAL content published after the
-      // archive snapshot, so it is not in archive/raw-html and cannot be ported
-      // until D-8 settles the content re-sync. This is a stopgap so an indexed
-      // URL with inbound links does not dead-end at cutover — deliberately
-      // TEMPORARY (307, not 301) because the post should return at this exact
-      // URL once it is recovered. Making it permanent would tell Google the
-      // article is gone for good.
+      // /2026/07/17/codeine-cough-syrup/ (the #2 page in GSC) is restored at its
+      // original URL from content/posts, so the old 307 stopgap to /blog/ is gone.
+      // These are old URL variants that GSC still shows getting impressions.
+      // Each one 404'd; each goes to the exact article it was a variant of.
       {
-        source: "/2026/07/17/codeine-cough-syrup",
-        destination: "/blog/",
-        permanent: false,
+        source: "/2026/07/17/codeine-syrup",
+        destination: "/2026/07/17/codeine-cough-syrup/",
+        permanent: true,
       },
+      {
+        source: "/2026/05/08/why-heroin-withdrawal-so-difficult",
+        destination: "/2026/05/08/why-heroin-withdrawal-is-so-difficult/",
+        permanent: true,
+      },
+      {
+        source: "/2023/09/22/mixing-benadryl-and-alcohol-is-a-recipe-for-danger",
+        destination: "/2023/09/22/benadryl-and-alcohol/",
+        permanent: true,
+      },
+
+      // WordPress ad landing pages. They were noindex on WP, so they carry no
+      // rankings, but ads or bookmarks may still point at them, so they get a
+      // landing spot instead of a 404. lp-2 was the insurance pitch, so it goes
+      // to admissions; the rest were copies of the homepage pitch.
+      { source: "/lp-2", destination: "/admission/", permanent: true },
+      ...["lp-1", "lp-3", "lp-recovery"].map((slug) => ({
+        source: `/${slug}`,
+        destination: "/",
+        permanent: true,
+      })),
 
       // Careers lives on ADP Workforce Now, not on this site. Temporary (307) on
       // purpose: ADP job-board URLs change when the account is reconfigured, and
