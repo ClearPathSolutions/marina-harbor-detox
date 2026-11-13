@@ -61,7 +61,7 @@ export default function BlogArchive() {
                 <h2 className="mt-3 text-2xl font-bold leading-snug text-navy-900 group-hover:text-navy-700 sm:text-3xl">
                   {featured.h1}
                 </h2>
-                <p className="mt-2 text-sm text-navy-900/50">{postDate(featured.url)?.label}</p>
+                <p className="mt-2 text-sm text-navy-900/50">{postDate(featured)?.label}</p>
                 <p className="mt-4 leading-relaxed text-navy-900/70">{excerpt(featured, 220)}</p>
                 <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
                   Read article <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -92,7 +92,7 @@ export default function BlogArchive() {
                       )}
                     </div>
                     <div className="flex flex-1 flex-col justify-center p-4 sm:justify-start sm:p-6">
-                      <p className="text-xs text-navy-900/50">{postDate(post.url)?.label}</p>
+                      <p className="text-xs text-navy-900/50">{postDate(post)?.label}</p>
                       <h3 className="mt-1.5 text-base font-bold leading-snug text-navy-900 group-hover:text-navy-700 sm:mt-2 sm:text-lg">
                         {post.h1}
                       </h3>

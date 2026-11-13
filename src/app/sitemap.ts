@@ -41,7 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: url(path),
       changeFrequency: doc.type === "post" ? "monthly" : "monthly",
       priority: doc.type === "post" ? 0.6 : 0.7,
-      lastModified: postDate(doc.url)?.iso,
+      lastModified: postDate(doc)?.iso,
     });
   }
 

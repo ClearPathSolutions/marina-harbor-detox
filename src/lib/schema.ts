@@ -71,7 +71,7 @@ const person = (p: BylinePerson) => ({ "@type": "Person", name: p.name, url: abs
  * have not been built yet.
  */
 export function blogPostingSchema(doc: Doc, path: string, image: string | null, byline: ArticleByline) {
-  const d = postDate(doc.url);
+  const d = postDate(doc);
   // Trailing slash, matching the canonical (next.config.mjs `trailingSlash`).
   const url = abs(path.endsWith("/") ? path : `${path}/`);
   const org = { "@id": ORGANIZATION_ID };

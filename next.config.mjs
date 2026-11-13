@@ -1,4 +1,28 @@
 /** @type {import('next').NextConfig} */
+import fs from "fs";
+import path from "path";
+
+// Blog posts moved from WordPress's /YYYY/MM/DD/<slug>/ to /blog/<slug>/
+// (2026-11-13). Each post's JSON keeps its publish date in `date`, so the old
+// URL is rebuilt from date + slug and permanently redirected to the new one.
+// Read from content/posts at build time, so a newly added post gets its
+// redirect without anyone editing this file.
+function datedPostRedirects() {
+  const dir = path.join(process.cwd(), "content", "posts");
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")))
+    .filter((d) => d.date && /\/blog\/[^/]+\/$/.test(d.url))
+    .map((d) => {
+      const slug = d.url.replace(/\/$/, "").split("/").pop();
+      return {
+        source: `/${d.date.replace(/-/g, "/")}/${slug}`,
+        destination: `/blog/${slug}/`,
+        permanent: true,
+      };
+    });
+}
 
 // MH-31 — security headers.
 //
@@ -92,7 +116,8 @@ const nextConfig = {
   //
   // Re-verified 2026-11-13 against every published WordPress post and page (WP
   // REST + Yoast sitemaps from the still-running WP Engine install): every old
-  // URL now resolves 200 or redirects once, with no chains.
+  // URL now resolves 200 or redirects once, with no chains. Posts now redirect
+  // from their dated URL to /blog/<slug>/; pages are unchanged.
   async redirects() {
     return [
       // The team is one page now, not one page per person. These three URLs are
@@ -167,23 +192,25 @@ const nextConfig = {
         permanent: true,
       },
 
-      // /2026/07/17/codeine-cough-syrup/ (the #2 page in GSC) is restored at its
-      // original URL from content/posts, so the old 307 stopgap to /blog/ is gone.
-      // These are old URL variants that GSC still shows getting impressions.
-      // Each one 404'd; each goes to the exact article it was a variant of.
+      // Every post's old dated WordPress URL -> /blog/<slug>/ (see above).
+      ...datedPostRedirects(),
+
+      // Old URL variants that GSC still shows getting impressions. Each one
+      // 404'd; each goes straight to the article's current /blog/ URL, never
+      // via its dated URL, so there is only one hop.
       {
         source: "/2026/07/17/codeine-syrup",
-        destination: "/2026/07/17/codeine-cough-syrup/",
+        destination: "/blog/codeine-cough-syrup/",
         permanent: true,
       },
       {
         source: "/2026/05/08/why-heroin-withdrawal-so-difficult",
-        destination: "/2026/05/08/why-heroin-withdrawal-is-so-difficult/",
+        destination: "/blog/why-heroin-withdrawal-is-so-difficult/",
         permanent: true,
       },
       {
         source: "/2023/09/22/mixing-benadryl-and-alcohol-is-a-recipe-for-danger",
-        destination: "/2023/09/22/benadryl-and-alcohol/",
+        destination: "/blog/benadryl-and-alcohol/",
         permanent: true,
       },
 

@@ -32,6 +32,13 @@ export type Doc = {
   reviewed_by?: string;
   /** YYYY-MM-DD. */
   last_reviewed?: string;
+  /**
+   * Posts only — publish date, YYYY-MM-DD. Posts used to live at WordPress's
+   * /YYYY/MM/DD/<slug>/ and the date was read off the URL; they now live at
+   * /blog/<slug>/, so it is stored here. next.config.mjs builds the old-URL
+   * redirects from this field.
+   */
+  date?: string;
 };
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
@@ -50,7 +57,7 @@ export function getPages(): Doc[] {
 }
 
 export function getPosts(): Doc[] {
-  return readDir("posts").sort((a, b) => (postDate(b.url)?.iso ?? "").localeCompare(postDate(a.url)?.iso ?? ""));
+  return readDir("posts").sort((a, b) => (postDate(b)?.iso ?? "").localeCompare(postDate(a)?.iso ?? ""));
 }
 
 /**
@@ -89,7 +96,7 @@ export function homepagePosts(count = 3): HomepagePost[] {
     .map((doc) => ({
       title: doc.h1 || doc.title,
       href: "/" + pathSegments(doc.url).join("/"),
-      date: postDate(doc.url)?.label ?? "",
+      date: postDate(doc)?.label ?? "",
       excerpt: excerpt(doc, 150),
       image: leadImage(doc),
       category: postCategories[doc.slug] ?? null,
@@ -506,10 +513,9 @@ export function leadImage(doc: Doc): string | null {
   return pool.length ? pool[slugHash(doc.slug) % pool.length] : photos[0]?.file ?? null;
 }
 
-export function postDate(url: string): { iso: string; label: string } | null {
-  const m = url.match(/\/((?:19|20)\d{2})\/(\d{2})\/(\d{2})\//);
-  if (!m) return null;
-  const iso = `${m[1]}-${m[2]}-${m[3]}`;
+export function postDate(doc: Pick<Doc, "date">): { iso: string; label: string } | null {
+  const iso = doc.date;
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
   const label = new Date(`${iso}T00:00:00`).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",

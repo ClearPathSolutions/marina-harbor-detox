@@ -480,7 +480,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
   const segs = pathSegments(doc.url);
   const slugPath = "/" + segs.join("/");
   const hero = leadImage(doc);
-  const date = doc.type === "post" ? postDate(doc.url) : null;
+  const date = doc.type === "post" ? postDate(doc) : null;
   const rt = doc.type === "post" ? readingTime(doc) : null;
   // MH-13: lift the reviewer / last-updated bullets out before sectioning.
   const { reviewedBy, lastUpdated, blocks: bodyBlocks } = extractByline(doc.blocks);
