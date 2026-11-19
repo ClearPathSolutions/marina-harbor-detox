@@ -560,6 +560,7 @@ export default function ContentPage({ doc }: { doc: Doc }) {
           title={doc.h1}
           crumbs={crumbs}
           photo={heroPhoto}
+          photoAlt={doc.type === "post" ? doc.h1 : undefined}
           eyebrow={doc.type === "post" ? "Recovery Blog" : undefined}
           meta={
             <>
