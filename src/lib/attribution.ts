@@ -39,6 +39,8 @@
  * withRestoredCampaign() for why that is safe and airtight.
  */
 
+import { latestReferrer, rememberReferrer } from "./latest-referrer";
+
 declare global {
   interface Window {
     __ctm?: { config?: { sid?: string | null } };
@@ -125,6 +127,7 @@ function write(record: FirstTouch): void {
  */
 export function captureFirstTouch(): void {
   if (!browser()) return;
+  rememberReferrer();
   const found = liveParams();
 
   // A fresh click always wins — that is a new campaign, not a continuation of
@@ -285,7 +288,7 @@ export function attributionPayload(): Record<string, unknown> {
   return {
     page_url: window.location.href,
     landing_page_url: stored?.landing || window.location.href,
-    referrer: stored?.referrer || externalReferrer() || null,
+    referrer: latestReferrer() ?? (stored?.referrer || externalReferrer() || null),
     utm: Object.keys(utm).length ? utm : null,
     // Same fallback order the Clarion envelope gets, so both records agree.
     gclid: p.gclid || p.wbraid || p.gbraid || null,
