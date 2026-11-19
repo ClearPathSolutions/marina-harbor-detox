@@ -32,6 +32,7 @@ export default function PageHero({
   eyebrow,
   lead,
   photo,
+  photoAlt,
   align = "left",
   meta,
 }: {
@@ -40,6 +41,8 @@ export default function PageHero({
   eyebrow?: string;
   lead?: string;
   photo?: string | null;
+  /** Alt text for the photo. Empty (decorative) unless given; blog posts pass their title. */
+  photoAlt?: string;
   align?: "left" | "center";
   meta?: React.ReactNode;
 }) {
@@ -55,7 +58,7 @@ export default function PageHero({
                 third-party JS. fetchPriority has to be passed explicitly. */}
             <Image
               src={photo}
-              alt=""
+              alt={photoAlt ?? ""}
               fill
               priority
               fetchPriority="high"
